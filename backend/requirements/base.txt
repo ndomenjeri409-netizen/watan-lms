@@ -1,0 +1,12 @@
+Django>=5.1,<5.3
+djangorestframework>=3.15
+drf-spectacular>=0.27
+django-filter>=24.0
+django-cors-headers>=4.4
+dj-database-url>=2.2
+django-environ>=0.11
+psycopg[binary]>=3.2
+firebase-admin>=6.5
+boto3>=1.35
+gunicorn>=22.0
+whitenoise>=6.7

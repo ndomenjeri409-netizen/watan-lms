@@ -1,0 +1,75 @@
+openapi: 3.0.3
+info:
+  title: Watan LMS API
+  version: 1.0.0
+paths:
+  /api/v1/me:
+    get:
+      operationId: api_v1_me_retrieve
+      tags:
+      - api
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+          description: ''
+components:
+  schemas:
+    Me:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        email:
+          type: string
+          format: email
+          readOnly: true
+        display_name:
+          type: string
+          readOnly: true
+        role:
+          readOnly: true
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        is_active:
+          type: boolean
+          readOnly: true
+      required:
+      - display_name
+      - email
+      - id
+      - is_active
+      - role
+    NullEnum:
+      enum:
+      - null
+    RoleEnum:
+      enum:
+      - SUPER_ADMIN
+      - ADMIN
+      - DIRECTOR
+      - HOD
+      - TEACHER
+      - BURSAR
+      - STUDENT
+      type: string
+      description: |-
+        * `SUPER_ADMIN` - Super Admin
+        * `ADMIN` - Admin
+        * `DIRECTOR` - Director
+        * `HOD` - Hod
+        * `TEACHER` - Teacher
+        * `BURSAR` - Bursar
+        * `STUDENT` - Student
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
