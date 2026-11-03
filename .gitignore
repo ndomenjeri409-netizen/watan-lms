@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+!.env.*.example
+__pycache__/
+.venv/
+node_modules/
+dist/
+*.log
+firebase-service-account*.json
+.DS_Store
+.neon
+.env.local
+frontend/node_modules/
+frontend/dist/
+backend/staticfiles/
