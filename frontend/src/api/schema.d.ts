@@ -4,6 +4,1208 @@
  */
 
 export interface paths {
+    "/api/v1/academic-periods/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["academic_periods_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["academic_periods_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/academic-periods/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["academic_periods_retrieve"];
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        put: operations["academic_periods_update"];
+        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        delete: operations["academic_periods_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        patch: operations["academic_periods_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/accounts/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["accounts_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/accounts/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["accounts_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/adjustments/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["adjustments_list"];
+        put?: never;
+        post: operations["adjustments_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/adjustments/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["adjustments_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/adjustments/{id}/approve/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["adjustments_approve_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/adjustments/{id}/reverse/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["adjustments_reverse_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/applications/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["applications_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["applications_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/applications/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["applications_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/applications/{id}/approve/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["applications_approve_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/applications/{id}/reject/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["applications_reject_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/assessments/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["assessments_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["assessments_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/assessments/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["assessments_retrieve"];
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        put: operations["assessments_update"];
+        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        delete: operations["assessments_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        patch: operations["assessments_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/assessments/{id}/close/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["assessments_close_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/assessments/{id}/publish/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["assessments_publish_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/attendance/check-in/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["attendance_check_in_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/attendance/records/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["attendance_records_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/attendance/records/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["attendance_records_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/attendance/sessions/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["attendance_sessions_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/attendance/sessions/{id}/close/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["attendance_sessions_close_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/attendance/sessions/{id}/qr/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["attendance_sessions_qr_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/attendance/sessions/open/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["attendance_sessions_open_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/blog/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["blog_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["blog_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/blog/{slug}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["blog_retrieve"];
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        put: operations["blog_update"];
+        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        delete: operations["blog_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        patch: operations["blog_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/campuses/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["campuses_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["campuses_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/campuses/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["campuses_retrieve"];
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        put: operations["campuses_update"];
+        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        delete: operations["campuses_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        patch: operations["campuses_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/cash-accounts/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["cash_accounts_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/cash-accounts/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["cash_accounts_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/class-groups/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["class_groups_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["class_groups_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/class-groups/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["class_groups_retrieve"];
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        put: operations["class_groups_update"];
+        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        delete: operations["class_groups_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        patch: operations["class_groups_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/course-access/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["course_access_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/course-access/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["course_access_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/course-modules/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["course_modules_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["course_modules_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/course-modules/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["course_modules_retrieve"];
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        put: operations["course_modules_update"];
+        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        delete: operations["course_modules_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        patch: operations["course_modules_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/course-units/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["course_units_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["course_units_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/course-units/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["course_units_retrieve"];
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        put: operations["course_units_update"];
+        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        delete: operations["course_units_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        patch: operations["course_units_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/courses/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["courses_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["courses_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/courses/{slug}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["courses_retrieve"];
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        put: operations["courses_update"];
+        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        delete: operations["courses_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        patch: operations["courses_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/departments/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["departments_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["departments_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/departments/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["departments_retrieve"];
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        put: operations["departments_update"];
+        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        delete: operations["departments_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        patch: operations["departments_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/enrollments/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["enrollments_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/enrollments/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["enrollments_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/enrollments/{id}/transition/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["enrollments_transition_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/faqs/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["faqs_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["faqs_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/faqs/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["faqs_retrieve"];
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        put: operations["faqs_update"];
+        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        delete: operations["faqs_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        patch: operations["faqs_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/fee-structures/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["fee_structures_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["fee_structures_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/fee-structures/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["fee_structures_retrieve"];
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        put: operations["fee_structures_update"];
+        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        delete: operations["fee_structures_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        patch: operations["fee_structures_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/files/{id}/complete/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["files_complete_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/files/{id}/download-url/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["files_download_url_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/files/uploads/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["files_uploads_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/gradebook/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["gradebook_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/grades/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["grades_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["grades_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/grades/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["grades_retrieve"];
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        put: operations["grades_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        patch: operations["grades_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/grades/{id}/approve/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["grades_approve_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/grades/{id}/reject/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["grades_reject_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/grades/{id}/submit-for-approval/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["grades_submit_for_approval_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/guardians/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["guardians_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["guardians_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/guardians/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["guardians_retrieve"];
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        put: operations["guardians_update"];
+        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        delete: operations["guardians_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        patch: operations["guardians_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/invoices/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["invoices_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["invoices_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/invoices/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["invoices_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/invoices/{id}/void/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["invoices_void_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/journal-entries/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["journal_entries_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/journal-entries/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["journal_entries_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/lessons/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["lessons_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["lessons_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/lessons/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["lessons_retrieve"];
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        put: operations["lessons_update"];
+        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        delete: operations["lessons_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        patch: operations["lessons_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/materials/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["materials_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["materials_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/materials/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["materials_retrieve"];
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        put: operations["materials_update"];
+        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        delete: operations["materials_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        patch: operations["materials_partial_update"];
+        trace?: never;
+    };
     "/api/v1/me": {
         parameters: {
             query?: never;
@@ -11,9 +1213,536 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["api_v1_me_retrieve"];
+        get: operations["me_retrieve"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["me_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/pages/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["pages_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["pages_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pages/{slug}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["pages_retrieve"];
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        put: operations["pages_update"];
+        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        delete: operations["pages_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        patch: operations["pages_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/payments/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["payments_list"];
+        put?: never;
+        post: operations["payments_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payments/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["payments_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payments/{id}/reverse/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["payments_reverse_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/programs/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["programs_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["programs_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/programs/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["programs_retrieve"];
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        put: operations["programs_update"];
+        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        delete: operations["programs_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        patch: operations["programs_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/receipts/{receipt_id}/pdf/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["receipts_pdf_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/refunds/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["refunds_list"];
+        put?: never;
+        post: operations["refunds_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/refunds/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["refunds_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/refunds/{id}/approve/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["refunds_approve_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/refunds/{id}/reverse/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["refunds_reverse_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reports/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["reports_overview_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rooms/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["rooms_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["rooms_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rooms/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["rooms_retrieve"];
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        put: operations["rooms_update"];
+        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        delete: operations["rooms_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        patch: operations["rooms_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/staff-profiles/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["staff_profiles_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/staff-profiles/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["staff_profiles_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/students/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["students_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/students/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["students_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/students/{student_id}/statement/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["students_statement_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/submissions/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["submissions_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["submissions_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/submissions/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["submissions_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/timetable/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["timetable_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["timetable_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/timetable/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["timetable_retrieve"];
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        put: operations["timetable_update"];
+        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        delete: operations["timetable_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        patch: operations["timetable_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/transcripts/{student_id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["transcripts_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/transcripts/me/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["transcripts_me_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/units": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["units_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["users_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["users_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/{id}/role/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["users_role_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/users/invite/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["users_invite_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -24,28 +1753,1932 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        AcademicPeriod: {
+            /** Format: uuid */
+            readonly id: string;
+            name: string;
+            /** Format: date */
+            starts_on: string;
+            /** Format: date */
+            ends_on: string;
+            is_current?: boolean;
+            is_active?: boolean;
+        };
+        AcademicPeriodRequest: {
+            name: string;
+            /** Format: date */
+            starts_on: string;
+            /** Format: date */
+            ends_on: string;
+            is_current?: boolean;
+            is_active?: boolean;
+        };
+        Account: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly code: string;
+            readonly name: string;
+            readonly type: components["schemas"]["TypeEnum"];
+            /** Format: uuid */
+            readonly parent: string | null;
+            readonly is_active: boolean;
+        };
+        Adjustment: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            readonly invoice: string;
+            /** Format: decimal */
+            readonly amount: string;
+            readonly reason: string;
+            /** Format: uuid */
+            readonly requested_by: string;
+            /** Format: uuid */
+            readonly approved_by: string | null;
+            readonly status: components["schemas"]["Status803Enum"];
+            /** Format: uuid */
+            readonly journal_entry: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        Application: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            readonly department: string;
+            /** Format: uuid */
+            program?: string | null;
+            /** Format: uuid */
+            course: string;
+            readonly course_title: string;
+            readonly course_code: string;
+            first_name: string;
+            last_name: string;
+            /** Format: email */
+            email: string;
+            phone?: string;
+            statement?: string;
+            readonly status: components["schemas"]["ApplicationStatusEnum"];
+            /** Format: uuid */
+            readonly student: string | null;
+            readonly student_profile: components["schemas"]["Student"];
+            /** Format: uuid */
+            readonly reviewed_by: string | null;
+            /** Format: date-time */
+            readonly reviewed_at: string | null;
+            readonly review_note: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        ApplicationRequest: {
+            /** Format: uuid */
+            program?: string | null;
+            /** Format: uuid */
+            course: string;
+            first_name: string;
+            last_name: string;
+            /** Format: email */
+            email: string;
+            phone?: string;
+            statement?: string;
+        };
+        /**
+         * @description * `PENDING` - Pending
+         *     * `APPROVED` - Approved
+         *     * `REJECTED` - Rejected
+         *     * `CANCELLED` - Cancelled
+         * @enum {string}
+         */
+        ApplicationStatusEnum: "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED";
+        ApproveApplicationResponse: {
+            application: components["schemas"]["Application"];
+            student: components["schemas"]["StudentProvisioningSummary"];
+            /** Format: uuid */
+            enrollment_id: string;
+        };
+        Assessment: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            course: string;
+            readonly course_title: string;
+            /** Format: uuid */
+            class_group?: string | null;
+            readonly class_group_name: string | null;
+            /** Format: uuid */
+            readonly created_by: string;
+            title: string;
+            instructions?: string;
+            kind: components["schemas"]["Kind1c8Enum"];
+            /** Format: decimal */
+            maximum_score: string;
+            /** Format: date-time */
+            due_at?: string | null;
+            readonly status: components["schemas"]["AssessmentStatusEnum"];
+            readonly submission_count: number;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        AssessmentRequest: {
+            /** Format: uuid */
+            course: string;
+            /** Format: uuid */
+            class_group?: string | null;
+            title: string;
+            instructions?: string;
+            kind: components["schemas"]["Kind1c8Enum"];
+            /** Format: decimal */
+            maximum_score: string;
+            /** Format: date-time */
+            due_at?: string | null;
+        };
+        /**
+         * @description * `DRAFT` - Draft
+         *     * `PUBLISHED` - Published
+         *     * `CLOSED` - Closed
+         * @enum {string}
+         */
+        AssessmentStatusEnum: "DRAFT" | "PUBLISHED" | "CLOSED";
+        AttendanceRecord: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            readonly session: string;
+            /** Format: uuid */
+            readonly student: string;
+            readonly registration_number: string;
+            readonly student_name: string;
+            readonly status: components["schemas"]["AttendanceRecordStatusEnum"];
+            /** Format: date-time */
+            readonly checked_in_at: string;
+        };
+        /**
+         * @description * `PRESENT` - Present
+         *     * `LATE` - Late
+         * @enum {string}
+         */
+        AttendanceRecordStatusEnum: "PRESENT" | "LATE";
+        AttendanceSession: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            class_group: string;
+            readonly class_group_name: string;
+            readonly course_title: string;
+            /** Format: uuid */
+            readonly opened_by: string;
+            title?: string;
+            /** @default true */
+            readonly is_open: boolean;
+            /** Format: date-time */
+            readonly opened_at: string;
+            /** Format: date-time */
+            readonly closed_at: string | null;
+            readonly record_count: number;
+        };
+        BlogPost: {
+            /** Format: uuid */
+            readonly id: string;
+            title: string;
+            slug?: string;
+            excerpt?: string;
+            body: string;
+            author_name?: string;
+            is_published?: boolean;
+            /** Format: date-time */
+            published_at?: string | null;
+        };
+        BlogPostRequest: {
+            title: string;
+            slug?: string;
+            excerpt?: string;
+            body: string;
+            author_name?: string;
+            is_published?: boolean;
+            /** Format: date-time */
+            published_at?: string | null;
+        };
+        BusinessUnit: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly code: string;
+            readonly name: string;
+            readonly kind: components["schemas"]["BusinessUnitKindEnum"];
+            readonly currency: string;
+            readonly modules: unknown;
+            readonly is_active: boolean;
+        };
+        /**
+         * @description * `ACADEMIC` - Academic
+         *     * `TRAINING` - Training
+         *     * `DRIVING` - Driving
+         *     * `SERVICES` - Services
+         *     * `GROUP` - Group
+         * @enum {string}
+         */
+        BusinessUnitKindEnum: "ACADEMIC" | "TRAINING" | "DRIVING" | "SERVICES" | "GROUP";
+        BusinessUnitSummary: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly code: string;
+            readonly name: string;
+        };
+        Campus: {
+            /** Format: uuid */
+            readonly id: string;
+            name: string;
+            code: string;
+            is_active?: boolean;
+        };
+        CampusRequest: {
+            name: string;
+            code: string;
+            is_active?: boolean;
+        };
+        CashAccount: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            readonly account: string;
+            readonly kind: components["schemas"]["CashAccountKindEnum"];
+            readonly name: string;
+            /** Format: uuid */
+            readonly custody_unit: string;
+            /** Format: uuid */
+            readonly custodian: string;
+            /** Format: decimal */
+            readonly imprest_limit: string | null;
+            readonly is_active: boolean;
+        };
+        /**
+         * @description * `DRAWER` - Drawer
+         *     * `MPESA_AGENT` - M-Pesa agent
+         *     * `BANK` - Bank
+         * @enum {string}
+         */
+        CashAccountKindEnum: "DRAWER" | "MPESA_AGENT" | "BANK";
+        /**
+         * @description * `CASH` - Cash
+         *     * `MPESA_AGENT` - M-Pesa agent
+         *     * `BANK` - Bank
+         * @enum {string}
+         */
+        ChannelEnum: "CASH" | "MPESA_AGENT" | "BANK";
+        CheckInRequest: {
+            token: string;
+            /** Format: uuid */
+            client_checkin_id?: string;
+        };
+        ClassGroup: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            course: string;
+            readonly course_title: string;
+            /** Format: uuid */
+            teacher: string;
+            readonly teacher_name: string;
+            /** Format: uuid */
+            academic_period?: string | null;
+            name: string;
+            code: string;
+            /** Format: int64 */
+            capacity?: number;
+            is_active?: boolean;
+        };
+        ClassGroupRequest: {
+            /** Format: uuid */
+            course: string;
+            /** Format: uuid */
+            teacher: string;
+            /** Format: uuid */
+            academic_period?: string | null;
+            name: string;
+            code: string;
+            /** Format: int64 */
+            capacity?: number;
+            is_active?: boolean;
+        };
+        ContentPage: {
+            /** Format: uuid */
+            readonly id: string;
+            title: string;
+            slug?: string;
+            body: string;
+            is_published?: boolean;
+            /** Format: date-time */
+            published_at?: string | null;
+        };
+        ContentPageRequest: {
+            title: string;
+            slug?: string;
+            body: string;
+            is_published?: boolean;
+            /** Format: date-time */
+            published_at?: string | null;
+        };
+        Course: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            department: string;
+            /** Format: uuid */
+            program?: string | null;
+            /** Format: uuid */
+            readonly created_by: string;
+            title: string;
+            slug?: string;
+            code: string;
+            summary?: string;
+            description?: string;
+            learning_outcomes?: unknown;
+            /** Format: uuid */
+            cover_image?: string | null;
+            status?: components["schemas"]["CourseStatusEnum"];
+            is_active?: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        CourseAccess: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            readonly course: string;
+            readonly course_title: string;
+            readonly course_slug: string;
+            readonly is_active: boolean;
+        };
+        CourseModule: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            course: string;
+            title: string;
+            description?: string;
+            /** Format: int64 */
+            position: number;
+            is_active?: boolean;
+        };
+        CourseModuleRequest: {
+            /** Format: uuid */
+            course: string;
+            title: string;
+            description?: string;
+            /** Format: int64 */
+            position: number;
+            is_active?: boolean;
+        };
+        CourseRequest: {
+            /** Format: uuid */
+            department: string;
+            /** Format: uuid */
+            program?: string | null;
+            title: string;
+            slug?: string;
+            code: string;
+            summary?: string;
+            description?: string;
+            learning_outcomes?: unknown;
+            /** Format: uuid */
+            cover_image?: string | null;
+            status?: components["schemas"]["CourseStatusEnum"];
+            is_active?: boolean;
+        };
+        /**
+         * @description * `DRAFT` - Draft
+         *     * `PUBLISHED` - Published
+         * @enum {string}
+         */
+        CourseStatusEnum: "DRAFT" | "PUBLISHED";
+        Department: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly unit: components["schemas"]["DepartmentUnit"];
+            /** Format: uuid */
+            campus?: string | null;
+            name: string;
+            code: string;
+            is_active?: boolean;
+            /** Format: date-time */
+            archived_at?: string | null;
+            readonly program_count: number;
+            readonly course_count: number;
+        };
+        DepartmentUnit: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly code: string;
+            readonly name: string;
+        };
+        DepartmentWriteRequest: {
+            /** Format: uuid */
+            unit: string;
+            /** Format: uuid */
+            campus?: string | null;
+            name: string;
+            code: string;
+            is_active?: boolean;
+        };
+        DownloadUrl: {
+            /** Format: uri */
+            download_url: string;
+            expires_in: number;
+        };
+        Enrollment: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            readonly student: string;
+            readonly student_profile: components["schemas"]["Student"];
+            /** Format: uuid */
+            readonly course: string;
+            readonly course_title: string;
+            readonly course_code: string;
+            /** Format: uuid */
+            readonly application: string | null;
+            readonly status: components["schemas"]["Status2aaEnum"];
+            /** Format: uuid */
+            readonly approved_by: string | null;
+            /** Format: date-time */
+            readonly activated_at: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        FAQ: {
+            /** Format: uuid */
+            readonly id: string;
+            question: string;
+            answer: string;
+            /** Format: int64 */
+            position?: number;
+            is_published?: boolean;
+        };
+        FAQRequest: {
+            question: string;
+            answer: string;
+            /** Format: int64 */
+            position?: number;
+            is_published?: boolean;
+        };
+        FeeStructure: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            unit: string;
+            code: string;
+            name: string;
+            /** Format: decimal */
+            amount: string;
+            /** Format: uuid */
+            receivable_account: string;
+            /** Format: uuid */
+            income_account: string;
+            /** Format: uuid */
+            discount_account?: string | null;
+            /** Format: uuid */
+            refund_account?: string | null;
+            is_active?: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        FeeStructureRequest: {
+            /** Format: uuid */
+            unit: string;
+            code: string;
+            name: string;
+            /** Format: decimal */
+            amount: string;
+            /** Format: uuid */
+            receivable_account: string;
+            /** Format: uuid */
+            income_account: string;
+            /** Format: uuid */
+            discount_account?: string | null;
+            /** Format: uuid */
+            refund_account?: string | null;
+            is_active?: boolean;
+        };
+        Grade: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            submission: string;
+            readonly student_name: string;
+            readonly registration_number: string;
+            readonly assessment_title: string;
+            /** Format: decimal */
+            readonly maximum_score: string;
+            /** Format: decimal */
+            score: string;
+            feedback?: string;
+            readonly status: components["schemas"]["Status3d8Enum"];
+            readonly revision: number;
+            /** Format: uuid */
+            readonly graded_by: string;
+            /** Format: uuid */
+            readonly approved_by: string | null;
+            /** Format: date-time */
+            readonly approved_at: string | null;
+            /** Format: date-time */
+            readonly published_at: string | null;
+            readonly review_note: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        GradeRequest: {
+            /** Format: uuid */
+            submission: string;
+            /** Format: decimal */
+            score: string;
+            feedback?: string;
+        };
+        GradeReviewRequest: {
+            note?: string;
+        };
+        GradebookAssessment: {
+            /** Format: uuid */
+            id: string;
+            title: string;
+            kind: components["schemas"]["Kind1c8Enum"];
+            /** Format: decimal */
+            maximum_score: string;
+            /** Format: date-time */
+            due_at: string | null;
+        };
+        GradebookEntry: {
+            /** Format: uuid */
+            grade_id: string;
+            /** Format: decimal */
+            score: string;
+            status: components["schemas"]["Status3d8Enum"];
+            revision: number;
+        };
+        GradebookResponse: {
+            course: {
+                [key: string]: string;
+            };
+            assessments: components["schemas"]["GradebookAssessment"][];
+            students: components["schemas"]["GradebookStudent"][];
+        };
+        GradebookStudent: {
+            /** Format: uuid */
+            id: string;
+            registration_number: string;
+            name: string;
+            grades: {
+                [key: string]: components["schemas"]["GradebookEntry"];
+            };
+        };
+        Guardian: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            student: string;
+            full_name: string;
+            relationship: string;
+            email?: string;
+            phone?: string;
+            is_active?: boolean;
+        };
+        GuardianRequest: {
+            /** Format: uuid */
+            student: string;
+            full_name: string;
+            relationship: string;
+            email?: string;
+            phone?: string;
+            is_active?: boolean;
+        };
+        InviteUserRequest: {
+            /** Format: email */
+            email: string;
+            display_name: string;
+            role: components["schemas"]["Role688Enum"];
+            /** Format: uuid */
+            unit_id?: string;
+            department_ids?: string[];
+        };
+        Invoice: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly number: string;
+            /** Format: uuid */
+            readonly student: string;
+            readonly student_name: string;
+            readonly student_registration_number: string;
+            /** Format: uuid */
+            readonly unit: string;
+            /** Format: uuid */
+            readonly fee_structure: string;
+            /** Format: date */
+            readonly issue_date: string;
+            /** Format: date */
+            readonly due_date: string;
+            /** Format: decimal */
+            readonly amount: string;
+            /** Format: decimal */
+            readonly balance_due: string;
+            readonly status: components["schemas"]["InvoiceStatusEnum"];
+            /** Format: uuid */
+            readonly journal_entry: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        InvoiceCreateRequest: {
+            /** Format: uuid */
+            student: string;
+            /** Format: uuid */
+            fee_structure: string;
+            /** Format: date */
+            issue_date: string;
+            /** Format: date */
+            due_date: string;
+            idempotency_key: string;
+        };
+        /**
+         * @description * `OPEN` - Open
+         *     * `PARTIAL` - Partially paid
+         *     * `PAID` - Paid
+         *     * `VOID` - Void
+         * @enum {string}
+         */
+        InvoiceStatusEnum: "OPEN" | "PARTIAL" | "PAID" | "VOID";
+        JournalEntry: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: date */
+            readonly date: string;
+            readonly memo: string;
+            readonly source_type: components["schemas"]["SourceTypeEnum"];
+            /** Format: uuid */
+            readonly source_id: string | null;
+            readonly status: components["schemas"]["JournalEntryStatusEnum"];
+            /** Format: uuid */
+            readonly reverses: string | null;
+            readonly reversal_reason: string;
+            readonly lines: components["schemas"]["JournalLine"][];
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `POSTED` - Posted
+         * @enum {string}
+         */
+        JournalEntryStatusEnum: "POSTED";
+        JournalLine: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            readonly account: string;
+            readonly account_code: string;
+            /** Format: uuid */
+            readonly unit: string;
+            readonly unit_code: string;
+            /** Format: uuid */
+            readonly cash_account: string | null;
+            /** Format: decimal */
+            readonly debit: string;
+            /** Format: decimal */
+            readonly credit: string;
+            /** Format: uuid */
+            readonly student: string | null;
+        };
+        /**
+         * @description * `ASSIGNMENT` - Assignment
+         *     * `QUIZ` - Quiz
+         *     * `EXAM` - Exam
+         *     * `PROJECT` - Project
+         * @enum {string}
+         */
+        Kind1c8Enum: "ASSIGNMENT" | "QUIZ" | "EXAM" | "PROJECT";
+        Lesson: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            unit: string;
+            title: string;
+            description?: string;
+            video_url?: string;
+            /** Format: int64 */
+            position: number;
+            /** Format: int64 */
+            duration_minutes?: number;
+            is_active?: boolean;
+        };
+        LessonRequest: {
+            /** Format: uuid */
+            unit: string;
+            title: string;
+            description?: string;
+            video_url?: string;
+            /** Format: int64 */
+            position: number;
+            /** Format: int64 */
+            duration_minutes?: number;
+            is_active?: boolean;
+        };
+        Material: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            lesson: string;
+            title: string;
+            kind: components["schemas"]["MaterialKindEnum"];
+            url?: string;
+            /** Format: uuid */
+            file?: string | null;
+            is_active?: boolean;
+        };
+        /**
+         * @description * `LINK` - External link
+         *     * `FILE` - Uploaded file
+         * @enum {string}
+         */
+        MaterialKindEnum: "LINK" | "FILE";
+        MaterialRequest: {
+            /** Format: uuid */
+            lesson: string;
+            title: string;
+            kind: components["schemas"]["MaterialKindEnum"];
+            url?: string;
+            /** Format: uuid */
+            file?: string | null;
+            is_active?: boolean;
+        };
         Me: {
             /** Format: uuid */
             readonly id: string;
             /** Format: email */
             readonly email: string;
             readonly display_name: string;
-            readonly role: (components["schemas"]["RoleEnum"] | components["schemas"]["NullEnum"]) | null;
+            readonly phone_number: string;
+            readonly role: string | null;
+            readonly assignments: components["schemas"]["RoleAssignment"][];
+            readonly is_global_read: boolean;
+            readonly awaiting_approval: boolean;
             readonly is_active: boolean;
         };
         /** @enum {unknown} */
         NullEnum: null;
+        OpenSessionRequest: {
+            /** Format: uuid */
+            class_group: string;
+            title?: string;
+        };
+        PaginatedAcademicPeriodList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["AcademicPeriod"][];
+        };
+        PaginatedAccountList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Account"][];
+        };
+        PaginatedAdjustmentList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Adjustment"][];
+        };
+        PaginatedApplicationList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Application"][];
+        };
+        PaginatedAssessmentList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Assessment"][];
+        };
+        PaginatedAttendanceRecordList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["AttendanceRecord"][];
+        };
+        PaginatedAttendanceSessionList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["AttendanceSession"][];
+        };
+        PaginatedBlogPostList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["BlogPost"][];
+        };
+        PaginatedBusinessUnitList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["BusinessUnit"][];
+        };
+        PaginatedCampusList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Campus"][];
+        };
+        PaginatedCashAccountList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["CashAccount"][];
+        };
+        PaginatedClassGroupList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["ClassGroup"][];
+        };
+        PaginatedContentPageList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["ContentPage"][];
+        };
+        PaginatedCourseAccessList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["CourseAccess"][];
+        };
+        PaginatedCourseList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Course"][];
+        };
+        PaginatedCourseModuleList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["CourseModule"][];
+        };
+        PaginatedDepartmentList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Department"][];
+        };
+        PaginatedEnrollmentList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Enrollment"][];
+        };
+        PaginatedFAQList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["FAQ"][];
+        };
+        PaginatedFeeStructureList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["FeeStructure"][];
+        };
+        PaginatedGradeList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Grade"][];
+        };
+        PaginatedGuardianList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Guardian"][];
+        };
+        PaginatedInvoiceList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Invoice"][];
+        };
+        PaginatedJournalEntryList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["JournalEntry"][];
+        };
+        PaginatedLessonList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Lesson"][];
+        };
+        PaginatedMaterialList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Material"][];
+        };
+        PaginatedPaymentList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Payment"][];
+        };
+        PaginatedProgramList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Program"][];
+        };
+        PaginatedRefundList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Refund"][];
+        };
+        PaginatedRoomList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Room"][];
+        };
+        PaginatedStaffProfileList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["StaffProfile"][];
+        };
+        PaginatedStudentList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Student"][];
+        };
+        PaginatedSubmissionList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Submission"][];
+        };
+        PaginatedTimetableSlotList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["TimetableSlot"][];
+        };
+        PaginatedUnitList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Unit"][];
+        };
+        PaginatedUserList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["User"][];
+        };
+        PatchedAcademicPeriodRequest: {
+            name?: string;
+            /** Format: date */
+            starts_on?: string;
+            /** Format: date */
+            ends_on?: string;
+            is_current?: boolean;
+            is_active?: boolean;
+        };
+        PatchedAssessmentRequest: {
+            /** Format: uuid */
+            course?: string;
+            /** Format: uuid */
+            class_group?: string | null;
+            title?: string;
+            instructions?: string;
+            kind?: components["schemas"]["Kind1c8Enum"];
+            /** Format: decimal */
+            maximum_score?: string;
+            /** Format: date-time */
+            due_at?: string | null;
+        };
+        PatchedBlogPostRequest: {
+            title?: string;
+            slug?: string;
+            excerpt?: string;
+            body?: string;
+            author_name?: string;
+            is_published?: boolean;
+            /** Format: date-time */
+            published_at?: string | null;
+        };
+        PatchedCampusRequest: {
+            name?: string;
+            code?: string;
+            is_active?: boolean;
+        };
+        PatchedChangeRoleRequest: {
+            role?: (components["schemas"]["Role688Enum"] | components["schemas"]["NullEnum"]) | null;
+            /** Format: uuid */
+            unit_id?: string;
+            department_ids?: string[];
+        };
+        PatchedClassGroupRequest: {
+            /** Format: uuid */
+            course?: string;
+            /** Format: uuid */
+            teacher?: string;
+            /** Format: uuid */
+            academic_period?: string | null;
+            name?: string;
+            code?: string;
+            /** Format: int64 */
+            capacity?: number;
+            is_active?: boolean;
+        };
+        PatchedContentPageRequest: {
+            title?: string;
+            slug?: string;
+            body?: string;
+            is_published?: boolean;
+            /** Format: date-time */
+            published_at?: string | null;
+        };
+        PatchedCourseModuleRequest: {
+            /** Format: uuid */
+            course?: string;
+            title?: string;
+            description?: string;
+            /** Format: int64 */
+            position?: number;
+            is_active?: boolean;
+        };
+        PatchedCourseRequest: {
+            /** Format: uuid */
+            department?: string;
+            /** Format: uuid */
+            program?: string | null;
+            title?: string;
+            slug?: string;
+            code?: string;
+            summary?: string;
+            description?: string;
+            learning_outcomes?: unknown;
+            /** Format: uuid */
+            cover_image?: string | null;
+            status?: components["schemas"]["CourseStatusEnum"];
+            is_active?: boolean;
+        };
+        PatchedDepartmentWriteRequest: {
+            /** Format: uuid */
+            unit?: string;
+            /** Format: uuid */
+            campus?: string | null;
+            name?: string;
+            code?: string;
+            is_active?: boolean;
+        };
+        PatchedFAQRequest: {
+            question?: string;
+            answer?: string;
+            /** Format: int64 */
+            position?: number;
+            is_published?: boolean;
+        };
+        PatchedFeeStructureRequest: {
+            /** Format: uuid */
+            unit?: string;
+            code?: string;
+            name?: string;
+            /** Format: decimal */
+            amount?: string;
+            /** Format: uuid */
+            receivable_account?: string;
+            /** Format: uuid */
+            income_account?: string;
+            /** Format: uuid */
+            discount_account?: string | null;
+            /** Format: uuid */
+            refund_account?: string | null;
+            is_active?: boolean;
+        };
+        PatchedGradeRequest: {
+            /** Format: uuid */
+            submission?: string;
+            /** Format: decimal */
+            score?: string;
+            feedback?: string;
+        };
+        PatchedGuardianRequest: {
+            /** Format: uuid */
+            student?: string;
+            full_name?: string;
+            relationship?: string;
+            email?: string;
+            phone?: string;
+            is_active?: boolean;
+        };
+        PatchedLessonRequest: {
+            /** Format: uuid */
+            unit?: string;
+            title?: string;
+            description?: string;
+            video_url?: string;
+            /** Format: int64 */
+            position?: number;
+            /** Format: int64 */
+            duration_minutes?: number;
+            is_active?: boolean;
+        };
+        PatchedMaterialRequest: {
+            /** Format: uuid */
+            lesson?: string;
+            title?: string;
+            kind?: components["schemas"]["MaterialKindEnum"];
+            url?: string;
+            /** Format: uuid */
+            file?: string | null;
+            is_active?: boolean;
+        };
+        PatchedMeUpdateRequest: {
+            display_name?: string;
+            phone_number?: string;
+        };
+        PatchedProgramRequest: {
+            /** Format: uuid */
+            department?: string;
+            name?: string;
+            code?: string;
+            is_active?: boolean;
+        };
+        PatchedRoomRequest: {
+            /** Format: uuid */
+            department?: string | null;
+            name?: string;
+            code?: string;
+            /** Format: int64 */
+            capacity?: number;
+            is_active?: boolean;
+        };
+        PatchedTimetableSlotRequest: {
+            /** Format: uuid */
+            class_group?: string;
+            /** Format: uuid */
+            room?: string | null;
+            weekday?: components["schemas"]["WeekdayEnum"];
+            /** Format: time */
+            starts_at?: string;
+            /** Format: time */
+            ends_at?: string;
+            /** Format: date */
+            effective_from?: string;
+            /** Format: date */
+            effective_until?: string | null;
+            is_active?: boolean;
+        };
+        PatchedUnitRequest: {
+            /** Format: uuid */
+            module?: string;
+            title?: string;
+            description?: string;
+            /** Format: int64 */
+            position?: number;
+            is_active?: boolean;
+        };
+        Payment: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            readonly invoice: string;
+            readonly invoice_number: string;
+            readonly student_name: string;
+            readonly student_registration_number: string;
+            /** Format: uuid */
+            readonly cash_account: string;
+            /** Format: decimal */
+            readonly amount: string;
+            readonly channel: components["schemas"]["ChannelEnum"];
+            readonly mpesa_code: string | null;
+            readonly payer_phone: string;
+            /** Format: date-time */
+            readonly received_at: string;
+            readonly receipt: components["schemas"]["Receipt"];
+            /** Format: uuid */
+            readonly journal_entry: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        PaymentCreateRequest: {
+            /** Format: uuid */
+            invoice: string;
+            /** Format: uuid */
+            cash_account: string;
+            /** Format: decimal */
+            amount: string;
+            channel: components["schemas"]["ChannelEnum"];
+            /** Format: date-time */
+            received_at: string;
+            idempotency_key: string;
+            mpesa_code?: string;
+            payer_phone?: string;
+        };
+        Program: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            department: string;
+            name: string;
+            code: string;
+            is_active?: boolean;
+        };
+        ProgramRequest: {
+            /** Format: uuid */
+            department: string;
+            name: string;
+            code: string;
+            is_active?: boolean;
+        };
+        /**
+         * @description * `material` - Course material
+         *     * `cover_image` - Course cover image
+         *     * `profile_photo` - Profile photo
+         *     * `document` - Document
+         *     * `generated` - Generated
+         *     * `submission` - Assessment submission
+         * @enum {string}
+         */
+        PurposeEnum: "material" | "cover_image" | "profile_photo" | "document" | "generated" | "submission";
+        QrIssue: {
+            token: string;
+            /** Format: date-time */
+            expires_at: string;
+            /** Format: uri */
+            check_in_url: string;
+        };
+        Receipt: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly number: string;
+            /** Format: date-time */
+            readonly issued_at: string;
+            readonly pdf_url: string;
+        };
+        Refund: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            readonly payment: string;
+            /** Format: uuid */
+            readonly cash_account: string;
+            /** Format: decimal */
+            readonly amount: string;
+            readonly reason: string;
+            /** Format: uuid */
+            readonly requested_by: string;
+            /** Format: uuid */
+            readonly approved_by: string | null;
+            readonly status: components["schemas"]["Status803Enum"];
+            /** Format: uuid */
+            readonly journal_entry: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        RejectApplicationRequest: {
+            note?: string;
+        };
+        ReportsOverview: {
+            departments?: number;
+            programs?: number;
+            courses?: number;
+            students?: number;
+            pending_applications?: number;
+            pending_enrollments?: number;
+            users?: number;
+            staff?: number;
+            assessments?: number;
+            submissions_to_grade?: number;
+        };
         /**
          * @description * `SUPER_ADMIN` - Super Admin
          *     * `ADMIN` - Admin
          *     * `DIRECTOR` - Director
+         *     * `AUDITOR` - Auditor
+         *     * `UNIT_MANAGER` - Unit Manager
          *     * `HOD` - Hod
          *     * `TEACHER` - Teacher
          *     * `BURSAR` - Bursar
+         *     * `CASHIER` - Cashier
+         * @enum {string}
+         */
+        Role688Enum: "SUPER_ADMIN" | "ADMIN" | "DIRECTOR" | "AUDITOR" | "UNIT_MANAGER" | "HOD" | "TEACHER" | "BURSAR" | "CASHIER";
+        RoleAssignment: {
+            readonly role: components["schemas"]["RoleAssignmentRoleEnum"];
+            readonly unit: components["schemas"]["BusinessUnitSummary"] | null;
+        };
+        /**
+         * @description * `SUPER_ADMIN` - Super Admin
+         *     * `ADMIN` - Admin
+         *     * `DIRECTOR` - Director
+         *     * `AUDITOR` - Auditor
+         *     * `UNIT_MANAGER` - Unit Manager
+         *     * `HOD` - Hod
+         *     * `TEACHER` - Teacher
+         *     * `BURSAR` - Bursar
+         *     * `CASHIER` - Cashier
          *     * `STUDENT` - Student
          * @enum {string}
          */
-        RoleEnum: "SUPER_ADMIN" | "ADMIN" | "DIRECTOR" | "HOD" | "TEACHER" | "BURSAR" | "STUDENT";
+        RoleAssignmentRoleEnum: "SUPER_ADMIN" | "ADMIN" | "DIRECTOR" | "AUDITOR" | "UNIT_MANAGER" | "HOD" | "TEACHER" | "BURSAR" | "CASHIER" | "STUDENT";
+        Room: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            department?: string | null;
+            name: string;
+            code: string;
+            /** Format: int64 */
+            capacity?: number;
+            is_active?: boolean;
+        };
+        RoomRequest: {
+            /** Format: uuid */
+            department?: string | null;
+            name: string;
+            code: string;
+            /** Format: int64 */
+            capacity?: number;
+            is_active?: boolean;
+        };
+        /**
+         * @description * `INVOICE` - Invoice
+         *     * `PAYMENT` - Payment
+         *     * `REFUND` - Refund
+         *     * `ADJUSTMENT` - Adjustment
+         *     * `REVERSAL` - Reversal
+         * @enum {string}
+         */
+        SourceTypeEnum: "INVOICE" | "PAYMENT" | "REFUND" | "ADJUSTMENT" | "REVERSAL";
+        StaffProfile: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            readonly user: string;
+            /** Format: email */
+            readonly user_email: string;
+            readonly display_name: string;
+            readonly role: string;
+            /** Format: uuid */
+            department?: string | null;
+            job_title?: string;
+            phone?: string;
+            is_active?: boolean;
+        };
+        /**
+         * @description * `PENDING` - Pending
+         *     * `APPROVED` - Approved
+         *     * `ACTIVE` - Active
+         *     * `COMPLETED` - Completed
+         *     * `REJECTED` - Rejected
+         *     * `CANCELLED` - Cancelled
+         * @enum {string}
+         */
+        Status2aaEnum: "PENDING" | "APPROVED" | "ACTIVE" | "COMPLETED" | "REJECTED" | "CANCELLED";
+        /**
+         * @description * `DRAFT` - Draft
+         *     * `PENDING_APPROVAL` - Pending approval
+         *     * `PUBLISHED` - Published
+         *     * `REJECTED` - Rejected
+         * @enum {string}
+         */
+        Status3d8Enum: "DRAFT" | "PENDING_APPROVAL" | "PUBLISHED" | "REJECTED";
+        /**
+         * @description * `REQUESTED` - Requested
+         *     * `POSTED` - Posted
+         *     * `REVERSED` - Reversed
+         * @enum {string}
+         */
+        Status803Enum: "REQUESTED" | "POSTED" | "REVERSED";
+        StoredFile: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly purpose: components["schemas"]["PurposeEnum"];
+            readonly original_name: string;
+            readonly content_type: string;
+            readonly size_bytes: number;
+            readonly status: components["schemas"]["StoredFileStatusEnum"];
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `PENDING` - Pending
+         *     * `READY` - Ready
+         *     * `DELETED` - Deleted
+         * @enum {string}
+         */
+        StoredFileStatusEnum: "PENDING" | "READY" | "DELETED";
+        Student: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            readonly user: string | null;
+            /** Format: uuid */
+            readonly department: string;
+            /** Format: uuid */
+            readonly program: string | null;
+            readonly registration_number: string;
+            readonly first_name: string;
+            readonly last_name: string;
+            /** Format: email */
+            readonly email: string;
+            readonly phone: string;
+            readonly admission_year: number;
+            readonly is_active: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        StudentProvisioningSummary: {
+            /** Format: uuid */
+            id: string;
+            registration_number: string;
+            /** Format: email */
+            email: string;
+        };
+        StudentStatement: {
+            /** Format: uuid */
+            student: string;
+            registration_number: string;
+            /** Format: decimal */
+            balance: string;
+            lines: components["schemas"]["StudentStatementLine"][];
+        };
+        StudentStatementLine: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: date */
+            readonly date: string;
+            readonly memo: string;
+            readonly account_code: string;
+            /** Format: decimal */
+            readonly debit: string;
+            /** Format: decimal */
+            readonly credit: string;
+        };
+        Submission: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            assessment: string;
+            readonly assessment_title: string;
+            /** Format: uuid */
+            readonly student: string;
+            readonly student_name: string;
+            readonly registration_number: string;
+            /** @default 1 */
+            readonly attempt_number: number;
+            /** Format: uuid */
+            file: string;
+            readonly file_name: string;
+            note?: string;
+            /** Format: date-time */
+            readonly submitted_at: string;
+        };
+        SubmissionRequest: {
+            /** Format: uuid */
+            assessment: string;
+            /** Format: uuid */
+            file: string;
+            note?: string;
+        };
+        TimetableSlot: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            class_group: string;
+            /** Format: uuid */
+            room?: string | null;
+            weekday: components["schemas"]["WeekdayEnum"];
+            /** Format: time */
+            starts_at: string;
+            /** Format: time */
+            ends_at: string;
+            /** Format: date */
+            effective_from: string;
+            /** Format: date */
+            effective_until?: string | null;
+            is_active?: boolean;
+        };
+        TimetableSlotRequest: {
+            /** Format: uuid */
+            class_group: string;
+            /** Format: uuid */
+            room?: string | null;
+            weekday: components["schemas"]["WeekdayEnum"];
+            /** Format: time */
+            starts_at: string;
+            /** Format: time */
+            ends_at: string;
+            /** Format: date */
+            effective_from: string;
+            /** Format: date */
+            effective_until?: string | null;
+            is_active?: boolean;
+        };
+        TransitionEnrollmentRequest: {
+            status: components["schemas"]["Status2aaEnum"];
+        };
+        /**
+         * @description * `ASSET` - Asset
+         *     * `LIABILITY` - Liability
+         *     * `EQUITY` - Equity
+         *     * `INCOME` - Income
+         *     * `EXPENSE` - Expense
+         * @enum {string}
+         */
+        TypeEnum: "ASSET" | "LIABILITY" | "EQUITY" | "INCOME" | "EXPENSE";
+        Unit: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            module: string;
+            title: string;
+            description?: string;
+            /** Format: int64 */
+            position: number;
+            is_active?: boolean;
+        };
+        UnitRequest: {
+            /** Format: uuid */
+            module: string;
+            title: string;
+            description?: string;
+            /** Format: int64 */
+            position: number;
+            is_active?: boolean;
+        };
+        UploadRequestRequest: {
+            purpose: components["schemas"]["PurposeEnum"];
+            filename: string;
+            content_type: string;
+            size: number;
+        };
+        UploadStarted: {
+            file: components["schemas"]["StoredFile"];
+            /** Format: uri */
+            upload_url: string;
+            headers: {
+                [key: string]: string;
+            };
+        };
+        User: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: email */
+            readonly email: string;
+            readonly display_name: string;
+            readonly role: string | null;
+            readonly is_active: boolean;
+            readonly department_ids: string[];
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `0` - Monday
+         *     * `1` - Tuesday
+         *     * `2` - Wednesday
+         *     * `3` - Thursday
+         *     * `4` - Friday
+         *     * `5` - Saturday
+         *     * `6` - Sunday
+         * @enum {integer}
+         */
+        WeekdayEnum: 0 | 1 | 2 | 3 | 4 | 5 | 6;
     };
     responses: never;
     parameters: never;
@@ -55,7 +3688,3379 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    api_v1_me_retrieve: {
+    academic_periods_list: {
+        parameters: {
+            query?: {
+                is_current?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedAcademicPeriodList"];
+                };
+            };
+        };
+    };
+    academic_periods_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AcademicPeriodRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AcademicPeriodRequest"];
+                "multipart/form-data": components["schemas"]["AcademicPeriodRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AcademicPeriod"];
+                };
+            };
+        };
+    };
+    academic_periods_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this academic period. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AcademicPeriod"];
+                };
+            };
+        };
+    };
+    academic_periods_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this academic period. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AcademicPeriodRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AcademicPeriodRequest"];
+                "multipart/form-data": components["schemas"]["AcademicPeriodRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AcademicPeriod"];
+                };
+            };
+        };
+    };
+    academic_periods_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this academic period. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    academic_periods_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this academic period. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAcademicPeriodRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedAcademicPeriodRequest"];
+                "multipart/form-data": components["schemas"]["PatchedAcademicPeriodRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AcademicPeriod"];
+                };
+            };
+        };
+    };
+    accounts_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedAccountList"];
+                };
+            };
+        };
+    };
+    accounts_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this account. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Account"];
+                };
+            };
+        };
+    };
+    adjustments_list: {
+        parameters: {
+            query?: {
+                invoice?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `REQUESTED` - Requested
+                 *     * `POSTED` - Posted
+                 *     * `REVERSED` - Reversed
+                 */
+                status?: "POSTED" | "REQUESTED" | "REVERSED";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedAdjustmentList"];
+                };
+            };
+        };
+    };
+    adjustments_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Adjustment"];
+                };
+            };
+        };
+    };
+    adjustments_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this adjustment. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Adjustment"];
+                };
+            };
+        };
+    };
+    adjustments_approve_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this adjustment. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Adjustment"];
+                };
+            };
+        };
+    };
+    adjustments_reverse_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this adjustment. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Adjustment"];
+                };
+            };
+        };
+    };
+    applications_list: {
+        parameters: {
+            query?: {
+                course?: string;
+                department?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                program?: string;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `PENDING` - Pending
+                 *     * `APPROVED` - Approved
+                 *     * `REJECTED` - Rejected
+                 *     * `CANCELLED` - Cancelled
+                 */
+                status?: "APPROVED" | "CANCELLED" | "PENDING" | "REJECTED";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedApplicationList"];
+                };
+            };
+        };
+    };
+    applications_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApplicationRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ApplicationRequest"];
+                "multipart/form-data": components["schemas"]["ApplicationRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Application"];
+                };
+            };
+        };
+    };
+    applications_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this application. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Application"];
+                };
+            };
+        };
+    };
+    applications_approve_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this application. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApproveApplicationResponse"];
+                };
+            };
+        };
+    };
+    applications_reject_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this application. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["RejectApplicationRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["RejectApplicationRequest"];
+                "multipart/form-data": components["schemas"]["RejectApplicationRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Application"];
+                };
+            };
+        };
+    };
+    assessments_list: {
+        parameters: {
+            query?: {
+                class_group?: string;
+                course?: string;
+                /**
+                 * @description * `ASSIGNMENT` - Assignment
+                 *     * `QUIZ` - Quiz
+                 *     * `EXAM` - Exam
+                 *     * `PROJECT` - Project
+                 */
+                kind?: "ASSIGNMENT" | "EXAM" | "PROJECT" | "QUIZ";
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `DRAFT` - Draft
+                 *     * `PUBLISHED` - Published
+                 *     * `CLOSED` - Closed
+                 */
+                status?: "CLOSED" | "DRAFT" | "PUBLISHED";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedAssessmentList"];
+                };
+            };
+        };
+    };
+    assessments_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssessmentRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AssessmentRequest"];
+                "multipart/form-data": components["schemas"]["AssessmentRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Assessment"];
+                };
+            };
+        };
+    };
+    assessments_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this assessment. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Assessment"];
+                };
+            };
+        };
+    };
+    assessments_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this assessment. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssessmentRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AssessmentRequest"];
+                "multipart/form-data": components["schemas"]["AssessmentRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Assessment"];
+                };
+            };
+        };
+    };
+    assessments_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this assessment. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    assessments_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this assessment. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAssessmentRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedAssessmentRequest"];
+                "multipart/form-data": components["schemas"]["PatchedAssessmentRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Assessment"];
+                };
+            };
+        };
+    };
+    assessments_close_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this assessment. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Assessment"];
+                };
+            };
+        };
+    };
+    assessments_publish_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this assessment. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Assessment"];
+                };
+            };
+        };
+    };
+    attendance_check_in_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CheckInRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CheckInRequest"];
+                "multipart/form-data": components["schemas"]["CheckInRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceRecord"];
+                };
+            };
+        };
+    };
+    attendance_records_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                session?: string;
+                /**
+                 * @description * `PRESENT` - Present
+                 *     * `LATE` - Late
+                 */
+                status?: "LATE" | "PRESENT";
+                student?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedAttendanceRecordList"];
+                };
+            };
+        };
+    };
+    attendance_records_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this attendance record. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceRecord"];
+                };
+            };
+        };
+    };
+    attendance_sessions_list: {
+        parameters: {
+            query?: {
+                class_group?: string;
+                is_open?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedAttendanceSessionList"];
+                };
+            };
+        };
+    };
+    attendance_sessions_close_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this attendance session. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceSession"];
+                };
+            };
+        };
+    };
+    attendance_sessions_qr_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this attendance session. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QrIssue"];
+                };
+            };
+        };
+    };
+    attendance_sessions_open_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpenSessionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["OpenSessionRequest"];
+                "multipart/form-data": components["schemas"]["OpenSessionRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceSession"];
+                };
+            };
+        };
+    };
+    blog_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedBlogPostList"];
+                };
+            };
+        };
+    };
+    blog_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BlogPostRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["BlogPostRequest"];
+                "multipart/form-data": components["schemas"]["BlogPostRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlogPost"];
+                };
+            };
+        };
+    };
+    blog_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlogPost"];
+                };
+            };
+        };
+    };
+    blog_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BlogPostRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["BlogPostRequest"];
+                "multipart/form-data": components["schemas"]["BlogPostRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlogPost"];
+                };
+            };
+        };
+    };
+    blog_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    blog_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedBlogPostRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedBlogPostRequest"];
+                "multipart/form-data": components["schemas"]["PatchedBlogPostRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlogPost"];
+                };
+            };
+        };
+    };
+    campuses_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedCampusList"];
+                };
+            };
+        };
+    };
+    campuses_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CampusRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CampusRequest"];
+                "multipart/form-data": components["schemas"]["CampusRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Campus"];
+                };
+            };
+        };
+    };
+    campuses_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this campus. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Campus"];
+                };
+            };
+        };
+    };
+    campuses_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this campus. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CampusRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CampusRequest"];
+                "multipart/form-data": components["schemas"]["CampusRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Campus"];
+                };
+            };
+        };
+    };
+    campuses_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this campus. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    campuses_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this campus. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedCampusRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedCampusRequest"];
+                "multipart/form-data": components["schemas"]["PatchedCampusRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Campus"];
+                };
+            };
+        };
+    };
+    cash_accounts_list: {
+        parameters: {
+            query?: {
+                custody_unit?: string;
+                is_active?: boolean;
+                /**
+                 * @description * `DRAWER` - Drawer
+                 *     * `MPESA_AGENT` - M-Pesa agent
+                 *     * `BANK` - Bank
+                 */
+                kind?: "BANK" | "DRAWER" | "MPESA_AGENT";
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedCashAccountList"];
+                };
+            };
+        };
+    };
+    cash_accounts_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this cash account. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CashAccount"];
+                };
+            };
+        };
+    };
+    class_groups_list: {
+        parameters: {
+            query?: {
+                academic_period?: string;
+                course?: string;
+                is_active?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                teacher?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedClassGroupList"];
+                };
+            };
+        };
+    };
+    class_groups_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClassGroupRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ClassGroupRequest"];
+                "multipart/form-data": components["schemas"]["ClassGroupRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClassGroup"];
+                };
+            };
+        };
+    };
+    class_groups_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this class group. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClassGroup"];
+                };
+            };
+        };
+    };
+    class_groups_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this class group. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClassGroupRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ClassGroupRequest"];
+                "multipart/form-data": components["schemas"]["ClassGroupRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClassGroup"];
+                };
+            };
+        };
+    };
+    class_groups_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this class group. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    class_groups_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this class group. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedClassGroupRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedClassGroupRequest"];
+                "multipart/form-data": components["schemas"]["PatchedClassGroupRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClassGroup"];
+                };
+            };
+        };
+    };
+    course_access_list: {
+        parameters: {
+            query?: {
+                course?: string;
+                is_active?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                student?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedCourseAccessList"];
+                };
+            };
+        };
+    };
+    course_access_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this course access. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CourseAccess"];
+                };
+            };
+        };
+    };
+    course_modules_list: {
+        parameters: {
+            query?: {
+                course?: string;
+                is_active?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedCourseModuleList"];
+                };
+            };
+        };
+    };
+    course_modules_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CourseModuleRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CourseModuleRequest"];
+                "multipart/form-data": components["schemas"]["CourseModuleRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CourseModule"];
+                };
+            };
+        };
+    };
+    course_modules_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this course module. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CourseModule"];
+                };
+            };
+        };
+    };
+    course_modules_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this course module. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CourseModuleRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CourseModuleRequest"];
+                "multipart/form-data": components["schemas"]["CourseModuleRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CourseModule"];
+                };
+            };
+        };
+    };
+    course_modules_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this course module. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    course_modules_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this course module. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedCourseModuleRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedCourseModuleRequest"];
+                "multipart/form-data": components["schemas"]["PatchedCourseModuleRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CourseModule"];
+                };
+            };
+        };
+    };
+    course_units_list: {
+        parameters: {
+            query?: {
+                is_active?: boolean;
+                module?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedUnitList"];
+                };
+            };
+        };
+    };
+    course_units_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UnitRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["UnitRequest"];
+                "multipart/form-data": components["schemas"]["UnitRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Unit"];
+                };
+            };
+        };
+    };
+    course_units_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this unit. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Unit"];
+                };
+            };
+        };
+    };
+    course_units_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this unit. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UnitRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["UnitRequest"];
+                "multipart/form-data": components["schemas"]["UnitRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Unit"];
+                };
+            };
+        };
+    };
+    course_units_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this unit. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    course_units_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this unit. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedUnitRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedUnitRequest"];
+                "multipart/form-data": components["schemas"]["PatchedUnitRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Unit"];
+                };
+            };
+        };
+    };
+    courses_list: {
+        parameters: {
+            query?: {
+                department?: string;
+                is_active?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                program?: string;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `DRAFT` - Draft
+                 *     * `PUBLISHED` - Published
+                 */
+                status?: "DRAFT" | "PUBLISHED";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedCourseList"];
+                };
+            };
+        };
+    };
+    courses_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CourseRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CourseRequest"];
+                "multipart/form-data": components["schemas"]["CourseRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Course"];
+                };
+            };
+        };
+    };
+    courses_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Course"];
+                };
+            };
+        };
+    };
+    courses_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CourseRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CourseRequest"];
+                "multipart/form-data": components["schemas"]["CourseRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Course"];
+                };
+            };
+        };
+    };
+    courses_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    courses_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedCourseRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedCourseRequest"];
+                "multipart/form-data": components["schemas"]["PatchedCourseRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Course"];
+                };
+            };
+        };
+    };
+    departments_list: {
+        parameters: {
+            query?: {
+                campus?: string;
+                is_active?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /** @description Include archived departments in the list. */
+                show_archived?: boolean;
+                /** @description Limit departments to an authorized business unit. */
+                unit?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedDepartmentList"];
+                };
+            };
+        };
+    };
+    departments_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DepartmentWriteRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["DepartmentWriteRequest"];
+                "multipart/form-data": components["schemas"]["DepartmentWriteRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Department"];
+                };
+            };
+        };
+    };
+    departments_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this department. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Department"];
+                };
+            };
+        };
+    };
+    departments_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this department. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DepartmentWriteRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["DepartmentWriteRequest"];
+                "multipart/form-data": components["schemas"]["DepartmentWriteRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Department"];
+                };
+            };
+        };
+    };
+    departments_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this department. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    departments_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this department. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedDepartmentWriteRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedDepartmentWriteRequest"];
+                "multipart/form-data": components["schemas"]["PatchedDepartmentWriteRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Department"];
+                };
+            };
+        };
+    };
+    enrollments_list: {
+        parameters: {
+            query?: {
+                course?: string;
+                course__department?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `PENDING` - Pending
+                 *     * `APPROVED` - Approved
+                 *     * `ACTIVE` - Active
+                 *     * `COMPLETED` - Completed
+                 *     * `REJECTED` - Rejected
+                 *     * `CANCELLED` - Cancelled
+                 */
+                status?: "ACTIVE" | "APPROVED" | "CANCELLED" | "COMPLETED" | "PENDING" | "REJECTED";
+                student?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedEnrollmentList"];
+                };
+            };
+        };
+    };
+    enrollments_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this enrollment. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Enrollment"];
+                };
+            };
+        };
+    };
+    enrollments_transition_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this enrollment. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TransitionEnrollmentRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["TransitionEnrollmentRequest"];
+                "multipart/form-data": components["schemas"]["TransitionEnrollmentRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Enrollment"];
+                };
+            };
+        };
+    };
+    faqs_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedFAQList"];
+                };
+            };
+        };
+    };
+    faqs_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FAQRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["FAQRequest"];
+                "multipart/form-data": components["schemas"]["FAQRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FAQ"];
+                };
+            };
+        };
+    };
+    faqs_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this faq. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FAQ"];
+                };
+            };
+        };
+    };
+    faqs_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this faq. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FAQRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["FAQRequest"];
+                "multipart/form-data": components["schemas"]["FAQRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FAQ"];
+                };
+            };
+        };
+    };
+    faqs_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this faq. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    faqs_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this faq. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedFAQRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedFAQRequest"];
+                "multipart/form-data": components["schemas"]["PatchedFAQRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FAQ"];
+                };
+            };
+        };
+    };
+    fee_structures_list: {
+        parameters: {
+            query?: {
+                is_active?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                unit?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedFeeStructureList"];
+                };
+            };
+        };
+    };
+    fee_structures_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FeeStructureRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["FeeStructureRequest"];
+                "multipart/form-data": components["schemas"]["FeeStructureRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeeStructure"];
+                };
+            };
+        };
+    };
+    fee_structures_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this fee structure. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeeStructure"];
+                };
+            };
+        };
+    };
+    fee_structures_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this fee structure. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FeeStructureRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["FeeStructureRequest"];
+                "multipart/form-data": components["schemas"]["FeeStructureRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeeStructure"];
+                };
+            };
+        };
+    };
+    fee_structures_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this fee structure. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    fee_structures_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this fee structure. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedFeeStructureRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedFeeStructureRequest"];
+                "multipart/form-data": components["schemas"]["PatchedFeeStructureRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeeStructure"];
+                };
+            };
+        };
+    };
+    files_complete_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this stored file. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StoredFile"];
+                };
+            };
+        };
+    };
+    files_download_url_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this stored file. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DownloadUrl"];
+                };
+            };
+        };
+    };
+    files_uploads_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UploadRequestRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["UploadRequestRequest"];
+                "multipart/form-data": components["schemas"]["UploadRequestRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadStarted"];
+                };
+            };
+        };
+    };
+    gradebook_retrieve: {
+        parameters: {
+            query: {
+                /** @description Course UUID */
+                course: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GradebookResponse"];
+                };
+            };
+        };
+    };
+    grades_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `DRAFT` - Draft
+                 *     * `PENDING_APPROVAL` - Pending approval
+                 *     * `PUBLISHED` - Published
+                 *     * `REJECTED` - Rejected
+                 */
+                status?: "DRAFT" | "PENDING_APPROVAL" | "PUBLISHED" | "REJECTED";
+                submission__assessment?: string;
+                submission__student?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedGradeList"];
+                };
+            };
+        };
+    };
+    grades_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GradeRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["GradeRequest"];
+                "multipart/form-data": components["schemas"]["GradeRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Grade"];
+                };
+            };
+        };
+    };
+    grades_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this grade. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Grade"];
+                };
+            };
+        };
+    };
+    grades_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this grade. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GradeRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["GradeRequest"];
+                "multipart/form-data": components["schemas"]["GradeRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Grade"];
+                };
+            };
+        };
+    };
+    grades_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this grade. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedGradeRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedGradeRequest"];
+                "multipart/form-data": components["schemas"]["PatchedGradeRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Grade"];
+                };
+            };
+        };
+    };
+    grades_approve_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this grade. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Grade"];
+                };
+            };
+        };
+    };
+    grades_reject_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this grade. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["GradeReviewRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["GradeReviewRequest"];
+                "multipart/form-data": components["schemas"]["GradeReviewRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Grade"];
+                };
+            };
+        };
+    };
+    grades_submit_for_approval_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this grade. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Grade"];
+                };
+            };
+        };
+    };
+    guardians_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                student?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedGuardianList"];
+                };
+            };
+        };
+    };
+    guardians_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GuardianRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["GuardianRequest"];
+                "multipart/form-data": components["schemas"]["GuardianRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Guardian"];
+                };
+            };
+        };
+    };
+    guardians_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this guardian. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Guardian"];
+                };
+            };
+        };
+    };
+    guardians_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this guardian. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GuardianRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["GuardianRequest"];
+                "multipart/form-data": components["schemas"]["GuardianRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Guardian"];
+                };
+            };
+        };
+    };
+    guardians_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this guardian. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    guardians_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this guardian. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedGuardianRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedGuardianRequest"];
+                "multipart/form-data": components["schemas"]["PatchedGuardianRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Guardian"];
+                };
+            };
+        };
+    };
+    invoices_list: {
+        parameters: {
+            query?: {
+                due_date?: string;
+                issue_date?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `OPEN` - Open
+                 *     * `PARTIAL` - Partially paid
+                 *     * `PAID` - Paid
+                 *     * `VOID` - Void
+                 */
+                status?: "OPEN" | "PAID" | "PARTIAL" | "VOID";
+                student?: string;
+                unit?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedInvoiceList"];
+                };
+            };
+        };
+    };
+    invoices_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InvoiceCreateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["InvoiceCreateRequest"];
+                "multipart/form-data": components["schemas"]["InvoiceCreateRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Invoice"];
+                };
+            };
+        };
+    };
+    invoices_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this invoice. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Invoice"];
+                };
+            };
+        };
+    };
+    invoices_void_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this invoice. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Invoice"];
+                };
+            };
+        };
+    };
+    journal_entries_list: {
+        parameters: {
+            query?: {
+                date?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `INVOICE` - Invoice
+                 *     * `PAYMENT` - Payment
+                 *     * `REFUND` - Refund
+                 *     * `ADJUSTMENT` - Adjustment
+                 *     * `REVERSAL` - Reversal
+                 */
+                source_type?: "ADJUSTMENT" | "INVOICE" | "PAYMENT" | "REFUND" | "REVERSAL";
+                /** @description * `POSTED` - Posted */
+                status?: "POSTED";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedJournalEntryList"];
+                };
+            };
+        };
+    };
+    journal_entries_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this journal entry. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JournalEntry"];
+                };
+            };
+        };
+    };
+    lessons_list: {
+        parameters: {
+            query?: {
+                is_active?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                unit?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedLessonList"];
+                };
+            };
+        };
+    };
+    lessons_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LessonRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["LessonRequest"];
+                "multipart/form-data": components["schemas"]["LessonRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Lesson"];
+                };
+            };
+        };
+    };
+    lessons_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this lesson. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Lesson"];
+                };
+            };
+        };
+    };
+    lessons_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this lesson. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LessonRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["LessonRequest"];
+                "multipart/form-data": components["schemas"]["LessonRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Lesson"];
+                };
+            };
+        };
+    };
+    lessons_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this lesson. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    lessons_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this lesson. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedLessonRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedLessonRequest"];
+                "multipart/form-data": components["schemas"]["PatchedLessonRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Lesson"];
+                };
+            };
+        };
+    };
+    materials_list: {
+        parameters: {
+            query?: {
+                /**
+                 * @description * `LINK` - External link
+                 *     * `FILE` - Uploaded file
+                 */
+                kind?: "FILE" | "LINK";
+                lesson?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedMaterialList"];
+                };
+            };
+        };
+    };
+    materials_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MaterialRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["MaterialRequest"];
+                "multipart/form-data": components["schemas"]["MaterialRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Material"];
+                };
+            };
+        };
+    };
+    materials_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this material. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Material"];
+                };
+            };
+        };
+    };
+    materials_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this material. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MaterialRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["MaterialRequest"];
+                "multipart/form-data": components["schemas"]["MaterialRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Material"];
+                };
+            };
+        };
+    };
+    materials_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this material. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    materials_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this material. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedMaterialRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedMaterialRequest"];
+                "multipart/form-data": components["schemas"]["PatchedMaterialRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Material"];
+                };
+            };
+        };
+    };
+    me_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -70,6 +7075,1296 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Me"];
+                };
+            };
+        };
+    };
+    me_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedMeUpdateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedMeUpdateRequest"];
+                "multipart/form-data": components["schemas"]["PatchedMeUpdateRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Me"];
+                };
+            };
+        };
+    };
+    pages_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedContentPageList"];
+                };
+            };
+        };
+    };
+    pages_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ContentPageRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ContentPageRequest"];
+                "multipart/form-data": components["schemas"]["ContentPageRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ContentPage"];
+                };
+            };
+        };
+    };
+    pages_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ContentPage"];
+                };
+            };
+        };
+    };
+    pages_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ContentPageRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ContentPageRequest"];
+                "multipart/form-data": components["schemas"]["ContentPageRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ContentPage"];
+                };
+            };
+        };
+    };
+    pages_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    pages_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedContentPageRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedContentPageRequest"];
+                "multipart/form-data": components["schemas"]["PatchedContentPageRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ContentPage"];
+                };
+            };
+        };
+    };
+    payments_list: {
+        parameters: {
+            query?: {
+                /**
+                 * @description * `CASH` - Cash
+                 *     * `MPESA_AGENT` - M-Pesa agent
+                 *     * `BANK` - Bank
+                 */
+                channel?: "BANK" | "CASH" | "MPESA_AGENT";
+                invoice?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                received_at?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedPaymentList"];
+                };
+            };
+        };
+    };
+    payments_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PaymentCreateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PaymentCreateRequest"];
+                "multipart/form-data": components["schemas"]["PaymentCreateRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Payment"];
+                };
+            };
+        };
+    };
+    payments_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this payment. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Payment"];
+                };
+            };
+        };
+    };
+    payments_reverse_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this payment. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Payment"];
+                };
+            };
+        };
+    };
+    programs_list: {
+        parameters: {
+            query?: {
+                department?: string;
+                is_active?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedProgramList"];
+                };
+            };
+        };
+    };
+    programs_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProgramRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ProgramRequest"];
+                "multipart/form-data": components["schemas"]["ProgramRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Program"];
+                };
+            };
+        };
+    };
+    programs_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this program. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Program"];
+                };
+            };
+        };
+    };
+    programs_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this program. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProgramRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ProgramRequest"];
+                "multipart/form-data": components["schemas"]["ProgramRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Program"];
+                };
+            };
+        };
+    };
+    programs_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this program. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    programs_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this program. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedProgramRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedProgramRequest"];
+                "multipart/form-data": components["schemas"]["PatchedProgramRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Program"];
+                };
+            };
+        };
+    };
+    receipts_pdf_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                receipt_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
+    refunds_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                payment?: string;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `REQUESTED` - Requested
+                 *     * `POSTED` - Posted
+                 *     * `REVERSED` - Reversed
+                 */
+                status?: "POSTED" | "REQUESTED" | "REVERSED";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedRefundList"];
+                };
+            };
+        };
+    };
+    refunds_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Refund"];
+                };
+            };
+        };
+    };
+    refunds_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this refund. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Refund"];
+                };
+            };
+        };
+    };
+    refunds_approve_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this refund. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Refund"];
+                };
+            };
+        };
+    };
+    refunds_reverse_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this refund. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Refund"];
+                };
+            };
+        };
+    };
+    reports_overview_retrieve: {
+        parameters: {
+            query?: {
+                /** @description Limit dashboard metrics to an authorized business unit. */
+                unit?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReportsOverview"];
+                };
+            };
+        };
+    };
+    rooms_list: {
+        parameters: {
+            query?: {
+                department?: string;
+                is_active?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedRoomList"];
+                };
+            };
+        };
+    };
+    rooms_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RoomRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["RoomRequest"];
+                "multipart/form-data": components["schemas"]["RoomRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Room"];
+                };
+            };
+        };
+    };
+    rooms_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this room. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Room"];
+                };
+            };
+        };
+    };
+    rooms_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this room. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RoomRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["RoomRequest"];
+                "multipart/form-data": components["schemas"]["RoomRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Room"];
+                };
+            };
+        };
+    };
+    rooms_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this room. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    rooms_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this room. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedRoomRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedRoomRequest"];
+                "multipart/form-data": components["schemas"]["PatchedRoomRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Room"];
+                };
+            };
+        };
+    };
+    staff_profiles_list: {
+        parameters: {
+            query?: {
+                department?: string;
+                is_active?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedStaffProfileList"];
+                };
+            };
+        };
+    };
+    staff_profiles_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this staff profile. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffProfile"];
+                };
+            };
+        };
+    };
+    students_list: {
+        parameters: {
+            query?: {
+                admission_year?: number;
+                department?: string;
+                is_active?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                program?: string;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedStudentList"];
+                };
+            };
+        };
+    };
+    students_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this student. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Student"];
+                };
+            };
+        };
+    };
+    students_statement_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                student_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudentStatement"];
+                };
+            };
+        };
+    };
+    submissions_list: {
+        parameters: {
+            query?: {
+                assessment?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                student?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedSubmissionList"];
+                };
+            };
+        };
+    };
+    submissions_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SubmissionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["SubmissionRequest"];
+                "multipart/form-data": components["schemas"]["SubmissionRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Submission"];
+                };
+            };
+        };
+    };
+    submissions_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this submission. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Submission"];
+                };
+            };
+        };
+    };
+    timetable_list: {
+        parameters: {
+            query?: {
+                class_group?: string;
+                is_active?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                room?: string;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `0` - Monday
+                 *     * `1` - Tuesday
+                 *     * `2` - Wednesday
+                 *     * `3` - Thursday
+                 *     * `4` - Friday
+                 *     * `5` - Saturday
+                 *     * `6` - Sunday
+                 */
+                weekday?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedTimetableSlotList"];
+                };
+            };
+        };
+    };
+    timetable_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TimetableSlotRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["TimetableSlotRequest"];
+                "multipart/form-data": components["schemas"]["TimetableSlotRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TimetableSlot"];
+                };
+            };
+        };
+    };
+    timetable_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this timetable slot. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TimetableSlot"];
+                };
+            };
+        };
+    };
+    timetable_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this timetable slot. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TimetableSlotRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["TimetableSlotRequest"];
+                "multipart/form-data": components["schemas"]["TimetableSlotRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TimetableSlot"];
+                };
+            };
+        };
+    };
+    timetable_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this timetable slot. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    timetable_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this timetable slot. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedTimetableSlotRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedTimetableSlotRequest"];
+                "multipart/form-data": components["schemas"]["PatchedTimetableSlotRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TimetableSlot"];
+                };
+            };
+        };
+    };
+    transcripts_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                student_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
+    transcripts_me_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
+    units_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedBusinessUnitList"];
+                };
+            };
+        };
+    };
+    users_list: {
+        parameters: {
+            query?: {
+                is_active?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedUserList"];
+                };
+            };
+        };
+    };
+    users_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this user. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["User"];
+                };
+            };
+        };
+    };
+    users_role_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this user. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedChangeRoleRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedChangeRoleRequest"];
+                "multipart/form-data": components["schemas"]["PatchedChangeRoleRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["User"];
+                };
+            };
+        };
+    };
+    users_invite_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InviteUserRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["InviteUserRequest"];
+                "multipart/form-data": components["schemas"]["InviteUserRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["User"];
                 };
             };
         };

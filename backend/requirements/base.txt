@@ -8,5 +8,6 @@ django-environ>=0.11
 psycopg[binary]>=3.2
 firebase-admin>=6.5
 boto3>=1.35
+reportlab>=4.2,<5
 gunicorn>=22.0
 whitenoise>=6.7

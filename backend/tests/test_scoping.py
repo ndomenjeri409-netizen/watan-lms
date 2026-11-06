@@ -18,5 +18,5 @@ class ScopedViewSetTests(TestCase):
     def test_mixin_scopes_queryset_to_request_user(self):
         user = object()
         view = type("View", (ScopedViewSetMixin, BaseView), {})()
-        view.request = SimpleNamespace(user=user)
+        view.request = SimpleNamespace(user=user, query_params={})
         self.assertEqual(view.get_queryset(), ("scoped", user))

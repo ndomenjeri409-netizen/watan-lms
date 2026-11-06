@@ -1,0 +1,93 @@
+code,name,type,parent,is_cash,is_postable
+1000,Assets,ASSET,,FALSE,FALSE
+1100,Cash and cash equivalents,ASSET,1000,FALSE,FALSE
+1110,Cash drawer - WTI,ASSET,1100,TRUE,TRUE
+1111,Cash drawer - WTA,ASSET,1100,TRUE,TRUE
+1112,Cash drawer - WDS,ASSET,1100,TRUE,TRUE
+1113,Cash drawer - WCY,ASSET,1100,TRUE,TRUE
+1120,M-Pesa agent float (held by WCY),ASSET,1100,TRUE,TRUE
+1130,Bank account - main,ASSET,1100,TRUE,TRUE
+1200,Receivables,ASSET,1000,FALSE,FALSE
+1210,Student fees receivable,ASSET,1200,FALSE,TRUE
+1220,Staff advances and other receivables,ASSET,1200,FALSE,TRUE
+1230,Customer receivables (credit sales),ASSET,1200,FALSE,TRUE
+1300,Prepayments and deposits,ASSET,1000,FALSE,TRUE
+1400,Inventory and consumables,ASSET,1000,FALSE,TRUE
+1500,Property and equipment,ASSET,1000,FALSE,FALSE
+1510,Computers and IT equipment,ASSET,1500,FALSE,TRUE
+1520,Furniture and fittings,ASSET,1500,FALSE,TRUE
+1530,Vehicles,ASSET,1500,FALSE,TRUE
+1590,Accumulated depreciation,ASSET,1500,FALSE,TRUE
+2000,Liabilities,LIABILITY,,FALSE,FALSE
+2100,Payables,LIABILITY,2000,FALSE,FALSE
+2110,Supplier payables,LIABILITY,2100,FALSE,TRUE
+2120,Accrued expenses,LIABILITY,2100,FALSE,TRUE
+2200,Student advance payments and deposits,LIABILITY,2000,FALSE,TRUE
+2210,Approved refunds payable,LIABILITY,2000,FALSE,TRUE
+2250,Unidentified receipts (suspense),LIABILITY,2000,FALSE,TRUE
+2270,Third-party collections payable (pass-through),LIABILITY,2000,FALSE,TRUE
+2300,Statutory payables,LIABILITY,2000,FALSE,FALSE
+2310,Statutory deductions payable,LIABILITY,2300,FALSE,TRUE
+2320,"Tax payable (VAT and other, if applicable)",LIABILITY,2300,FALSE,TRUE
+3000,Equity,EQUITY,,FALSE,FALSE
+3100,Owner's capital,EQUITY,3000,FALSE,TRUE
+3200,Retained earnings,EQUITY,3000,FALSE,TRUE
+3300,Owner's drawings,EQUITY,3000,FALSE,TRUE
+4000,Income,INCOME,,FALSE,FALSE
+4100,Course and training income,INCOME,4000,FALSE,FALSE
+4110,Tuition and course fees,INCOME,4100,FALSE,TRUE
+4120,Registration and application fees,INCOME,4100,FALSE,TRUE
+4130,Examination and assessment fees,INCOME,4100,FALSE,TRUE
+4140,Certification fees,INCOME,4100,FALSE,TRUE
+4150,Practical lesson and extra session fees,INCOME,4100,FALSE,TRUE
+4160,Late payment and reinstatement fees,INCOME,4100,FALSE,TRUE
+4200,Service income,INCOME,4000,FALSE,FALSE
+4210,Computer and internet services,INCOME,4200,FALSE,TRUE
+4220,"Printing, copying and scanning",INCOME,4200,FALSE,TRUE
+4230,Online application and e-service assistance fees,INCOME,4200,FALSE,TRUE
+4240,Other service sales,INCOME,4200,FALSE,TRUE
+4300,Commission and other income,INCOME,4000,FALSE,FALSE
+4310,M-Pesa agent commission,INCOME,4300,FALSE,TRUE
+4320,Other income,INCOME,4300,FALSE,TRUE
+4900,Income reductions (contra income),INCOME,4000,FALSE,FALSE
+4910,"Discounts, waivers and scholarships given",INCOME,4900,FALSE,TRUE
+4920,Refunds issued,INCOME,4900,FALSE,TRUE
+5000,Direct costs,EXPENSE,,FALSE,FALSE
+5110,Teacher and instructor fees,EXPENSE,5000,FALSE,TRUE
+5120,Examiner and invigilator fees,EXPENSE,5000,FALSE,TRUE
+5130,Course materials and training supplies,EXPENSE,5000,FALSE,TRUE
+5150,Vehicle fuel (driving practicals),EXPENSE,5000,FALSE,TRUE
+5160,Vehicle maintenance and repairs,EXPENSE,5000,FALSE,TRUE
+5170,Vehicle insurance and licences,EXPENSE,5000,FALSE,TRUE
+5180,GDS and software subscriptions,EXPENSE,5000,FALSE,TRUE
+5190,"Consumables for services (paper, toner, ink)",EXPENSE,5000,FALSE,TRUE
+6000,Operating expenses,EXPENSE,,FALSE,FALSE
+6100,Staff costs,EXPENSE,6000,FALSE,FALSE
+6110,Staff wages and salaries,EXPENSE,6100,FALSE,TRUE
+6120,Staff allowances and overtime,EXPENSE,6100,FALSE,TRUE
+6130,"Staff welfare (tea, lunch, refreshments)",EXPENSE,6100,FALSE,TRUE
+6140,Statutory employer contributions,EXPENSE,6100,FALSE,TRUE
+6200,Premises,EXPENSE,6000,FALSE,FALSE
+6210,Rent,EXPENSE,6200,FALSE,TRUE
+6220,Electricity and water,EXPENSE,6200,FALSE,TRUE
+6230,Cleaning and sanitation,EXPENSE,6200,FALSE,TRUE
+6240,Security,EXPENSE,6200,FALSE,TRUE
+6250,Repairs and maintenance (premises and equipment),EXPENSE,6200,FALSE,TRUE
+6300,Administration,EXPENSE,6000,FALSE,FALSE
+6310,"Internet, data and airtime",EXPENSE,6300,FALSE,TRUE
+6330,Stationery and printing (administration),EXPENSE,6300,FALSE,TRUE
+6340,Transport and travel,EXPENSE,6300,FALSE,TRUE
+6350,"Licences, permits and subscriptions",EXPENSE,6300,FALSE,TRUE
+6360,"Professional fees (accounting, legal)",EXPENSE,6300,FALSE,TRUE
+6370,Insurance,EXPENSE,6300,FALSE,TRUE
+6380,Bank and M-Pesa charges,EXPENSE,6300,FALSE,TRUE
+6390,Emergency and miscellaneous expenses,EXPENSE,6300,FALSE,TRUE
+6400,Marketing,EXPENSE,6000,FALSE,FALSE
+6410,Advertising and promotion,EXPENSE,6400,FALSE,TRUE
+6420,Website and digital marketing,EXPENSE,6400,FALSE,TRUE
+6500,Depreciation,EXPENSE,6000,FALSE,FALSE
+6510,Depreciation expense,EXPENSE,6500,FALSE,TRUE
+6900,Adjustments and write-offs,EXPENSE,6000,FALSE,FALSE
+6910,Bad debts written off,EXPENSE,6900,FALSE,TRUE
+6920,Cash over and short (drawer variances),EXPENSE,6900,FALSE,TRUE
+6930,Reconciliation differences (approved write-offs),EXPENSE,6900,FALSE,TRUE

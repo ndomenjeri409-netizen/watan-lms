@@ -1,33 +1,169 @@
 @import "tailwindcss";
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --color-ink: #0D0E12;
+  --color-panel: #181A22;
+  --color-amber: #FFAE1B;
+  --color-violet: #8F41FF;
+  --color-white: #FFFFFF;
+  --color-mist: #A0A5B5;
+
+  --color-success: #22C55E;
+  --color-danger: #EF4444;
+
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --radius-card: 0.875rem;
+}
+
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: var(--color-ink);
+  --surface: var(--color-panel);
+  --surface-2: color-mix(in srgb, var(--color-white) 6%, var(--color-panel));
+  --border: color-mix(in srgb, var(--color-white) 10%, var(--color-ink));
+  --text: var(--color-white);
+  --muted: var(--color-mist);
+  --ring: var(--color-amber);
+  --scroll-thumb: color-mix(in srgb, var(--color-mist) 35%, var(--color-ink));
+  --scroll-thumb-hover: color-mix(in srgb, var(--color-mist) 55%, var(--color-ink));
+  --success-text: var(--color-success);
+  --danger-text: var(--color-danger);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: color-mix(in srgb, var(--color-mist) 10%, var(--color-white));
+  --surface: var(--color-white);
+  --surface-2: color-mix(in srgb, var(--color-mist) 12%, var(--color-white));
+  --border: color-mix(in srgb, var(--color-mist) 40%, var(--color-white));
+  --text: var(--color-ink);
+  --muted: color-mix(in srgb, var(--color-ink) 62%, var(--color-white));
+  --ring: var(--color-ink);
+  --scroll-thumb: color-mix(in srgb, var(--color-mist) 70%, var(--color-white));
+  --scroll-thumb-hover: var(--color-mist);
+  --success-text: color-mix(in srgb, var(--color-success) 35%, var(--color-ink));
+  --danger-text: color-mix(in srgb, var(--color-danger) 35%, var(--color-ink));
+}
 
 :root {
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  color: #171717;
-  background: #faf9f6;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  --color-ink: #171717;
-  --color-paper: #faf9f6;
-  --color-gold: #b68b2d;
-  --radius-card: 0.75rem;
-  --space-page: 1.5rem;
+  --primary: var(--color-amber);
+  --primary-fg: var(--color-ink);
+  --primary-hover: color-mix(in srgb, var(--color-white) 14%, var(--color-amber));
+  --primary-active: color-mix(in srgb, var(--color-ink) 14%, var(--color-amber));
+  --accent: var(--color-violet);
+  --accent-fg: var(--color-white);
+  --sidebar-bg: var(--color-ink);
+  --sidebar-fg: var(--color-mist);
+  --sidebar-fg-active: var(--color-white);
+  --sidebar-active-bg: var(--color-panel);
+  --sidebar-border: color-mix(in srgb, var(--color-white) 8%, var(--color-ink));
+  --danger-button: color-mix(in srgb, var(--color-danger) 75%, var(--color-ink));
+}
+
+@theme inline {
+  --color-app: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--border);
+  --color-fg: var(--text);
+  --color-subtle: var(--muted);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-fg: var(--primary-fg);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-active: var(--primary-active);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-sidebar: var(--sidebar-bg);
+  --color-sidebar-fg: var(--sidebar-fg);
+  --color-sidebar-active: var(--sidebar-active-bg);
+  --color-sidebar-active-fg: var(--sidebar-fg-active);
+  --color-success-fg: var(--success-text);
+  --color-danger-fg: var(--danger-text);
+  --color-danger-button: var(--danger-button);
+  --color-warning-fg: var(--color-ink);
 }
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  font-family: var(--font-sans);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) transparent;
+}
+
+.sidebar-scroll {
+  color-scheme: dark;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-mist) 35%, var(--color-ink)) transparent;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar,
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track,
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-mist) 35%, var(--color-ink));
+  border-radius: 8px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--color-mist) 55%, var(--color-ink));
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  border-radius: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: var(--scroll-thumb-hover);
+}
+
 body {
-  margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
 }
 
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
 }
 
 a {
   color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }

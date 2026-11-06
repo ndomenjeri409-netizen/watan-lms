@@ -4,7 +4,10 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 
 from apps.accounts.authentication import FirebaseAuthentication
-from apps.accounts.models import User
+from apps.accounts.models import RoleAssignment, User
+from apps.accounts.roles import Role
+from apps.org.models import BusinessUnit, Campus, Department
+from apps.people.models import Student
 
 
 class MeTests(TestCase):
@@ -14,6 +17,87 @@ class MeTests(TestCase):
     def test_missing_header_is_unauthorized(self):
         response = self.client.get("/api/v1/me")
         self.assertEqual(response.status_code, 401)
+
+    def test_patch_updates_only_profile_fields(self):
+        user = User.objects.create_user(
+            "u1", email="a@b.com", display_name="Old name", role="ADMIN"
+        )
+        self.client.force_authenticate(user)
+
+        response = self.client.patch(
+            "/api/v1/me",
+            {"display_name": "New name", "phone_number": "+254700000000"},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["display_name"], "New name")
+        self.assertEqual(response.json()["phone_number"], "+254700000000")
+        user.refresh_from_db()
+        self.assertEqual(user.role, "ADMIN")
+
+    def test_patch_rejects_fields_that_are_not_profile_editable(self):
+        user = User.objects.create_user("u1", role="ADMIN")
+        self.client.force_authenticate(user)
+
+        response = self.client.patch("/api/v1/me", {"role": "ADMIN"}, format="json")
+
+        self.assertEqual(response.status_code, 400)
+        user.refresh_from_db()
+        self.assertEqual(user.role, "ADMIN")
+
+    def test_me_includes_active_assignments_and_access_flags(self):
+        unit = BusinessUnit.objects.create(
+            code="WTI", name="Watan Training Institute", kind=BusinessUnit.Kind.ACADEMIC
+        )
+        user = User.objects.create_user("multi-role-user")
+        RoleAssignment.objects.create(user=user, role=Role.ADMIN)
+        RoleAssignment.objects.create(user=user, role=Role.TEACHER, unit=unit)
+        RoleAssignment.objects.create(
+            user=user, role=Role.CASHIER, unit=unit, is_active=False
+        )
+        self.client.force_authenticate(user)
+
+        response = self.client.get("/api/v1/me")
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(
+            {
+                (
+                    assignment["role"],
+                    assignment["unit"]["code"] if assignment["unit"] else None,
+                )
+                for assignment in payload["assignments"]
+            },
+            {(Role.ADMIN, None), (Role.TEACHER, "WTI")},
+        )
+        self.assertTrue(payload["is_global_read"])
+        self.assertFalse(payload["awaiting_approval"])
+
+    def test_me_approval_status_is_derived_from_assignments_and_student_link(self):
+        user = User.objects.create_user("awaiting-user")
+        self.client.force_authenticate(user)
+        response = self.client.get("/api/v1/me")
+        self.assertTrue(response.json()["awaiting_approval"])
+
+        campus = Campus.objects.create(name="Main", code="MAIN")
+        department = Department.objects.create(campus=campus, name="Travel", code="TRV")
+        Student.objects.create(
+            user=user,
+            department=department,
+            registration_number="TRV-2026-0096",
+            first_name="Student",
+            last_name="User",
+            email="student@example.test",
+            admission_year=2026,
+        )
+        user.clear_role_cache()
+
+        response = self.client.get("/api/v1/me")
+
+        self.assertFalse(response.json()["awaiting_approval"])
+        self.assertFalse(response.json()["is_global_read"])
 
     @patch("apps.accounts.authentication._ensure_firebase")
     @patch(

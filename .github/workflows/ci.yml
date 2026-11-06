@@ -20,6 +20,7 @@ jobs:
       SECRET_KEY: ci-secret
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/watan
       DB_SSL_REQUIRE: "False"
+      REQUIRE_POSTGRES_TESTS: "1"
     defaults:
       run:
         working-directory: backend
@@ -33,7 +34,13 @@ jobs:
       - run: pip install -r requirements/dev.txt
       - run: ruff check . && ruff format --check .
       - run: python manage.py makemigrations --check --dry-run
-      - run: pytest
+      - name: Backend tests require PostgreSQL
+        run: |
+          set -o pipefail
+          pytest -rs | tee out.txt
+          if grep -q "SKIPPED" out.txt; then
+            exit 1
+          fi
       - name: OpenAPI is up to date
         run: |
           python manage.py spectacular --file /tmp/openapi.yaml --validate
@@ -54,6 +61,7 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
+      - run: npm run lint
       - name: Generated API types are up to date
         run: |
           npm run api:types

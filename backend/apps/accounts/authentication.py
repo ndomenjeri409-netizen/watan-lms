@@ -30,6 +30,19 @@ def _ensure_firebase():
         firebase_admin.initialize_app(cred)
 
 
+def verify_revoked_token(request):
+    header = request.headers.get("Authorization", "")
+    if not header.startswith("Bearer "):
+        raise AuthenticationFailed("Administrator session is missing.")
+    try:
+        decoded = fb_auth.verify_id_token(header[7:], check_revoked=True)
+    except (FirebaseError, ValueError) as exc:
+        raise AuthenticationFailed("Invalid or revoked administrator session.") from exc
+    if decoded.get("uid") != request.user.firebase_uid:
+        raise AuthenticationFailed("Administrator session does not match the account.")
+    return decoded
+
+
 class FirebaseAuthentication(BaseAuthentication):
     def authenticate(self, request):
         header = request.headers.get("Authorization", "")
@@ -47,7 +60,6 @@ class FirebaseAuthentication(BaseAuthentication):
             defaults={
                 "email": decoded.get("email", ""),
                 "display_name": decoded.get("name", ""),
-                "role": None,
             },
         )
         if not user.is_active:

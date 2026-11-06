@@ -1,6 +1,7 @@
-import { useQuery } from '@tanstack/react-query'
+import { updateProfile } from 'firebase/auth'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '../../api/client'
-import { useAuth } from '../../lib/auth/AuthProvider'
+import { useAuth } from '../../lib/auth/useAuth'
 
 export class ApiError extends Error {
   readonly code: string
@@ -37,7 +38,7 @@ function toApiError(error: unknown) {
 export function useMe() {
   const { firebaseUser } = useAuth()
   return useQuery({
-    queryKey: ['me'],
+    queryKey: ['me', firebaseUser?.uid],
     enabled: Boolean(firebaseUser),
     staleTime: 60_000,
     queryFn: async () => {
@@ -45,6 +46,39 @@ export function useMe() {
       if (error) throw toApiError(error)
       if (!data) throw new ApiError('The API returned no profile.', 'UNKNOWN')
       return data
+    },
+  })
+}
+
+export function useUpdateMe() {
+  const { firebaseUser } = useAuth()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (profile: { display_name: string; phone_number: string }) => {
+      if (!firebaseUser) throw new ApiError('You must be signed in to update your profile.', 'UNAUTHENTICATED')
+
+      const previousDisplayName = firebaseUser.displayName
+      await updateProfile(firebaseUser, { displayName: profile.display_name })
+      const { data, error } = await api.PATCH('/api/v1/me', { body: profile })
+      if (error || !data) {
+        const apiError = error ? toApiError(error) : new ApiError('The API returned no profile.', 'UNKNOWN')
+        try {
+          await updateProfile(firebaseUser, { displayName: previousDisplayName })
+        } catch (rollbackError) {
+          throw new AggregateError(
+            [apiError, rollbackError],
+            'Profile update failed and the Firebase display name could not be restored.',
+          )
+        }
+        throw apiError
+      }
+      return data
+    },
+    onSuccess: (profile) => {
+      if (firebaseUser) {
+        queryClient.setQueryData(['me', firebaseUser.uid], profile)
+      }
     },
   })
 }

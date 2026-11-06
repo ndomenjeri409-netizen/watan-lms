@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { z } from 'zod'
-import { useAuth } from '../lib/auth/AuthProvider'
+import { useAuth } from '../lib/auth/useAuth'
 
 const loginSchema = z.object({
   email: z.string().email('Enter a valid email address.'),
@@ -36,20 +36,20 @@ export function Login() {
     <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center p-6">
       <Link to="/" className="mb-6 text-sm underline">Watan LMS</Link>
       <h1 className="mb-2 text-3xl font-semibold">Sign in</h1>
-      <p className="mb-6 text-neutral-600">Use your school account to continue.</p>
+      <p className="mb-6 text-subtle">Use your school account to continue.</p>
       <form className="space-y-4" onSubmit={submit} noValidate>
         <label className="block">
           <span className="mb-1 block">Email</span>
-          <input className="w-full rounded border border-neutral-300 bg-white p-3" type="email" autoComplete="email" {...register('email')} />
-          {errors.email && <span role="alert" className="text-sm text-red-700">{errors.email.message}</span>}
+          <input className="w-full rounded border border-line bg-white p-3" type="email" autoComplete="email" {...register('email')} />
+          {errors.email && <span role="alert" className="text-sm text-danger-fg">{errors.email.message}</span>}
         </label>
         <label className="block">
           <span className="mb-1 block">Password</span>
-          <input className="w-full rounded border border-neutral-300 bg-white p-3" type="password" autoComplete="current-password" {...register('password')} />
-          {errors.password && <span role="alert" className="text-sm text-red-700">{errors.password.message}</span>}
+          <input className="w-full rounded border border-line bg-white p-3" type="password" autoComplete="current-password" {...register('password')} />
+          {errors.password && <span role="alert" className="text-sm text-danger-fg">{errors.password.message}</span>}
         </label>
-        {serverError && <p role="alert" className="text-sm text-red-700">{serverError}</p>}
-        <button className="w-full rounded bg-neutral-900 p-3 font-medium text-white disabled:opacity-60" type="submit" disabled={isSubmitting}>
+        {serverError && <p role="alert" className="text-sm text-danger-fg">{serverError}</p>}
+        <button className="w-full rounded bg-primary p-3 font-medium text-primary-fg disabled:opacity-60" type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Signing in…' : 'Sign in'}
         </button>
       </form>

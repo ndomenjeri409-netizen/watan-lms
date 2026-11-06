@@ -25,6 +25,17 @@ INSTALLED_APPS = [
     "django_filters",
     "corsheaders",
     "apps.accounts",
+    "apps.org",
+    "apps.audit",
+    "apps.academics",
+    "apps.files",
+    "apps.cms",
+    "apps.people",
+    "apps.enrollment",
+    "apps.scheduling",
+    "apps.attendance",
+    "apps.assessment",
+    "apps.finance",
 ]
 
 MIDDLEWARE = [
@@ -94,6 +105,7 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "Watan LMS API",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
 }
 
 CORS_ALLOWED_ORIGINS = env.list(
@@ -105,3 +117,6 @@ R2_ENDPOINT_URL = env("R2_ENDPOINT_URL", default="")
 R2_BUCKET = env("R2_BUCKET", default="")
 R2_ACCESS_KEY_ID = env("R2_ACCESS_KEY_ID", default="")
 R2_SECRET_ACCESS_KEY = env("R2_SECRET_ACCESS_KEY", default="")
+FILE_STORAGE_QUOTA_BYTES = env.int(
+    "FILE_STORAGE_QUOTA_BYTES", default=500 * 1024 * 1024
+)

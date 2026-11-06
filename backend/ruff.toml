@@ -1,2 +1,4 @@
+extend-exclude = ["**/migrations/*"]
+
 [lint.per-file-ignores]
-"apps/accounts/migrations/*.py" = ["RUF012"]
+"apps/*/migrations/*.py" = ["RUF012"]

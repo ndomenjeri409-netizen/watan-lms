@@ -49,6 +49,16 @@ Regenerate the OpenAPI contract with `python manage.py spectacular --file openap
 
 No staging cold-start measurement is available yet; record the measured first-request latency here after staging is reachable.
 
+## Multi-unit model
+
+The business operates as one organization with business units as cost centres. Unit codes and names are maintained in [`docs/units.md`](docs/units.md); seed or refresh them idempotently with `python manage.py seed_units` from `backend`.
+
+Access is granted through role assignments rather than a single account-wide role. Group-scoped roles (`SUPER_ADMIN`, `ADMIN`, `DIRECTOR`, `AUDITOR`) have no unit on the assignment; operational roles such as `UNIT_MANAGER`, `HOD`, `TEACHER`, and `CASHIER` are assigned to a unit. A `BURSAR` assignment may be unit-scoped or group-wide. Student access is derived from the linked Student record, not a role assignment. Group readers can view across units; director and auditor access is read-only. Unit-scoped API lists are restricted to assigned units and can accept `?unit=<unit-id>` to select one permitted unit.
+
+Departments belong to a unit. The Department unit migration is nullable for existing records so that legacy departments are not assigned to a unit without an approved mapping; new department records require a unit.
+
+The authoritative, expanded role and finance model is in [`docs/MULTI_UNIT_AND_FINANCE_ADDENDUM.md`](docs/MULTI_UNIT_AND_FINANCE_ADDENDUM.md), which supersedes the earlier role list and finance-ledger description in the blueprint.
+
 ## Sprint 1 starts here
 
 Continue with section 13 of `docs/WATAN_LMS_V2_BLUEPRINT.md`.
