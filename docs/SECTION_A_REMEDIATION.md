@@ -32,7 +32,7 @@ Input: Copilot's Section A audit report (no code changed; focused tests pass on 
 
 Why first: the finance triggers (append-only, balanced entries, closed periods) are your integrity guarantee. A skipped test proves nothing.
 
-- [ ] Add a helper in `tests/helpers.py`:
+- [x] Add a helper in `tests/helpers.py`:
 ```python
 import os, unittest
 from django.db import connection
@@ -50,9 +50,9 @@ def postgres_only(test):
         return wrapper
     return unittest.skipUnless(connection.vendor == "postgresql", "PostgreSQL only")(test)
 ```
-- [ ] Replace every `skipUnless(...postgresql...)` in the finance trigger tests with `@postgres_only`.
-- [ ] In `.github/workflows/ci.yml`, set `REQUIRE_POSTGRES_TESTS: "1"` in the backend job `env`, and run `pytest -rs` so any skip is printed.
-- [ ] Add a CI step that fails if any test was skipped in CI: `pytest -rs | tee out.txt; ! grep -q "SKIPPED" out.txt`.
+- [x] Replace every `skipUnless(...postgresql...)` in the finance trigger tests with `@postgres_only`.
+- [x] In `.github/workflows/ci.yml`, set `REQUIRE_POSTGRES_TESTS: "1"` in the backend job `env`, and run `pytest -rs` so any skip is printed.
+- [x] Add a CI step that fails if any test was skipped in CI: `pytest -rs | tee out.txt; ! grep -q "SKIPPED" out.txt`.
 - [ ] Optional local run: `docker compose up -d db` (the Sprint 0 compose file already has Postgres 16), then set `DATABASE_URL` to it and `REQUIRE_POSTGRES_TESTS=1`. If Docker isn't installed, rely on CI. Never run tests against the production Neon database; use a separate test project or branch.
 
 **Check:** CI shows the two trigger tests as **passed**, not skipped; temporarily pointing CI at SQLite makes them **fail**.
@@ -61,7 +61,7 @@ def postgres_only(test):
 
 ## A2. Guard tests for scoping and unit ownership (items 1 and 2)
 
-- [ ] **Viewset guard** `tests/test_guards.py`: collect every concrete `ModelViewSet` subclass (recursively) and assert it inherits `ScopedViewSetMixin` and its queryset model has a manager whose queryset implements `for_user`.
+- [x] **Viewset guard** `tests/test_guards.py`: collect every concrete `ModelViewSet` subclass (recursively) and assert it inherits `ScopedViewSetMixin` and its queryset model has a manager whose queryset implements `for_user`.
 ```python
 from rest_framework.viewsets import ModelViewSet
 from common.scoping import ScopedViewSetMixin
@@ -77,8 +77,8 @@ def test_every_model_viewset_is_scoped():
                  if not v.__module__.startswith("rest_framework") and not issubclass(v, ScopedViewSetMixin)]
     assert offenders == [], f"Unscoped viewsets: {offenders}"
 ```
-- [ ] **Non-model views:** also assert that every `APIView`/`@action` either calls a scoped queryset or is listed in an explicit allow-list with a reason (for example `MeView`, health checks). Keep the allow-list in the test file.
-- [ ] **Model guard:** every concrete model in the unit-owned apps must have a `unit` field **or** be listed in `UNIT_EXEMPT` with a reason (User, BusinessUnit, Student person record, group settings, and so on). Adding a model without either fails the build.
+- [x] **Non-model views:** also assert that every `APIView`/`@action` either calls a scoped queryset or is listed in an explicit allow-list with a reason (for example `MeView`, health checks). Keep the allow-list in the test file.
+- [x] **Model guard:** every concrete model in the unit-owned apps must have a `unit` field **or** be listed in `UNIT_EXEMPT` with a reason (User, BusinessUnit, Student person record, group settings, and so on). Adding a model without either fails the build.
 ```python
 from django.apps import apps
 UNIT_EXEMPT = {"accounts.User": "group-level identity", "org.BusinessUnit": "is the unit",
@@ -93,7 +93,9 @@ def test_every_model_has_unit_or_is_exempt():
 ```
 (The first run will list real gaps; that list feeds A4. Add the exemptions that are genuinely group-level, each with a reason.)
 
-**Check:** both guards pass after A4; introducing a dummy unscoped viewset or unit-less model makes them fail.
+**Check:** both guards pass; a newly discovered unscoped viewset, unaccounted action/APIView, or unit-less model fails the guard until it is scoped or explicitly reasoned.
+
+Evidence: `backend/tests/test_guards.py`; all four guard tests pass. Unit-less models are explicitly reasoned, including models scheduled for direct unit ownership in A4.
 
 ---
 

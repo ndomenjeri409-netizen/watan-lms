@@ -10,7 +10,7 @@ Statuses: `DONE` · `IN PROGRESS` · `PENDING` · `BLOCKED (reason)`
 | 0 Foundation | DONE | |
 | 0.75 Multi-unit foundation | DONE | |
 | 1 to 5 | DONE | Reported complete |
-| 6a Finance core | IN PROGRESS | See section "6a closure" |
+| 6a Finance core | IN PROGRESS | B.2 is complete; accountant approval and B.3 to B.6 remain |
 | 6b Cash custody and institutional finance | PENDING | **Starts only after Section A is DONE** |
 | 6c Reconciliation and month-end close | PENDING | Needs sample M-Pesa statement |
 | 7 Comms, dashboards, public site | PENDING | |
@@ -21,7 +21,7 @@ Statuses: `DONE` · `IN PROGRESS` · `PENDING` · `BLOCKED (reason)`
 | Item | Status | Evidence / notes |
 |---|---|---|
 | B.1 Chart of accounts approved and seeded | BLOCKED (accountant approval) | Draft: `chart_of_accounts_DRAFT.csv` + notes |
-| B.2 Journal engine (balanced entries, unit on lines, idempotency, unique M-Pesa code, maker-checker, balance from journal) | IN PROGRESS | Invoice idempotency and audit unit attribution implemented. M-Pesa normalization is enforced in `Payment.save()`, admin saves, and `record_payment`; migration `0007_payment_finance_mpesa_code_normalized.py` adds the normalized-code CheckConstraint without a data migration. No payment importer exists. PostgreSQL-only normalized-code and uniqueness tests await CI. Configured Neon `neondb` has no `finance_payment` table, so no existing codes were available to compare; no database data was changed. `test_journal_student_balance_matches_invoices_across_units_and_posting_orders` proves journal and invoice balances match across two units, partial payments, an adjustment, a refund, reversals, and different posting orders. |
+| B.2 Journal engine (balanced entries, unit on lines, idempotency, unique M-Pesa code, maker-checker, balance from journal) | DONE | All five checks are implemented. PostgreSQL CI run [#6](https://github.com/ndomenjeri409-netizen/watan-lms/actions/runs/42227337787) passed 89 tests with `REQUIRE_POSTGRES_TESTS=1` and no skips. Evidence includes `test_payment_is_idempotent_and_mpesa_code_is_globally_unique`, `test_invoice_is_idempotent_and_rejects_key_reuse_for_different_request`, `test_adjustment_and_refund_require_separate_approval`, `test_void_invoice_uses_reversal_and_disallows_bursar_self_approval`, and `test_journal_student_balance_matches_invoices_across_units_and_posting_orders`. M-Pesa codes are normalized in model, admin, and service writes; migration `0007_payment_finance_mpesa_code_normalized.py` adds the normalized-code check and partial unique constraint. The configured Neon `neondb` had no `finance_payment` table at precheck time; no data was altered. |
 | B.3 DB guarantees proven in CI | PENDING | Depends on A1 |
 | B.4 Receipts (generate at posting, per-unit numbers, VOID on reversal, hash) | PARTIAL | Currently saved on first download |
 | B.5 Fee structures per unit, instalments, statements | PENDING | |
@@ -30,8 +30,8 @@ Statuses: `DONE` · `IN PROGRESS` · `PENDING` · `BLOCKED (reason)`
 ## Section A remediation (`SECTION_A_REMEDIATION.md`)
 | Step | Status | Depends on | Notes |
 |---|---|---|---|
-| A1 CI proves Postgres tests (`REQUIRE_POSTGRES_TESTS=1`, `@postgres_only`) | IN PROGRESS | none | Helper and CI skip guard configured; PostgreSQL CI proof remains pending. |
-| A2 Guard tests (viewsets scoped, models have unit) | PENDING | none | Run again after B.2 to catch new models |
+| A1 CI proves Postgres tests (`REQUIRE_POSTGRES_TESTS=1`, `@postgres_only`) | DONE | none | CI run [#7](https://github.com/ndomenjeri409-netizen/watan-lms/actions/runs/42228775785): PostgreSQL 16, `REQUIRE_POSTGRES_TESTS=1`, 93 passed, no skips. |
+| A2 Guard tests (viewsets scoped, models have unit) | DONE | none | `backend/tests/test_guards.py` guards concrete ModelViewSets, actions, non-model APIViews, and current unit-less models with explicit reasons. Four guard tests pass; direct-unit follow-ups remain listed for A4. |
 | A3 Audit log: unit/scope and actor/system label | IN PROGRESS | D3 | Nullable audit unit and centralized unit resolver added; SYSTEM actor handling remains pending. |
 | A4 Unit ownership on Department, Program, Course, Enrollment, TimetableSlot | PENDING | D2, `docs/department_unit_map.csv` | |
 | A5 Per-unit registration numbers | PENDING | D1 | Independent of finance work |
@@ -61,12 +61,9 @@ Statuses: `DONE` · `IN PROGRESS` · `PENDING` · `BLOCKED (reason)`
 
 ## Latest verification
 - Date: 2026-11-06
-- HEAD: `e905def4165c4f2c3fde3403cd9946b8c359cf75` (worktree changes uncommitted)
-- `backend: ruff check .`: PASS
-- `backend: ruff format .`: PASS — 142 files unchanged; migrations excluded.
-- `backend: ruff format --check .`: PASS (142 files already formatted; migrations excluded).
-- `backend: pytest -q -rs` with in-memory SQLite: PASS — 85 passed, 4 PostgreSQL-only skipped, 38 subtests passed. PostgreSQL constraint tests are not exercised locally.
-- `backend: makemigrations --check --dry-run`: PASS (no changes detected; constraint migration generated).
-- `backend: pytest -rs` with the configured PostgreSQL connection: BLOCKED — test database migration setup fails in `apps/finance/migrations/0002_journal_guards.py`; Psycopg treats an unescaped `%` in the migration SQL as an incomplete placeholder.
-- Earlier checks: `makemigrations --check --dry-run`, OpenAPI validation, frontend typecheck, and Finance page tests passed (4 Finance tests).
-- Duplicate-code precheck: configured Neon `watan_lms` / `neondb` has no `finance_payment` relation or payment-named table; no data was altered.
+- A2 implementation commit: `6cde587`; `pre-a2` points to the preceding green commit.
+- `backend: pytest -q -rs` with in-memory SQLite: PASS — 89 passed, 4 PostgreSQL-only skipped, 38 subtests passed.
+- `backend: ruff check .` and `ruff format --check .`: PASS — 143 files already formatted; migrations excluded.
+- `backend: makemigrations --check --dry-run`: PASS — no changes detected.
+- OpenAPI generation/validation: PASS — no drift; frontend API type generation and typecheck pass.
+- GitHub Actions run [#7](https://github.com/ndomenjeri409-netizen/watan-lms/actions/runs/42228775785): PASS — PostgreSQL 16, `REQUIRE_POSTGRES_TESTS=1`, 93 passed and no skipped tests; frontend lint, generated API type check, typecheck, tests, and build passed.

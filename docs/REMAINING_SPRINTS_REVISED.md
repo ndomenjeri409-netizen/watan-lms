@@ -29,11 +29,11 @@ Replaces Sprints 6 to 9 and "After launch" in `WATAN_LMS_V2_BLUEPRINT.md`. Read 
 
 Ask Copilot to run these checks and report; fix gaps in small commits.
 - [ ] Every model that belongs to a unit has a non-null `unit` FK: Department, Program, Course, Enrollment, FeeStructure, Invoice, Announcement (if unit-targeted), Appointment slots, Student registration sequences.
-- [ ] Every `ModelViewSet` uses the unit-scoped queryset/mixin; a test fails the build if one doesn't.
+- [x] Every `ModelViewSet` uses the unit-scoped queryset/mixin; a test fails the build if one doesn't.
 - [ ] Registration numbers use a **per-unit** sequence and the unit code prefix (atomic, `select_for_update`).
 - [ ] Audit log rows carry `unit` (nullable for group actions) and actor.
 - [ ] The authorization matrix covers role × unit × resource × action for all existing resources.
-- [ ] CI runs the PostgreSQL job with `REQUIRE_POSTGRES_TESTS=1` so Postgres-only tests **fail instead of skip** in CI (see B.3).
+- [x] CI runs the PostgreSQL job with `REQUIRE_POSTGRES_TESTS=1` so Postgres-only tests **fail instead of skip** in CI (see B.3).
 
 ---
 
@@ -51,9 +51,9 @@ What remains. **Tick a box only if the code already does it; otherwise build it.
 ### B.2 Journal engine
 - [x] Invoice, payment, refund, adjustment (waiver) and reversal each post a **balanced** entry; every line has `unit`; cash lines have `cash_account`.
 - [x] Idempotency key on payment and invoice endpoints (retry never double-posts).
-- [ ] **M-Pesa transaction code unique across the whole business:** normalize (trim, uppercase) and enforce with a partial unique DB constraint across all payments.
+- [x] **M-Pesa transaction code unique across the whole business:** normalize (trim, uppercase) and enforce with a partial unique DB constraint across all payments.
 - [x] Maker-checker on refunds, waivers and voids, with a mandatory reason.
-- [ ] Student balance computed from the journal (receivable lines for the student) and equal to invoice-level balances; a test proves it.
+- [x] Student balance computed from the journal (receivable lines for the student) and equal to invoice-level balances; a test proves it.
 
 ### B.3 Database guarantees proven in CI
 - [ ] Triggers: journal entries/lines and payments are append-only; entries must balance at commit; posting into a closed period is rejected.
