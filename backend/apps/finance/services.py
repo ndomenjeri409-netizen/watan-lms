@@ -236,7 +236,7 @@ def record_payment(
         )
 
     invoice = (
-        Invoice.objects.select_for_update()
+        Invoice.objects.select_for_update(of=("self",))
         .select_related("unit", "student", "fee_structure__receivable_account")
         .get(pk=invoice_id)
     )
@@ -489,7 +489,7 @@ def approve_refund(*, refund_id, actor):
             {"approved_by": "The requester cannot approve their refund."}
         )
     payment = (
-        Payment.objects.select_for_update()
+        Payment.objects.select_for_update(of=("self",))
         .select_related("journal_entry")
         .get(pk=refund.payment_id)
     )
@@ -615,7 +615,7 @@ def void_invoice(*, invoice_id, reason, actor):
 @transaction.atomic
 def reverse_payment(*, payment_id, reason, actor):
     payment = (
-        Payment.objects.select_for_update()
+        Payment.objects.select_for_update(of=("self",))
         .select_related("journal_entry")
         .get(pk=payment_id)
     )
@@ -659,7 +659,7 @@ def reverse_payment(*, payment_id, reason, actor):
 @transaction.atomic
 def reverse_adjustment(*, adjustment_id, reason, actor):
     adjustment = (
-        Adjustment.objects.select_for_update()
+        Adjustment.objects.select_for_update(of=("self",))
         .select_related("invoice", "journal_entry")
         .get(pk=adjustment_id)
     )
@@ -706,7 +706,7 @@ def reverse_adjustment(*, adjustment_id, reason, actor):
 @transaction.atomic
 def reverse_refund(*, refund_id, reason, actor):
     refund = (
-        Refund.objects.select_for_update()
+        Refund.objects.select_for_update(of=("self",))
         .select_related("journal_entry")
         .get(pk=refund_id)
     )
