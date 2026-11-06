@@ -437,7 +437,7 @@ class ReceiptPdfView(APIView):
     def get(self, request, receipt_id):
         with transaction.atomic():
             receipt = get_object_or_404(
-                Receipt.objects.select_for_update().select_related(
+                Receipt.objects.select_for_update(of=("self",)).select_related(
                     "generated_file",
                     "payment__journal_entry__created_by",
                     "payment__invoice__student__department__unit",

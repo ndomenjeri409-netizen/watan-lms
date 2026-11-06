@@ -355,7 +355,7 @@ def request_adjustment(*, invoice_id, amount, reason, actor):
 @transaction.atomic
 def approve_adjustment(*, adjustment_id, actor):
     adjustment = (
-        Adjustment.objects.select_for_update()
+        Adjustment.objects.select_for_update(of=("self",))
         .select_related(
             "invoice__fee_structure__discount_account",
             "invoice__fee_structure__receivable_account",
@@ -473,7 +473,7 @@ def request_refund(*, payment_id, cash_account_id, amount, reason, actor):
 @transaction.atomic
 def approve_refund(*, refund_id, actor):
     refund = (
-        Refund.objects.select_for_update()
+        Refund.objects.select_for_update(of=("self",))
         .select_related(
             "payment__invoice__fee_structure__refund_account",
             "payment__invoice__unit",
