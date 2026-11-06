@@ -15,7 +15,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from apps.accounts.models import User
 from apps.accounts.roles import ADMIN_ROLES, Role
-from common.audit import get_object_unit, record_audit
+from common.audit import record_audit
 
 from .models import StoredFile
 from .policies import UPLOAD_POLICIES
@@ -93,8 +93,9 @@ class FileStorageViewSet(GenericViewSet):
             record_audit(
                 actor=request.user,
                 action="file_upload_started",
-                instance=stored_file,
-                unit=get_object_unit(stored_file),
+                obj=stored_file,
+                unit=None,
+                group_level=True,
                 after={
                     "purpose": stored_file.purpose,
                     "size_bytes": stored_file.size_bytes,
@@ -156,8 +157,9 @@ class FileStorageViewSet(GenericViewSet):
             record_audit(
                 actor=request.user,
                 action="file_upload_completed",
-                instance=stored_file,
-                unit=get_object_unit(stored_file),
+                obj=stored_file,
+                unit=None,
+                group_level=True,
             )
         return Response(StoredFileSerializer(stored_file).data)
 

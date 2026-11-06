@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 
-from common.audit import get_object_unit, record_audit
+from common.audit import record_audit
 from common.scoping import ScopedViewSetMixin
 
 from .models import FAQ, BlogPost, ContentPage
@@ -24,8 +24,9 @@ class CMSViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
             record_audit(
                 actor=self.request.user,
                 action="created",
-                instance=instance,
-                unit=get_object_unit(instance),
+                obj=instance,
+                unit=None,
+                group_level=True,
                 after=serializer.data,
             )
 
@@ -36,8 +37,9 @@ class CMSViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
             record_audit(
                 actor=self.request.user,
                 action="updated",
-                instance=instance,
-                unit=get_object_unit(instance),
+                obj=instance,
+                unit=None,
+                group_level=True,
                 before=before,
                 after=self.get_serializer(instance=instance).data,
             )
@@ -50,8 +52,9 @@ class CMSViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
             record_audit(
                 actor=self.request.user,
                 action="unpublished",
-                instance=instance,
-                unit=get_object_unit(instance),
+                obj=instance,
+                unit=None,
+                group_level=True,
                 before=before,
                 after=self.get_serializer(instance=instance).data,
             )

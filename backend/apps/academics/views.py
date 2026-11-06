@@ -29,7 +29,7 @@ class AcademicViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
             record_audit(
                 actor=self.request.user,
                 action="created",
-                instance=instance,
+                obj=instance,
                 unit=get_object_unit(instance),
                 after=self.get_serializer(instance=instance).data,
             )
@@ -69,7 +69,7 @@ class AcademicViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
             record_audit(
                 actor=self.request.user,
                 action="updated",
-                instance=instance,
+                obj=instance,
                 unit=get_object_unit(instance),
                 before=before,
                 after=self.get_serializer(instance=instance).data,
@@ -83,7 +83,7 @@ class AcademicViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
             record_audit(
                 actor=self.request.user,
                 action="archived",
-                instance=instance,
+                obj=instance,
                 unit=get_object_unit(instance),
                 before=before,
                 after=self.get_serializer(instance=instance).data,

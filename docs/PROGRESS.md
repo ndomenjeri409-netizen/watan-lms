@@ -32,7 +32,7 @@ Statuses: `DONE` · `IN PROGRESS` · `PENDING` · `BLOCKED (reason)`
 |---|---|---|---|
 | A1 CI proves Postgres tests (`REQUIRE_POSTGRES_TESTS=1`, `@postgres_only`) | DONE | none | CI run [#7](https://github.com/ndomenjeri409-netizen/watan-lms/actions/runs/42228775785): PostgreSQL 16, `REQUIRE_POSTGRES_TESTS=1`, 93 passed, no skips. |
 | A2 Guard tests (viewsets scoped, models have unit) | DONE | none | `backend/tests/test_guards.py` guards concrete ModelViewSets, actions, non-model APIViews, and current unit-less models with explicit reasons. Four guard tests pass; direct-unit follow-ups remain listed for A4. |
-| A3 Audit log: unit/scope and actor/system label | IN PROGRESS | D3 | Nullable audit unit and centralized unit resolver added; SYSTEM actor handling remains pending. |
+| A3 Audit log: unit/scope and actor/system label | IN PROGRESS | D3 | Implementation and tests are in place: constraints, conservative legacy backfill, role-scoped reads, append-only queryset guards, and explicit user/system attribution at all 53 call sites. PostgreSQL CI is pending. |
 | A4 Unit ownership on Department, Program, Course, Enrollment, TimetableSlot | PENDING | D2, `docs/department_unit_map.csv` | |
 | A5 Per-unit registration numbers | PENDING | D1 | Independent of finance work |
 | A6 Authorization matrix coverage | PENDING | A2 to A4 | |
@@ -62,8 +62,10 @@ Statuses: `DONE` · `IN PROGRESS` · `PENDING` · `BLOCKED (reason)`
 ## Latest verification
 - Date: 2026-11-06
 - A2 implementation commit: `6cde587`; `pre-a2` points to the preceding green commit.
+- A3 worktree verification: `97 passed, 4 PostgreSQL-only skipped, 47 subtests passed` on isolated in-memory SQLite; focused audit tests: `8 passed, 9 subtests passed`. PostgreSQL CI is pending.
 - `backend: pytest -q -rs` with in-memory SQLite: PASS — 89 passed, 4 PostgreSQL-only skipped, 38 subtests passed.
 - `backend: ruff check .` and `ruff format --check .`: PASS — 143 files already formatted; migrations excluded.
 - `backend: makemigrations --check --dry-run`: PASS — no changes detected.
 - OpenAPI generation/validation: PASS — no drift; frontend API type generation and typecheck pass.
+- A3 checks: Ruff, format, migration drift, OpenAPI validation, and frontend typecheck pass. The local `DATABASE_URL` points to Neon, so test commands were rerun with in-memory SQLite; do not run local tests against that Neon URL.
 - GitHub Actions run [#7](https://github.com/ndomenjeri409-netizen/watan-lms/actions/runs/42228775785): PASS — PostgreSQL 16, `REQUIRE_POSTGRES_TESTS=1`, 93 passed and no skipped tests; frontend lint, generated API type check, typecheck, tests, and build passed.

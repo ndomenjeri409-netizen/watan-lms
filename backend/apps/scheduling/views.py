@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import viewsets
 
 from apps.accounts.roles import ADMIN_ROLES, Role
-from common.audit import get_object_unit, record_audit
+from common.audit import get_object_audit_scope, record_audit
 from common.scoping import ScopedViewSetMixin
 
 from .models import ClassGroup, Room, TimetableSlot
@@ -16,11 +16,13 @@ class AuditedSchedulingViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
     def perform_create(self, serializer):
         with transaction.atomic():
             instance = serializer.save()
+            unit, group_level = get_object_audit_scope(instance)
             record_audit(
                 actor=self.request.user,
                 action="created",
-                instance=instance,
-                unit=get_object_unit(instance),
+                obj=instance,
+                unit=unit,
+                group_level=group_level,
                 after=self.get_serializer(instance).data,
             )
 
@@ -28,11 +30,13 @@ class AuditedSchedulingViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
         before = self.get_serializer(serializer.instance).data
         with transaction.atomic():
             instance = serializer.save()
+            unit, group_level = get_object_audit_scope(instance)
             record_audit(
                 actor=self.request.user,
                 action="updated",
-                instance=instance,
-                unit=get_object_unit(instance),
+                obj=instance,
+                unit=unit,
+                group_level=group_level,
                 before=before,
                 after=self.get_serializer(instance).data,
             )
@@ -42,11 +46,13 @@ class AuditedSchedulingViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
         with transaction.atomic():
             instance.is_active = False
             instance.save(update_fields=("is_active", "updated_at"))
+            unit, group_level = get_object_audit_scope(instance)
             record_audit(
                 actor=self.request.user,
                 action="archived",
-                instance=instance,
-                unit=get_object_unit(instance),
+                obj=instance,
+                unit=unit,
+                group_level=group_level,
                 before=before,
                 after=self.get_serializer(instance).data,
             )

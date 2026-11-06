@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 
 from apps.accounts.roles import ADMIN_ROLES, Role
 from apps.scheduling.models import ClassGroup
-from common.audit import get_object_unit, record_audit
+from common.audit import get_object_audit_scope, record_audit
 from common.scoping import ScopedViewSetMixin
 
 from .models import AttendanceRecord, AttendanceSession
@@ -77,11 +77,13 @@ class AttendanceSessionViewSet(ScopedViewSetMixin, viewsets.GenericViewSet):
                     opened_by=request.user,
                     title=serializer.validated_data.get("title", ""),
                 )
+                unit, group_level = get_object_audit_scope(session)
                 record_audit(
                     actor=request.user,
                     action="attendance_session_opened",
-                    instance=session,
-                    unit=get_object_unit(session),
+                    obj=session,
+                    unit=unit,
+                    group_level=group_level,
                     after={"class_group_id": str(group.id), "is_open": True},
                 )
         except IntegrityError as exc:
@@ -115,11 +117,13 @@ class AttendanceSessionViewSet(ScopedViewSetMixin, viewsets.GenericViewSet):
             session.is_open = False
             session.closed_at = timezone.now()
             session.save(update_fields=("is_open", "closed_at", "updated_at"))
+            unit, group_level = get_object_audit_scope(session)
             record_audit(
                 actor=request.user,
                 action="attendance_session_closed",
-                instance=session,
-                unit=get_object_unit(session),
+                obj=session,
+                unit=unit,
+                group_level=group_level,
                 after={"is_open": False, "closed_at": session.closed_at.isoformat()},
             )
         return Response(self.get_serializer(session).data)

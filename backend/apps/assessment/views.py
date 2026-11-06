@@ -12,7 +12,7 @@ from apps.academics.models import Course
 from apps.accounts.roles import ADMIN_ROLES, Role
 from apps.enrollment.models import CourseAccess
 from apps.people.models import Student
-from common.audit import get_object_unit, record_audit
+from common.audit import get_object_audit_scope, record_audit
 from common.scoping import ScopedViewSetMixin
 
 from .models import Assessment, Grade, Submission
@@ -73,11 +73,13 @@ class AssessmentViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
             raise PermissionDenied("You may not create assessments for this course.")
         with transaction.atomic():
             assessment = serializer.save(created_by=self.request.user)
+            unit, group_level = get_object_audit_scope(assessment)
             record_audit(
                 actor=self.request.user,
                 action="assessment_created",
-                instance=assessment,
-                unit=get_object_unit(assessment),
+                obj=assessment,
+                unit=unit,
+                group_level=group_level,
                 after=self.get_serializer(assessment).data,
             )
 
@@ -102,11 +104,13 @@ class AssessmentViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
             before = self.get_serializer(assessment).data
             serializer.instance = assessment
             assessment = serializer.save()
+            unit, group_level = get_object_audit_scope(assessment)
             record_audit(
                 actor=self.request.user,
                 action="assessment_updated",
-                instance=assessment,
-                unit=get_object_unit(assessment),
+                obj=assessment,
+                unit=unit,
+                group_level=group_level,
                 before=before,
                 after=self.get_serializer(assessment).data,
             )
@@ -117,11 +121,13 @@ class AssessmentViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
         with transaction.atomic():
             instance.status = Assessment.Status.CLOSED
             instance.save(update_fields=("status", "updated_at"))
+            unit, group_level = get_object_audit_scope(instance)
             record_audit(
                 actor=self.request.user,
                 action="assessment_archived",
-                instance=instance,
-                unit=get_object_unit(instance),
+                obj=instance,
+                unit=unit,
+                group_level=group_level,
                 after={"status": instance.status},
             )
 
@@ -138,11 +144,13 @@ class AssessmentViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
         with transaction.atomic():
             assessment.status = Assessment.Status.PUBLISHED
             assessment.save(update_fields=("status", "updated_at"))
+            unit, group_level = get_object_audit_scope(assessment)
             record_audit(
                 actor=request.user,
                 action="assessment_published",
-                instance=assessment,
-                unit=get_object_unit(assessment),
+                obj=assessment,
+                unit=unit,
+                group_level=group_level,
                 after={"status": assessment.status},
             )
         return Response(self.get_serializer(assessment).data)
@@ -160,11 +168,13 @@ class AssessmentViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
         with transaction.atomic():
             assessment.status = Assessment.Status.CLOSED
             assessment.save(update_fields=("status", "updated_at"))
+            unit, group_level = get_object_audit_scope(assessment)
             record_audit(
                 actor=request.user,
                 action="assessment_closed",
-                instance=assessment,
-                unit=get_object_unit(assessment),
+                obj=assessment,
+                unit=unit,
+                group_level=group_level,
                 after={"status": assessment.status},
             )
         return Response(self.get_serializer(assessment).data)
@@ -231,11 +241,13 @@ class SubmissionViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
                 raise ValidationError(
                     {"submission": "A concurrent submission was received; retry."}
                 ) from exc
+            unit, group_level = get_object_audit_scope(submission)
             record_audit(
                 actor=self.request.user,
                 action="assessment_submitted",
-                instance=submission,
-                unit=get_object_unit(submission),
+                obj=submission,
+                unit=unit,
+                group_level=group_level,
                 after={
                     "assessment_id": str(assessment.id),
                     "student_id": str(student.id),
@@ -275,11 +287,13 @@ class GradeViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
             except IntegrityError as exc:
                 raise DuplicateGrade() from exc
             record_grade_revision(grade=grade, actor=self.request.user)
+            unit, group_level = get_object_audit_scope(grade)
             record_audit(
                 actor=self.request.user,
                 action="grade_created",
-                instance=grade,
-                unit=get_object_unit(grade),
+                obj=grade,
+                unit=unit,
+                group_level=group_level,
                 after={"score": str(grade.score), "status": grade.status},
             )
 
@@ -303,11 +317,13 @@ class GradeViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
             grade.revision += 1
             grade.save(update_fields=("revision", "updated_at"))
             record_grade_revision(grade=grade, actor=self.request.user)
+            unit, group_level = get_object_audit_scope(grade)
             record_audit(
                 actor=self.request.user,
                 action="grade_updated",
-                instance=grade,
-                unit=get_object_unit(grade),
+                obj=grade,
+                unit=unit,
+                group_level=group_level,
                 before=before,
                 after={
                     "score": str(grade.score),

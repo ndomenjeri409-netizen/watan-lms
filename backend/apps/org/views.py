@@ -46,11 +46,17 @@ class ScopedOrgViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
     def perform_create(self, serializer):
         with transaction.atomic():
             instance = serializer.save()
+            unit = get_object_unit(instance)
             record_audit(
                 actor=self.request.user,
                 action="created",
-                instance=instance,
-                unit=get_object_unit(instance),
+                obj=instance,
+                unit=unit,
+                group_level=(
+                    unit is None
+                    and instance._meta.label_lower
+                    in {"org.academicperiod", "org.campus"}
+                ),
                 after=serializer.data,
             )
 
@@ -58,11 +64,17 @@ class ScopedOrgViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
         before = self.get_serializer(instance=serializer.instance).data
         with transaction.atomic():
             instance = serializer.save()
+            unit = get_object_unit(instance)
             record_audit(
                 actor=self.request.user,
                 action="updated",
-                instance=instance,
-                unit=get_object_unit(instance),
+                obj=instance,
+                unit=unit,
+                group_level=(
+                    unit is None
+                    and instance._meta.label_lower
+                    in {"org.academicperiod", "org.campus"}
+                ),
                 before=before,
                 after=self.get_serializer(instance=instance).data,
             )
@@ -72,11 +84,17 @@ class ScopedOrgViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
         with transaction.atomic():
             instance.is_active = False
             instance.save(update_fields=("is_active", "updated_at"))
+            unit = get_object_unit(instance)
             record_audit(
                 actor=self.request.user,
                 action="archived",
-                instance=instance,
-                unit=get_object_unit(instance),
+                obj=instance,
+                unit=unit,
+                group_level=(
+                    unit is None
+                    and instance._meta.label_lower
+                    in {"org.academicperiod", "org.campus"}
+                ),
                 before=before,
                 after=self.get_serializer(instance=instance).data,
             )
@@ -179,7 +197,7 @@ class DepartmentViewSet(ScopedOrgViewSet):
             record_audit(
                 actor=self.request.user,
                 action="archived",
-                instance=instance,
+                obj=instance,
                 unit=get_object_unit(instance),
                 before=before,
                 after=self.get_serializer(instance=instance).data,

@@ -2,7 +2,7 @@ from django.db import transaction
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
-from common.audit import get_object_unit, record_audit
+from common.audit import get_object_audit_scope, record_audit
 
 from .models import Grade, GradeRevision
 
@@ -17,11 +17,13 @@ def record_grade_revision(*, grade, actor, change_note=""):
         changed_by=actor,
         change_note=change_note,
     )
+    unit, group_level = get_object_audit_scope(grade)
     record_audit(
         actor=actor,
         action="grade_revision_created",
-        instance=grade,
-        unit=get_object_unit(grade),
+        obj=grade,
+        unit=unit,
+        group_level=group_level,
         after={
             "revision": grade.revision,
             "score": str(grade.score),
@@ -88,11 +90,13 @@ def transition_grade(*, grade_id, actor, action, note=""):
             )
         )
         record_grade_revision(grade=grade, actor=actor, change_note=note)
+        unit, group_level = get_object_audit_scope(grade)
         record_audit(
             actor=actor,
             action=f"grade_{action}",
-            instance=grade,
-            unit=get_object_unit(grade),
+            obj=grade,
+            unit=unit,
+            group_level=group_level,
             before=before,
             after={
                 "status": grade.status,

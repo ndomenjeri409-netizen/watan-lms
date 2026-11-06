@@ -12,9 +12,8 @@ from rest_framework.exceptions import (
 from apps.accounts import authentication
 from apps.accounts.models import User
 from apps.accounts.roles import Role
-from apps.audit.models import AuditLog
 from apps.people.models import Student, allocate_registration_number
-from common.audit import get_object_unit, record_audit
+from common.audit import get_object_audit_scope, record_audit
 
 from .models import Application, CourseAccess, Enrollment
 
@@ -67,11 +66,13 @@ def transition_enrollment(enrollment, target, actor):
             enrollment.activated_at = timezone.now()
             update_fields.append("activated_at")
         enrollment.save(update_fields=update_fields)
+        unit, group_level = get_object_audit_scope(enrollment)
         record_audit(
             actor=actor,
             action="enrollment_status_changed",
-            instance=enrollment,
-            unit=get_object_unit(enrollment),
+            obj=enrollment,
+            unit=unit,
+            group_level=group_level,
             before=before,
             after={"status": target},
         )
@@ -87,11 +88,13 @@ def transition_enrollment(enrollment, target, actor):
                 access.enrollment = enrollment
                 access.is_active = True
                 access.save(update_fields=("enrollment", "is_active", "updated_at"))
+            unit, group_level = get_object_audit_scope(access)
             record_audit(
                 actor=actor,
                 action="course_access_granted",
-                instance=access,
-                unit=get_object_unit(access),
+                obj=access,
+                unit=unit,
+                group_level=group_level,
                 after={
                     "student_id": str(enrollment.student_id),
                     "course_id": str(enrollment.course_id),
@@ -104,11 +107,13 @@ def transition_enrollment(enrollment, target, actor):
             ):
                 access.is_active = False
                 access.save(update_fields=("is_active", "updated_at"))
+                unit, group_level = get_object_audit_scope(access)
                 record_audit(
                     actor=actor,
                     action="course_access_revoked",
-                    instance=access,
-                    unit=get_object_unit(access),
+                    obj=access,
+                    unit=unit,
+                    group_level=group_level,
                     before={"is_active": True},
                     after={"is_active": False},
                 )
@@ -168,11 +173,13 @@ def approve_application(application, actor):
                 phone=application.phone,
                 admission_year=year,
             )
+            unit, group_level = get_object_audit_scope(student)
             record_audit(
                 actor=actor,
                 action="student_provisioned",
-                instance=student,
-                unit=get_object_unit(student),
+                obj=student,
+                unit=unit,
+                group_level=group_level,
                 after={
                     "registration_number": student.registration_number,
                     "user_id": str(user.id),
@@ -201,11 +208,13 @@ def approve_application(application, actor):
                     "updated_at",
                 )
             )
+            unit, group_level = get_object_audit_scope(application)
             record_audit(
                 actor=actor,
                 action="application_approved",
-                instance=application,
-                unit=get_object_unit(application),
+                obj=application,
+                unit=unit,
+                group_level=group_level,
                 before=before,
                 after={
                     "status": application.status,
@@ -245,11 +254,13 @@ def reject_application(application, actor, note=""):
                 "updated_at",
             )
         )
+        unit, group_level = get_object_audit_scope(application)
         record_audit(
             actor=actor,
             action="application_rejected",
-            instance=application,
-            unit=get_object_unit(application),
+            obj=application,
+            unit=unit,
+            group_level=group_level,
             before=before,
             after={"status": application.status, "review_note": note},
         )
@@ -257,11 +268,13 @@ def reject_application(application, actor, note=""):
 
 
 def record_public_application(application):
-    AuditLog.objects.create(
-        actor=None,
+    unit, group_level = get_object_audit_scope(application)
+    record_audit(
+        system_label="public_application_submission",
         action="application_submitted",
-        object_type=application._meta.label,
-        object_id=str(application.pk),
+        obj=application,
+        unit=unit,
+        group_level=group_level,
         after={
             "course_id": str(application.course_id),
             "department_id": str(application.department_id),

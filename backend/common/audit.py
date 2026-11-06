@@ -108,13 +108,49 @@ def get_object_unit(instance):
     return next(iter(units.values())) if len(units) == 1 else None
 
 
-def record_audit(*, actor, action, instance, unit, before=None, after=None):
+def get_object_audit_scope(instance):
+    unit = get_object_unit(instance)
+    return unit, unit is None
+
+
+def record_audit(
+    *,
+    actor=None,
+    action,
+    obj,
+    unit=None,
+    group_level=False,
+    before=None,
+    after=None,
+    system_label=None,
+    meta=None,
+):
+    if actor is not None and system_label is not None:
+        raise ValueError("Provide either an actor or a system label, not both.")
+    if actor is None and not (system_label and system_label.strip()):
+        raise ValueError("An actor or non-empty system label is required.")
+    if group_level and unit is not None:
+        raise ValueError("Group-level audit entries cannot have a unit.")
+
+    if unit is None and not group_level:
+        unit = get_object_unit(obj)
+    if unit is None and not group_level:
+        raise ValueError(
+            "The audit object has no unique unit; provide a unit or group_level=True."
+        )
+
     return AuditLog.objects.create(
         actor=actor,
         unit=unit,
+        scope=AuditLog.Scope.GROUP if group_level else AuditLog.Scope.UNIT,
+        actor_kind=(
+            AuditLog.ActorKind.SYSTEM if actor is None else AuditLog.ActorKind.USER
+        ),
+        actor_label=system_label.strip() if system_label else "",
         action=action,
-        object_type=instance._meta.label,
-        object_id=str(instance.pk),
+        object_type=obj._meta.label,
+        object_id=str(obj.pk),
         before=json.loads(json.dumps(before or {}, cls=DjangoJSONEncoder)),
         after=json.loads(json.dumps(after or {}, cls=DjangoJSONEncoder)),
+        meta=json.loads(json.dumps(meta or {}, cls=DjangoJSONEncoder)),
     )

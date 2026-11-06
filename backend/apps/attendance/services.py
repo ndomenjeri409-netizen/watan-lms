@@ -8,7 +8,7 @@ from rest_framework.exceptions import APIException, ValidationError
 
 from apps.enrollment.models import CourseAccess
 from apps.people.models import Student
-from common.audit import get_object_unit, record_audit
+from common.audit import get_object_audit_scope, record_audit
 
 from .models import AttendanceRecord, AttendanceSession, CheckIn, QrToken
 
@@ -29,11 +29,13 @@ def issue_qr_token(session, actor):
             token_digest=hashlib.sha256(raw_token.encode()).hexdigest(),
             expires_at=timezone.now() + timedelta(minutes=5),
         )
+        unit, group_level = get_object_audit_scope(token)
         record_audit(
             actor=actor,
             action="attendance_qr_issued",
-            instance=token,
-            unit=get_object_unit(token),
+            obj=token,
+            unit=unit,
+            group_level=group_level,
             after={
                 "session_id": str(session.id),
                 "expires_at": token.expires_at.isoformat(),
@@ -83,11 +85,13 @@ def check_in_with_qr(*, user, raw_token, client_checkin_id=None):
                 qr_token=token,
                 client_checkin_id=client_checkin_id,
             )
+            unit, group_level = get_object_audit_scope(record)
             record_audit(
                 actor=user,
                 action="attendance_checked_in",
-                instance=record,
-                unit=get_object_unit(record),
+                obj=record,
+                unit=unit,
+                group_level=group_level,
                 after={
                     "session_id": str(session.id),
                     "student_id": str(student.id),

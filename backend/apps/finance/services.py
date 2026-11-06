@@ -91,11 +91,13 @@ def post_journal_entry(
     JournalLine.objects.bulk_create(
         [JournalLine(entry=entry, **line) for line in normalized_lines]
     )
+    entry_unit = get_object_unit(entry)
     record_audit(
         actor=actor,
         action="finance_journal_posted",
-        instance=entry,
-        unit=get_object_unit(entry),
+        obj=entry,
+        unit=entry_unit,
+        group_level=entry_unit is None,
         after={
             "date": entry.date,
             "memo": entry.memo,
@@ -184,7 +186,7 @@ def create_invoice(
             record_audit(
                 actor=actor,
                 action="finance_invoice_created",
-                instance=invoice,
+                obj=invoice,
                 unit=get_object_unit(invoice),
                 after={
                     "number": number,
@@ -316,7 +318,7 @@ def record_payment(
     record_audit(
         actor=actor,
         action="finance_payment_recorded",
-        instance=payment,
+        obj=payment,
         unit=get_object_unit(payment),
         after={
             "invoice_id": invoice.id,
@@ -346,7 +348,7 @@ def request_adjustment(*, invoice_id, amount, reason, actor):
     record_audit(
         actor=actor,
         action="finance_adjustment_requested",
-        instance=adjustment,
+        obj=adjustment,
         unit=get_object_unit(adjustment),
     )
     return adjustment
@@ -427,7 +429,7 @@ def approve_adjustment(*, adjustment_id, actor):
     record_audit(
         actor=actor,
         action="finance_adjustment_approved",
-        instance=adjustment,
+        obj=adjustment,
         unit=get_object_unit(adjustment),
         after={"amount": adjustment.amount, "journal_entry_id": entry.id},
     )
@@ -464,7 +466,7 @@ def request_refund(*, payment_id, cash_account_id, amount, reason, actor):
     record_audit(
         actor=actor,
         action="finance_refund_requested",
-        instance=refund,
+        obj=refund,
         unit=get_object_unit(refund),
     )
     return refund
@@ -531,7 +533,7 @@ def approve_refund(*, refund_id, actor):
     record_audit(
         actor=actor,
         action="finance_refund_approved",
-        instance=refund,
+        obj=refund,
         unit=get_object_unit(refund),
         after={"amount": refund.amount, "journal_entry_id": entry.id},
     )
@@ -568,11 +570,13 @@ def reverse_journal_entry(*, entry_id, reason, actor):
             for line in original_lines
         ],
     )
+    reversal_unit = get_object_unit(reversal)
     record_audit(
         actor=actor,
         action="finance_journal_reversed",
-        instance=reversal,
-        unit=get_object_unit(reversal),
+        obj=reversal,
+        unit=reversal_unit,
+        group_level=reversal_unit is None,
         after={"reverses_id": original.id, "reason": reason},
     )
     return reversal
@@ -605,7 +609,7 @@ def void_invoice(*, invoice_id, reason, actor):
     record_audit(
         actor=actor,
         action="finance_invoice_voided",
-        instance=invoice,
+        obj=invoice,
         unit=get_object_unit(invoice),
         after={"reversal_entry_id": reversal.id, "reason": reason},
     )
@@ -649,7 +653,7 @@ def reverse_payment(*, payment_id, reason, actor):
     record_audit(
         actor=actor,
         action="finance_payment_reversed",
-        instance=payment,
+        obj=payment,
         unit=get_object_unit(payment),
         after={"reversal_entry_id": reversal.id, "reason": reason},
     )
@@ -696,7 +700,7 @@ def reverse_adjustment(*, adjustment_id, reason, actor):
     record_audit(
         actor=actor,
         action="finance_adjustment_reversed",
-        instance=adjustment,
+        obj=adjustment,
         unit=get_object_unit(adjustment),
         after={"reversal_entry_id": reversal.id, "reason": reason},
     )
@@ -724,7 +728,7 @@ def reverse_refund(*, refund_id, reason, actor):
     record_audit(
         actor=actor,
         action="finance_refund_reversed",
-        instance=refund,
+        obj=refund,
         unit=get_object_unit(refund),
         after={"reversal_entry_id": reversal.id, "reason": reason},
     )

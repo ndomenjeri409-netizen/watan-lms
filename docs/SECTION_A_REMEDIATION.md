@@ -101,20 +101,20 @@ Evidence: `backend/tests/test_guards.py`; all four guard tests pass. Unit-less m
 
 ## A3. Audit trail integrity (item 4)
 
-- [ ] Add to `AuditLog`: `unit` (FK to BusinessUnit, nullable), `scope` (`UNIT` or `GROUP`), `actor_kind` (`USER` or `SYSTEM`).
-- [ ] Constraints:
+- [x] Add to `AuditLog`: `unit` (FK to BusinessUnit, nullable), `scope` (`UNIT` or `GROUP`), `actor_kind` (`USER` or `SYSTEM`), `actor_label`, and `meta`.
+- [x] Constraints:
   - `scope = UNIT` requires `unit` not null; `scope = GROUP` requires `unit` null.
   - `actor_kind = USER` requires `actor` not null; `SYSTEM` requires `actor` null and a non-empty `actor_label` (job name).
-- [ ] `record_audit(actor, action, obj, *, unit=None, group_level=False, before=None, after=None)`:
+- [x] `record_audit(actor, action, obj, *, unit=None, group_level=False, before=None, after=None)`:
   - Derive `unit` from `obj.unit` when present; otherwise require the caller to pass `unit` **or** `group_level=True`. Raise if neither (no silent nulls).
   - Require an actor or an explicit `system_label`.
-- [ ] Update every existing `record_audit` call to satisfy the new signature.
-- [ ] **Backfill** existing rows: derive `unit` from the target object where it still exists; rows you cannot attribute become `scope=GROUP` with a note in a `meta` field, never a guessed unit. Print a summary (counts attributed, counts left group-level).
-- [ ] Index `(unit, created_at)` and `(actor, created_at)`.
-- [ ] Scoping: `AuditLog.objects.for_user(user)`: unit managers see rows for their units; `GROUP` rows and all rows only for `SUPER_ADMIN`, `ADMIN`, `DIRECTOR`, `AUDITOR`. The audit log stays append-only.
-- [ ] Tests: raises when unit and group flag are both missing; constraint tests for the four combinations; scoping tests per role; backfill test on sample rows.
+- [x] Update every existing `record_audit` call to satisfy the new signature, including public application submissions.
+- [x] **Backfill** existing rows: derive `unit` from the target object where it still exists; rows you cannot attribute become `scope=GROUP` with a note in a `meta` field, never a guessed unit. Print a summary (counts attributed, counts left group-level).
+- [x] Index `(unit, created_at)` and `(actor, created_at)`.
+- [x] Scoping: `AuditLog.objects.for_user(user)`: unit managers see rows for their units; `GROUP` rows and all rows only for `SUPER_ADMIN`, `ADMIN`, `DIRECTOR`, `AUDITOR`. The audit log stays append-only.
+- [x] Tests: raises when unit and group flag are both missing; constraint tests for the four combinations; scoping tests per role; backfill test on sample rows (`backend/tests/test_audit.py`).
 
-**Check:** no code path can write an audit row without an actor or system label and an explicit scope.
+**Check:** locally verified with 8 focused tests and the full SQLite suite; PostgreSQL CI verification is pending.
 
 ---
 

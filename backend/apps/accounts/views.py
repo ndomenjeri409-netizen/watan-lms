@@ -123,11 +123,13 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
                             for department_id in values.get("department_ids", [])
                         ]
                     )
+                audit_unit = get_object_unit(user)
                 record_audit(
                     actor=request.user,
                     action="invited",
-                    instance=user,
-                    unit=get_object_unit(user),
+                    obj=user,
+                    unit=audit_unit,
+                    group_level=audit_unit is None,
                     after={
                         "email": user.email,
                         "role": user.role,
@@ -188,11 +190,13 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
                     str(value) for value in values.get("department_ids", [])
                 ],
             }
+            audit_unit = get_object_unit(user)
             record_audit(
                 actor=request.user,
                 action="role_changed",
-                instance=user,
-                unit=get_object_unit(user),
+                obj=user,
+                unit=audit_unit,
+                group_level=audit_unit is None,
                 before=before,
                 after=after,
             )

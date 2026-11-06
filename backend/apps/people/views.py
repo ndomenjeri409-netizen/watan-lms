@@ -72,7 +72,7 @@ class GuardianViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
             record_audit(
                 actor=self.request.user,
                 action="created",
-                instance=guardian,
+                obj=guardian,
                 unit=get_object_unit(guardian),
                 after=self.get_serializer(guardian).data,
             )
@@ -101,7 +101,7 @@ class GuardianViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
             record_audit(
                 actor=self.request.user,
                 action="updated",
-                instance=guardian,
+                obj=guardian,
                 unit=get_object_unit(guardian),
                 before=before,
                 after=self.get_serializer(guardian).data,
@@ -115,7 +115,7 @@ class GuardianViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
             record_audit(
                 actor=self.request.user,
                 action="archived",
-                instance=instance,
+                obj=instance,
                 unit=get_object_unit(instance),
                 before=before,
                 after=self.get_serializer(instance).data,
