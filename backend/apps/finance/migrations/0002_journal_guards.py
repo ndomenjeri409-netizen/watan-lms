@@ -10,8 +10,9 @@ def install_journal_guards(apps, schema_editor):
         CREATE FUNCTION finance_reject_journal_mutation()
         RETURNS trigger AS $$
         BEGIN
-            RAISE EXCEPTION '% records are append-only', TG_TABLE_NAME
-                USING ERRCODE = '23000';
+            RAISE EXCEPTION USING
+                MESSAGE = TG_TABLE_NAME::text || ' records are append-only',
+                ERRCODE = '23000';
         END;
         $$ LANGUAGE plpgsql;
         """,
@@ -45,9 +46,10 @@ def install_journal_guards(apps, schema_editor):
             WHERE entry_id = target_entry_id;
 
             IF debit_total <= 0 OR debit_total <> credit_total THEN
-                RAISE EXCEPTION 'Journal entry % must have equal, non-zero debits and credits',
-                    target_entry_id
-                    USING ERRCODE = '23000';
+                RAISE EXCEPTION USING
+                    MESSAGE = 'Journal entry ' || target_entry_id::text
+                        || ' must have equal, non-zero debits and credits',
+                    ERRCODE = '23000';
             END IF;
             RETURN NULL;
         END;

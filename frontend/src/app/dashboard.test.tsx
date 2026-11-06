@@ -1,10 +1,14 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import type { components } from '../api/schema'
 import { DashboardView } from './Dashboard'
 import { dashboardFor } from './dashboard-config'
 import type { Role } from '../features/me/roles'
+
+vi.mock('../lib/firebase', () => ({
+  auth: { currentUser: null },
+}))
 
 const profile: components['schemas']['Me'] = {
   id: 'preview',
