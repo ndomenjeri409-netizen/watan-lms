@@ -6412,9 +6412,8 @@ components:
           maxLength: 40
         capacity:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         is_active:
           type: boolean
       required:
@@ -6448,9 +6447,8 @@ components:
           maxLength: 40
         capacity:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         is_active:
           type: boolean
       required:
@@ -6606,9 +6604,8 @@ components:
           type: string
         position:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         is_active:
           type: boolean
       required:
@@ -6630,9 +6627,8 @@ components:
           type: string
         position:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         is_active:
           type: boolean
       required:
@@ -6854,9 +6850,8 @@ components:
           type: string
         position:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         is_published:
           type: boolean
       required:
@@ -6875,9 +6870,8 @@ components:
           minLength: 1
         position:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         is_published:
           type: boolean
       required:
@@ -7497,14 +7491,12 @@ components:
             maxLength: 0
         position:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         duration_minutes:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         is_active:
           type: boolean
       required:
@@ -7533,14 +7525,12 @@ components:
             maxLength: 0
         position:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         duration_minutes:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         is_active:
           type: boolean
       required:
@@ -8625,9 +8615,8 @@ components:
           maxLength: 40
         capacity:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         is_active:
           type: boolean
     PatchedContentPageRequest:
@@ -8664,9 +8653,8 @@ components:
           type: string
         position:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         is_active:
           type: boolean
     PatchedCourseRequest:
@@ -8737,9 +8725,8 @@ components:
           minLength: 1
         position:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         is_published:
           type: boolean
     PatchedFeeStructureRequest:
@@ -8835,14 +8822,12 @@ components:
             maxLength: 0
         position:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         duration_minutes:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         is_active:
           type: boolean
     PatchedMaterialRequest:
@@ -8912,9 +8897,8 @@ components:
           maxLength: 32
         capacity:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         is_active:
           type: boolean
     PatchedTimetableSlotRequest:
@@ -8931,7 +8915,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/WeekdayEnum'
           minimum: 0
-          maximum: 9223372036854775807
+          maximum: 32767
         starts_at:
           type: string
           format: time
@@ -8961,9 +8945,8 @@ components:
           type: string
         position:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         is_active:
           type: boolean
     Payment:
@@ -9333,9 +9316,8 @@ components:
           maxLength: 32
         capacity:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         is_active:
           type: boolean
       required:
@@ -9359,9 +9341,8 @@ components:
           maxLength: 32
         capacity:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         is_active:
           type: boolean
       required:
@@ -9716,7 +9697,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/WeekdayEnum'
           minimum: 0
-          maximum: 9223372036854775807
+          maximum: 32767
         starts_at:
           type: string
           format: time
@@ -9753,7 +9734,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/WeekdayEnum'
           minimum: 0
-          maximum: 9223372036854775807
+          maximum: 32767
         starts_at:
           type: string
           format: time
@@ -9813,9 +9794,8 @@ components:
           type: string
         position:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         is_active:
           type: boolean
       required:
@@ -9837,9 +9817,8 @@ components:
           type: string
         position:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
         is_active:
           type: boolean
       required:
