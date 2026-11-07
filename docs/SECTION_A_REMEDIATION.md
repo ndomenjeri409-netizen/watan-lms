@@ -114,7 +114,7 @@ Evidence: `backend/tests/test_guards.py`; all four guard tests pass. Unit-less m
 - [x] Scoping: `AuditLog.objects.for_user(user)`: unit managers see rows for their units; `GROUP` rows and all rows only for `SUPER_ADMIN`, `ADMIN`, `DIRECTOR`, `AUDITOR`. The audit log stays append-only.
 - [x] Tests: raises when unit and group flag are both missing; constraint tests for the four combinations; scoping tests per role; backfill test on sample rows (`backend/tests/test_audit.py`).
 
-**Check:** locally verified with 8 focused tests and the full SQLite suite; PostgreSQL CI verification is pending.
+**Check:** locally verified with 8 focused tests and the full SQLite suite. GitHub Actions run [#11](https://github.com/ndomenjeri409-netizen/watan-lms/actions/runs/42367403906) passed 101 PostgreSQL tests with no skips; all backend and frontend CI checks passed.
 
 ---
 
@@ -179,7 +179,7 @@ Largest step; do it last so it exercises everything fixed above. Build it **gene
 ---
 
 ## Definition of done for Section A
-- [ ] CI shows the Postgres trigger tests passing; skips fail CI.
+- [x] CI shows the Postgres trigger tests passing; skips fail CI.
 - [ ] Guard tests for scoped viewsets and unit-bearing models pass.
 - [ ] Audit rows always have an actor or system label, and an explicit scope.
 - [ ] No data row without a unit; parent/child unit consistency enforced.

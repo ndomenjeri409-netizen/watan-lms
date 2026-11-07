@@ -32,7 +32,7 @@ Statuses: `DONE` · `IN PROGRESS` · `PENDING` · `BLOCKED (reason)`
 |---|---|---|---|
 | A1 CI proves Postgres tests (`REQUIRE_POSTGRES_TESTS=1`, `@postgres_only`) | DONE | none | CI run [#7](https://github.com/ndomenjeri409-netizen/watan-lms/actions/runs/42228775785): PostgreSQL 16, `REQUIRE_POSTGRES_TESTS=1`, 93 passed, no skips. |
 | A2 Guard tests (viewsets scoped, models have unit) | DONE | none | `backend/tests/test_guards.py` guards concrete ModelViewSets, actions, non-model APIViews, and current unit-less models with explicit reasons. Four guard tests pass; direct-unit follow-ups remain listed for A4. |
-| A3 Audit log: unit/scope and actor/system label | IN PROGRESS | D3 | Implementation commit `fdaffe9`; constraints, conservative legacy backfill, role-scoped reads, append-only queryset guards, and explicit user/system attribution at all 53 call sites. PostgreSQL CI is pending. |
+| A3 Audit log: unit/scope and actor/system label | DONE | D3 | Implementation commit `fdaffe9`; explicit SYSTEM actor labels adopted per D3. GitHub Actions run [#11](https://github.com/ndomenjeri409-netizen/watan-lms/actions/runs/42367403906) passed 101 PostgreSQL tests with no skips; backend and frontend checks passed. |
 | A4 Unit ownership on Department, Program, Course, Enrollment, TimetableSlot | PENDING | D2, `docs/department_unit_map.csv` | |
 | A5 Per-unit registration numbers | PENDING | D1 | Independent of finance work |
 | A6 Authorization matrix coverage | PENDING | A2 to A4 | |
@@ -42,7 +42,7 @@ Statuses: `DONE` · `IN PROGRESS` · `PENDING` · `BLOCKED (reason)`
 |---|---|---|---|
 | D1 | Registration number format (proposal `WTI/ICT/2026/0001`); send sample current numbers | Owner | PENDING |
 | D2 | Direct `unit` FK on Program, Course, Enrollment (recommended) vs derived | Owner | PENDING |
-| D3 | Audit entries from jobs use a named SYSTEM actor (recommended) | Owner | PENDING |
+| D3 | Audit entries from jobs use a named SYSTEM actor (recommended) | Owner | DONE - A3 uses explicit SYSTEM actor kind and non-empty job labels. |
 
 ## Inputs pending (see `REMAINING_SPRINTS_REVISED.md`, "Inputs you need to provide")
 - Approved chart of accounts (accountant)
@@ -60,9 +60,9 @@ Statuses: `DONE` · `IN PROGRESS` · `PENDING` · `BLOCKED (reason)`
 - Never invent finance reference data (accounts, thresholds, categories, payees, amounts).
 
 ## Latest verification
-- Date: 2026-11-06
+- Date: 2026-11-07
 - A2 implementation commit: `6cde587`; `pre-a2` points to the preceding green commit.
-- A3 commit `fdaffe9`: `97 passed, 4 PostgreSQL-only skipped, 47 subtests passed` on isolated in-memory SQLite; focused audit tests: `8 passed, 9 subtests passed`. PostgreSQL CI is pending.
+- A3 commit `fdaffe9`: `97 passed, 4 PostgreSQL-only skipped, 47 subtests passed` on isolated in-memory SQLite; focused audit tests: `8 passed, 9 subtests passed`. GitHub Actions run [#11](https://github.com/ndomenjeri409-netizen/watan-lms/actions/runs/42367403906) passed 101 PostgreSQL tests with no skips; Ruff, migration check, OpenAPI, frontend lint, API type generation, typecheck, tests, and build passed.
 - `backend: pytest -q -rs` with in-memory SQLite: PASS — 89 passed, 4 PostgreSQL-only skipped, 38 subtests passed.
 - `backend: ruff check .` and `ruff format --check .`: PASS — 143 files already formatted; migrations excluded.
 - `backend: makemigrations --check --dry-run`: PASS — no changes detected.
