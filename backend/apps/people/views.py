@@ -212,7 +212,7 @@ class StudentViewSet(
     @extend_schema(request=StudentTransferSerializer, responses=StudentSerializer)
     @action(detail=True, methods=("post",))
     def transfer(self, request, pk=None):
-        student = self.get_queryset().filter(pk=pk).first()
+        student = Student.objects.select_related("home_unit").filter(pk=pk).first()
         if student is None:
             from rest_framework.exceptions import NotFound
 

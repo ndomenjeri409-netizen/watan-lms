@@ -97,6 +97,9 @@ ACTION_ALLOWLIST = {
     "apps.people.views.StudentViewSet.import_students": (
         "import_student_csv validates each row against the caller's authorized unit."
     ),
+    "apps.people.views.StudentViewSet.transfer": (
+        "Object permission and transfer_student validate source and target unit scope."
+    ),
     "apps.files.views.FileStorageViewSet.download_url": (
         "_get_stored_file and _may_download enforce owner and resource-specific access."
     ),
