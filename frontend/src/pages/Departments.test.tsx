@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -90,7 +90,9 @@ describe('Departments page', () => {
     fireEvent.change(screen.getByLabelText('Business unit'), { target: { value: 'unit-a' } })
     fireEvent.click(screen.getByRole('button', { name: 'Add department' }))
 
-    expect(await screen.findByText('A department with this code already exists.')).toBeInTheDocument()
+    expect(await within(screen.getByRole('dialog', { name: 'Add department' })).findByRole('alert')).toHaveTextContent(
+      'A department with this code already exists.',
+    )
     expect(screen.getByLabelText('Code')).toHaveAttribute('aria-invalid', 'true')
   })
 

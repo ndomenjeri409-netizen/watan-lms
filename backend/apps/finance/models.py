@@ -8,6 +8,8 @@ from apps.accounts.roles import Role
 from common.models import BaseModel
 from common.scoping import UnitScopedQuerySet
 
+from .permissions import finance_unit_ids
+
 
 class Account(BaseModel):
     class Type(models.TextChoices):
@@ -194,7 +196,7 @@ class InvoiceQuerySet(UnitScopedQuerySet):
             return self
         if user.has_role(Role.STUDENT):
             return self.filter(student__user=user)
-        unit_ids = user.unit_ids()
+        unit_ids = finance_unit_ids(user)
         return self.filter(unit_id__in=unit_ids) if unit_ids else self.none()
 
 
@@ -271,7 +273,7 @@ class JournalEntryQuerySet(models.QuerySet):
             return self.none()
         if user.has_global_read() or user.has_group_bursar_assignment():
             return self
-        unit_ids = user.unit_ids()
+        unit_ids = finance_unit_ids(user)
         if not unit_ids:
             return self.none()
         return self.filter(lines__unit_id__in=unit_ids).distinct()

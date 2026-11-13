@@ -355,7 +355,9 @@ export function Departments() {
               required
             />
           </FormField>
-          {formError && <p className="text-sm text-danger-fg" role="alert">{formError}</p>}
+          {formError && !Object.values(fieldErrors).includes(formError) && (
+            <p className="text-sm text-danger-fg" role="alert">{formError}</p>
+          )}
           <div className="flex justify-end gap-2 border-t border-line pt-4">
             <Button type="button" variant="secondary" size="md" onClick={() => setDrawerOpen(false)}>Cancel</Button>
             <Button type="submit" size="md" loading={saveDepartment.isPending}>

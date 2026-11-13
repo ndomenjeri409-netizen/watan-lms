@@ -90,10 +90,32 @@ describe('AppShell', () => {
     expect(screen.getByRole('heading', { name: 'Overview' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'People' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Academics' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Students' })).toHaveAttribute('aria-current', 'page')
+    const activeLink = screen.getByRole('link', { name: 'Students' })
+    expect(activeLink).toHaveAttribute('aria-current', 'page')
+    expect(activeLink).toHaveClass(
+      'flex',
+      'items-center',
+      'gap-3',
+      'rounded-md',
+      'px-3',
+      'border-l-[3px]',
+      'aria-[current=page]:bg-sidebar-active',
+      'aria-[current=page]:text-white',
+      'aria-[current=page]:border-primary',
+    )
+    expect(screen.getByRole('link', { name: 'Dashboard' })).toHaveClass('hover:bg-white/6')
     expect(screen.getAllByText('Admin').length).toBeGreaterThan(0)
     expect(screen.queryByRole('link', { name: 'Audit log' })).not.toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Skip to content' })).toHaveAttribute('href', '#main')
+    const skipLink = screen.getByRole('link', { name: 'Skip to content' })
+    expect(skipLink).toHaveAttribute('href', '#main')
+    expect(skipLink).toHaveClass(
+      'sr-only',
+      'focus-visible:not-sr-only',
+      'focus-visible:bg-primary',
+      'focus-visible:text-primary-fg',
+      'focus-visible:ring-2',
+      'focus-visible:ring-ring',
+    )
   })
 
   it('opens the mobile navigation drawer and closes it with Escape', async () => {
@@ -130,8 +152,23 @@ describe('AppShell', () => {
     localStorage.removeItem('watan-lms-active-unit')
     renderShell()
 
-    const switcher = await screen.findByRole('combobox', { name: 'Active business unit' })
+    const switcher = await screen.findByRole('combobox', { name: 'Business unit' })
+    expect(switcher).toHaveClass(
+      'absolute',
+      'inset-0',
+      'opacity-0',
+      'sm:h-10',
+      'sm:appearance-none',
+      'sm:rounded-md',
+      'sm:bg-surface-2',
+      'sm:border-line',
+      'sm:text-fg',
+      'sm:px-3',
+    )
+    expect(switcher.parentElement?.querySelector('svg')).toHaveAttribute('aria-hidden', 'true')
     expect(within(switcher).getByRole('option', { name: 'All units' })).toBeInTheDocument()
+    expect(within(switcher).getByRole('option', { name: 'Travel' })).toBeInTheDocument()
+    expect(within(switcher).getByRole('option', { name: 'Institute' })).toBeInTheDocument()
     fireEvent.change(switcher, { target: { value: 'unit-a' } })
 
     expect(localStorage.getItem('watan-lms-active-unit')).toBe('unit-a')
@@ -146,7 +183,7 @@ describe('AppShell', () => {
     })
 
     expect(await screen.findByText('Travel')).toBeInTheDocument()
-    expect(screen.queryByRole('combobox', { name: 'Active business unit' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('combobox', { name: 'Business unit' })).not.toBeInTheDocument()
   })
 
   it('lets multi-unit managers switch only between their assignments', async () => {
@@ -160,7 +197,7 @@ describe('AppShell', () => {
       is_global_read: false,
     })
 
-    const switcher = await screen.findByRole('combobox', { name: 'Active business unit' })
+    const switcher = await screen.findByRole('combobox', { name: 'Business unit' })
     expect(within(switcher).getAllByRole('option')).toHaveLength(2)
     expect(within(switcher).queryByRole('option', { name: 'All units' })).not.toBeInTheDocument()
   })
@@ -175,7 +212,7 @@ describe('AppShell', () => {
         is_global_read: true,
       })
 
-      const switcher = await screen.findByRole('combobox', { name: 'Active business unit' })
+      const switcher = await screen.findByRole('combobox', { name: 'Business unit' })
       expect(within(switcher).getByRole('option', { name: 'All units' })).toBeInTheDocument()
     },
   )

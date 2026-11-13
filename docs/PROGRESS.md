@@ -1,71 +1,134 @@
-# Project Progress Tracker (copy to `docs/PROGRESS.md`)
+# Watan LMS v2 — Progress Tracker
 
-**Rule for Copilot:** at the end of every step, update this file: change the status, add the date, the commit hash and the test counts. Never tick an item without evidence (a passing test, a query result, or a file path). If a step is interrupted, write what was done and what is left.
+Rebuilt 2026-11-08 from `docs/MASTER_GUIDE.md`, `docs/archive/SECTION_A_REMEDIATION.md`, and repository evidence after the prior file was found to contain only NUL bytes. Historical test results below are reported by those source documents; they were not rerun as part of this reconstruction.
 
-Statuses: `DONE` · `IN PROGRESS` · `PENDING` · `BLOCKED (reason)`
+**Current revision:** `729bd8d`; the working tree contains uncommitted changes. This tracker rebuild does not attribute those changes to a completed step.
+**Statuses:** `DONE` · `IN PROGRESS` · `PENDING` · `BLOCKED` · `PARTIAL`
 
 ## Sprints
-| Sprint | Status | Notes |
-|---|---|---|
-| 0 Foundation | DONE | |
-| 0.75 Multi-unit foundation | DONE | |
-| 1 to 5 | DONE | Reported complete |
-| 6a Finance core | IN PROGRESS | B.2 is complete; accountant approval and B.3 to B.6 remain |
-| 6b Cash custody and institutional finance | PENDING | **Starts only after Section A is DONE** |
-| 6c Reconciliation and month-end close | PENDING | Needs sample M-Pesa statement |
-| 7 Comms, dashboards, public site | PENDING | |
-| 8 Assistant and appointments | PENDING | |
-| 9 Hardening, parallel run, go-live | PENDING | |
 
-## 6a closure (`REMAINING_SPRINTS_REVISED.md` section B)
+| Sprint | Status | Evidence / notes |
+|---|---|---|
+| 0 Foundation | DONE | Status recorded in `docs/MASTER_GUIDE.md` §13.1; repository structure and configuration summarized in §3. |
+| 0.75 Multi-unit foundation | DONE | Status recorded in `docs/MASTER_GUIDE.md` §13.1; business-unit model and seed command summarized in §4. |
+| 1 to 5 | DONE | Status recorded in `docs/MASTER_GUIDE.md` §13.1; implemented scope and remaining gaps summarized in §4. |
+| Section A, A1–A5 | DONE | Evidence by step is listed below and in `docs/archive/SECTION_A_REMEDIATION.md`. |
+| Section A, A6 authorization matrix | IN PROGRESS | `backend/tests/authz_matrix.yaml` covers 220 URLConf method/path operations and tests Director/Auditor write denials; 16 actor profiles now have status and scoped-row assertions for units, departments, courses, students, users, and invoices. Enrollment, grades, assignments, other finance operations, and remaining routes still need coverage. |
+| Sprint 5.5, Step 1 teacher assignment | DONE | `CourseAssignment` model, API, migration, and tests: `backend/apps/academics/models.py`, `backend/apps/academics/views.py`, `backend/apps/academics/migrations/0004_courseassignment.py`, `backend/tests/test_academics.py`; status dated 2026-11-07 in `docs/MASTER_GUIDE.md` §13.1. |
+| Sprint 5.5, Step 5a student accounts | DONE | Approval creates an unlinked student without Firebase; public applications permit no email; in-scope staff can invite and audit account creation. `account_status` tracks NONE/INVITED/ACTIVE; enrollment flow tests passed. |
+| Sprint 5.5, Step 2 course lifecycle and editor | DONE | `CourseEditor` edits existing courses and exposes publish, unpublish, duplicate, and archive. Mutations require version tokens and are unit-audited; department moves require an administrator or same-unit manager and are blocked by classes, enrollments, course access, or assessments with submissions/grades. `tests.test_academics` passed on SQLite. |
+| Sprint 5.5, Step 3 curriculum tree | DONE | Modules, topics, lessons, and materials can be edited, archived, and shown/hidden; module/topic/lesson reordering is atomic, persistent, and audited. File materials use the files app upload flow, and the editor provides a student-view preview. HTTPS video links are restricted to `youtube.com`, `youtu.be`, `vimeo.com`, and their subdomains. |
+| Sprint 5.5, Step 4 D10 enrollment-to-class link | DONE | Active enrollments require a matching active class; activation enforces capacity, and application approval defers course access until activation. `tests.test_enrollment` passed on isolated in-memory SQLite (80 passed, 2 PostgreSQL-only skipped); Step 4 remains in progress for class lifecycle, assessment, attendance, and timetable work. |
+| Sprint 5.5, Step 4 class lifecycle and creation | PARTIAL | Added PLANNED/OPEN/RUNNING/COMPLETED/CANCELLED transitions, published-course/active typed period/unit/cohort/capacity validation, active-teacher requirement for RUNNING, attendance/timetable cleanup on cancellation, and protections for active enrollments. AcademicPeriod TERM/INTAKE and optional unit are implemented with legacy periods preserved untyped and scoped reads. `ClassGroup.teacher` is now removed after idempotent legacy-to-LEAD reconciliation. HOD approval of all latest EXAM grades for active enrollments now completes and locks the class. Assessment templates are course-owned; D13 enrollment-keyed grade revisions and attempt grants are implemented. Roster attendance marking, QR check-in authorization, and the end-to-end course-to-grade journey are complete; D13 PostgreSQL CI verification remains. |
+| Sprint 5.5, Step 4 ClassTeacher lead canonicalization | DONE | `scheduling.0005_remove_classgroup_teacher` reconciles legacy teacher values to active LEAD assignments before dropping the field; conflicting assignments are retained as ASSISTANT. Class creation accepts `lead_teacher`; the API returns `lead_teacher_id`/`lead_teacher_name`; ClassTeacher POST supports audited LEAD replacement. Access/querysets and Scheduling/Assessment UI use assignments. Migration backfill idempotency and lead replacement regression tests pass. Migration is generated only and has not been applied to a live database. |
+| Sprint 5.5, Step 5b D6/D7/D9 student registration | DONE | D9 confirmed 2026-11-13 and recorded in `MASTER_GUIDE.md` §1.2/§6.3 and `DEVIATIONS.md` as RESOLVED. Added required `home_unit` with prefix/department backfill and failure reporting; scoped student access and restricted identity/guardian data; audited transfer/status; registration, duplicate-warning/exact-lookup, cross-unit enrollment-token, CSV import, and profile-photo endpoints; front-desk registration/import UI and generated API types. Ten people authorization/registration/import tests, two backfill success/failure migration tests, and one finance-scoping regression passed on isolated SQLite. The extended no-account journey also passed through registration, finance, attendance, grades, statement data, receipt PDF, and transcript PDF. No live migration was run. Student statement PDF remains tracked in finance B.5. |
+| Sprint 5.5, Step 6 tests and docs | IN PROGRESS | Added role-matrix coverage for Step 5b student write routes and profile-photo uploads, plus scoped positive API tests for registration, import, duplicate enrollment, transfer, and status changes. Fixed restricted student fields/profile-photo downloads to require unit scope for Unit Managers/Bursars and permit global Admin/Director/Auditor access only to linked student photos. Repaired the graded-course-move test fixture to include its required assessment, enrollment, and source. The focused people/file/academics test set passed on isolated SQLite (46 passed, 1 PostgreSQL-only skipped); PostgreSQL CI verification remains. |
+| Sprint 5.5, remaining steps | IN PROGRESS | Step 4 roster attendance marking, QR roster authorization, and the end-to-end course-to-grade journey are complete; D13 PostgreSQL CI verification remains. Step 5b is complete. Step 6's PostgreSQL-only concurrency test still needs CI verification; A6 matrix work has started locally and remains incomplete. |
+| Sprint 6a Finance core | IN PROGRESS | B.2 done; B.1 and B.3–B.6 remain. |
+| Sprint 6b Cash custody and institutional finance | PENDING | Starts after authorization work; owner-provided finance inputs are required. |
+| Sprint 6c Reconciliation and month-end close | PENDING | Requires a redacted M-Pesa statement sample. |
+| Sprint 7 Comms, dashboards, public site | PENDING | See `docs/MASTER_GUIDE.md` §13.2. |
+| Sprint 8 Assistant and appointments | PENDING | See `docs/MASTER_GUIDE.md` §13.2. |
+| Sprint 9 Hardening, parallel run, go-live | PENDING | See `docs/MASTER_GUIDE.md` §13.2. |
+
+## Section A
+
+| Step | Status | Evidence |
+|---|---|---|
+| A1 Postgres-only tests fail rather than skip in CI | DONE | `docs/archive/SECTION_A_REMEDIATION.md` reports CI run #7: PostgreSQL 16, 93 passed, no skips; enforcement is in `.github/workflows/ci.yml` and backend test helpers. |
+| A2 Scoped viewset and unit-ownership guards | DONE | `backend/tests/test_guards.py`; `docs/archive/SECTION_A_REMEDIATION.md` reports four guard tests passing. |
+| A3 Audit trail scope and actor integrity | DONE | Audit implementation/tests in `backend/common/audit.py` and `backend/tests/test_audit.py`; CI run #11 reported 101 PostgreSQL tests passing with no skips. |
+| A4 Direct unit ownership | DONE | Migrations include `backend/apps/org/migrations/0006_a4_unit_ownership.py`, `backend/apps/org/migrations/0007_unit_consistency_guards.py`, and app-specific ownership migrations; evidence and row counts are recorded in `docs/archive/SECTION_A_REMEDIATION.md`. |
+| A5 Per-unit registration numbers | DONE | Migrations `backend/apps/people/migrations/0003_per_unit_registration_numbers.py` through `0005_registration_sequence_constraints.py`; tests and isolated-branch verification are recorded in `docs/archive/SECTION_A_REMEDIATION.md`. |
+| A6 Authorization matrix | IN PROGRESS | `backend/tests/authz_matrix.yaml` inventories 220 API operations from the URLConf; `tests.test_authz_matrix` verifies inventory coverage and DIRECTOR/AUDITOR 403 responses for all writes. Six scoped-read endpoints now assert statuses/rows across 16 actor profiles. The finance probe also fixed unit scoping to use finance-role assignments, preventing unrelated role assignments from widening invoice visibility. Enrollment, grades, assignments, further finance operations, and other routes remain. |
+
+## Sprint 6a closure
+
 | Item | Status | Evidence / notes |
 |---|---|---|
-| B.1 Chart of accounts approved and seeded | BLOCKED (accountant approval) | Draft: `chart_of_accounts_DRAFT.csv` + notes |
-| B.2 Journal engine (balanced entries, unit on lines, idempotency, unique M-Pesa code, maker-checker, balance from journal) | DONE | All five checks are implemented. PostgreSQL CI run [#6](https://github.com/ndomenjeri409-netizen/watan-lms/actions/runs/42227337787) passed 89 tests with `REQUIRE_POSTGRES_TESTS=1` and no skips. Evidence includes `test_payment_is_idempotent_and_mpesa_code_is_globally_unique`, `test_invoice_is_idempotent_and_rejects_key_reuse_for_different_request`, `test_adjustment_and_refund_require_separate_approval`, `test_void_invoice_uses_reversal_and_disallows_bursar_self_approval`, and `test_journal_student_balance_matches_invoices_across_units_and_posting_orders`. M-Pesa codes are normalized in model, admin, and service writes; migration `0007_payment_finance_mpesa_code_normalized.py` adds the normalized-code check and partial unique constraint. The configured Neon `neondb` had no `finance_payment` table at precheck time; no data was altered. |
-| B.3 DB guarantees proven in CI | PENDING | Depends on A1 |
-| B.4 Receipts (generate at posting, per-unit numbers, VOID on reversal, hash) | PARTIAL | Currently saved on first download |
-| B.5 Fee structures per unit, instalments, statements | PENDING | |
-| B.6 v1 finance import check | PENDING | |
+| B.1 Approved chart and seed loader | BLOCKED | Accountant approval and approved custodians are required; do not load or invent finance reference data. See `docs/MASTER_GUIDE.md` §§7.3, 7.9. |
+| B.2 Journal engine | DONE | Tests and PostgreSQL CI evidence are recorded in the historical tracker and `docs/MASTER_GUIDE.md` §4.1. |
+| B.3 Database guarantees and closed-period test | PENDING | Trigger verification and the closed-period test remain. |
+| B.4 Receipt generation and reversal integrity | PARTIAL | The guide reports receipt generation is currently on first download; posting-time generation, per-unit numbering, VOID reversal, and content hash remain. |
+| B.5 Fee structures and statements | PENDING | Instalments, due dates, enrollment-linked invoices, and statement PDF remain. |
+| B.6 Finance import mapping | PENDING | Import mapping and balance reconciliation remain. |
 
-## Section A remediation (`SECTION_A_REMEDIATION.md`)
-| Step | Status | Depends on | Notes |
-|---|---|---|---|
-| A1 CI proves Postgres tests (`REQUIRE_POSTGRES_TESTS=1`, `@postgres_only`) | DONE | none | CI run [#7](https://github.com/ndomenjeri409-netizen/watan-lms/actions/runs/42228775785): PostgreSQL 16, `REQUIRE_POSTGRES_TESTS=1`, 93 passed, no skips. |
-| A2 Guard tests (viewsets scoped, models have unit) | DONE | none | `backend/tests/test_guards.py` guards concrete ModelViewSets, actions, non-model APIViews, and current unit-less models with explicit reasons. Four guard tests pass; direct-unit follow-ups remain listed for A4. |
-| A3 Audit log: unit/scope and actor/system label | DONE | D3 | Implementation commit `fdaffe9`; explicit SYSTEM actor labels adopted per D3. GitHub Actions run [#11](https://github.com/ndomenjeri409-netizen/watan-lms/actions/runs/42367403906) passed 101 PostgreSQL tests with no skips; backend and frontend checks passed. |
-| A4 Unit ownership on Department, Program, Course, Enrollment, TimetableSlot | PENDING | D2, `docs/department_unit_map.csv` | |
-| A5 Per-unit registration numbers | PENDING | D1 | Independent of finance work |
-| A6 Authorization matrix coverage | PENDING | A2 to A4 | |
+## R0 Housekeeping — current step
 
-## Decisions pending
-| ID | Decision | Owner | Status |
-|---|---|---|---|
-| D1 | Registration number format (proposal `WTI/ICT/2026/0001`); send sample current numbers | Owner | PENDING |
-| D2 | Direct `unit` FK on Program, Course, Enrollment (recommended) vs derived | Owner | PENDING |
-| D3 | Audit entries from jobs use a named SYSTEM actor (recommended) | Owner | DONE - A3 uses explicit SYSTEM actor kind and non-empty job labels. |
+| Item | Status | Evidence / notes |
+|---|---|---|
+| Rebuild this tracker | DONE | Reconstructed 2026-11-08 from the guide and remediation record; prior file was verified as 14,150 NUL bytes. |
+| Add docs integrity check and wire it into pre-commit/CI | DONE | `scripts/check_docs.py` checks every top-level `docs/*.md` and `docs/*.csv` for empty/NUL files and verifies required `PROGRESS.md` headings. Wired through `.pre-commit-config.yaml` and `.github/workflows/ci.yml`; the check passed on 16 files, and valid/empty/NUL/missing-heading cases were exercised. |
+| Move superseded documents into `docs/archive/` with the required banner | DONE | Eight superseded planning documents were moved with the required banner; README and tracker links now point to the master guide/archive. |
+| Confirm CI instructions and refresh README | DONE | `.github/workflows/ci.yml` and `.github/copilot-instructions.md` exist; instructions now point to the master guide. README setup, current unit ownership, storage-setting names, checks, and roadmap references were refreshed. |
+| Storage smoke test and D11 provider-agnostic settings | DONE | D11 approved; `STORAGE_*` settings with `B2_*`/`R2_*` aliases and Backblaze endpoint-region derivation are implemented. `backend/scripts/r2_smoke.py` passed presigned PUT, HEAD, GET, and DELETE; browser PUT passed with HTTP 200; temporary object cleanup passed. The approved B2 Native CORS rule was added while preserving existing rules. |
+| Create `docs/DEVIATIONS.md` | DONE | Created the empty deviations log with its required header. |
+| Add tracked-file NUL guard and wire it into pre-commit/CI | DONE | `scripts/check_no_nul.py` scans `git ls-files`, skips the specified binary extensions, and fails on text-file NUL bytes; the check passed on 297 tracked text files with no findings. |
 
-## Inputs pending (see `REMAINING_SPRINTS_REVISED.md`, "Inputs you need to provide")
-- Approved chart of accounts (accountant)
-- Fee structures per unit
-- Cash account custodians and opening balances
-- Drawer imprest amounts, petty cash thresholds and categories
-- Approval thresholds and daily limits
-- Teacher and worker payee list
-- Redacted M-Pesa agent statement; answers on public use, commission and cash-back mechanics
+## Authorization consolidation
 
-## Working agreements
-- Work sequentially: do not run Section A and Section B work on parallel branches that both add migrations to the same app.
-- Tag a known-good commit before each step (`git tag pre-<step>`), and commit each step separately.
-- Every new model has a `unit` (or an exemption with a reason), every new endpoint has role x unit tests, every Postgres-only test uses `@postgres_only`.
-- Never invent finance reference data (accounts, thresholds, categories, payees, amounts).
+| Item | Status | Evidence |
+|---|---|---|
+| AC1 role and scope audit | DONE | Complete permission-class, queryset, and direct-view inventory with omitted roles and multi-role observations recorded in `docs/AUTHORIZATION_AUDIT.md`. Confirmed the documented G1 omissions; the invalid UNIT_MANAGER room queryset path was fixed in AC3 scheduling. Authorization matrix work remains tracked under Section A6. |
+| AC2 role-per-unit helper API | DONE | Added `has_role_for_unit`, `unit_ids_for`, `has_role_global`, and `department_ids_for_hod` to `apps/accounts/models.py`; focused assignment, inactive-role, global BURSAR, and HOD unit-scope cases are covered in `tests/test_role_assignments.py` (7 passed, 4 subtests). Ruff and Django system checks passed. |
+| AC3 people app | DONE | Replaced primary-role checks with role membership, per-unit, and HOD-scope helpers; added unit-scoped Student/StaffProfile/Guardian querysets, class-assigned teacher student visibility, and read-only DIRECTOR/AUDITOR permissions. The missing `Course.version` migration is now added as `0005_course_version`; migration-enabled `tests/test_people_authorization.py` passes (4 tests). See `docs/DEVIATIONS.md` for the unrelated stale-version response assertion mismatch. |
+| AC3 enrollment app | DONE | Migrated Application, Enrollment, and CourseAccess querysets and permissions to active role-assignment helpers; scopes for HOD, UNIT_MANAGER, teacher, and student are combined across roles. Directors/auditors are read-only. `EnrollmentAuthorizationTests` and `EnrollmentFlowTests` passed (12 tests) on an isolated PostgreSQL test database. |
+| AC3 scheduling app | DONE | Migrated Room, ClassGroup, ClassTeacher, and TimetableSlot scoping; fixed the invalid room/unit relationship; applied active role-assignment checks in permissions, views, and serializers. Multi-role, HOD, student, manager write-scope, and director/auditor cases are covered. Scheduling authorization and existing scheduling/attendance flow tests passed (13 tests) on an isolated PostgreSQL test database. |
+| AC3 attendance app | DONE | Migrated AttendanceSession and AttendanceRecord querysets and permissions to active role assignments; added scoped UNIT_MANAGER open/QR/close actions, HOD department scope, student self/open-course visibility, and read-only global readers. The attendance authorization and scheduling/attendance flow subset passed (13 tests) without migrations. A final full-file rerun after moving scheduling assertions into their own test class was blocked during isolated PostgreSQL setup when the server closed its connection; no tests ran in that attempt. |
+| AC3 academics app | DONE | Migrated course, assignment, and curriculum querysets and permissions to active role-assignment helpers; unioned HOD department, manager unit, and teacher-assignment scopes; DIRECTOR/AUDITOR remain read-only. Teacher-in-WTI/manager-in-WTA, HOD scope, and read-only cases are covered. Six focused academics authorization/regression tests passed on isolated in-memory SQLite. The full file had one known failure: the pre-existing stale-version test expects the field at the response top level; see `docs/DEVIATIONS.md`. |
+| AC3 assessment app | DONE | Assessment, submission, and grade querysets now union active HOD department, UNIT_MANAGER unit, teacher-assignment/class, student-self, and global read scopes. Assessment management includes scoped unit managers; teacher-only grading still requires an active teacher assignment, including for multi-role users. DIRECTOR/AUDITOR remain read-only, including gradebook and transcripts. `tests.test_assessment` passed (10 tests) on isolated in-memory SQLite; Ruff and migration drift checks passed. |
+| AC3 files app | DONE | Upload role checks now use active role assignments; UNIT_MANAGER may upload course materials and covers. Downloads of linked course/assessment files use global read assignments or the caller's scoped course/class access; public course files remain public. Director/auditor access is read-only. Six file/upload/download authorization and regression tests passed on isolated in-memory SQLite; Ruff and `git diff --check` passed. |
+| AC3 CMS app | DONE | Draft visibility now recognizes active global read assignments; public and unit-scoped users still see only published content. Mutations require an active global SUPER_ADMIN/ADMIN assignment; DIRECTOR/AUDITOR can read drafts but cannot write. CMS authorization tests and existing public-CMS regression passed (4 tests) on isolated in-memory SQLite; Ruff and migration drift checks passed. |
+| AC3 org app | DONE | Department, program, and campus querysets now union HOD department scopes and UNIT_MANAGER unit scopes without leaking units from other roles; academic periods are readable by unit managers. Org permissions use active assignments, and DIRECTOR/AUDITOR are global read-only. Org authorization and regression tests passed (24 tests, 1 PostgreSQL-only skip) on isolated in-memory SQLite; Ruff and migration drift checks passed. |
 
-## Latest verification
-- Date: 2026-11-07
-- A2 implementation commit: `6cde587`; `pre-a2` points to the preceding green commit.
-- A3 commit `fdaffe9`: `97 passed, 4 PostgreSQL-only skipped, 47 subtests passed` on isolated in-memory SQLite; focused audit tests: `8 passed, 9 subtests passed`. GitHub Actions run [#11](https://github.com/ndomenjeri409-netizen/watan-lms/actions/runs/42367403906) passed 101 PostgreSQL tests with no skips; Ruff, migration check, OpenAPI, frontend lint, API type generation, typecheck, tests, and build passed.
-- `backend: pytest -q -rs` with in-memory SQLite: PASS — 89 passed, 4 PostgreSQL-only skipped, 38 subtests passed.
-- `backend: ruff check .` and `ruff format --check .`: PASS — 143 files already formatted; migrations excluded.
-- `backend: makemigrations --check --dry-run`: PASS — no changes detected.
-- OpenAPI generation/validation: PASS — no drift; frontend API type generation and typecheck pass.
-- A3 checks: Ruff, format, migration drift, OpenAPI validation, and frontend typecheck pass. The local `DATABASE_URL` points to Neon, so test commands were rerun with in-memory SQLite; do not run local tests against that Neon URL.
-- GitHub Actions run [#7](https://github.com/ndomenjeri409-netizen/watan-lms/actions/runs/42228775785): PASS — PostgreSQL 16, `REQUIRE_POSTGRES_TESTS=1`, 93 passed and no skipped tests; frontend lint, generated API type check, typecheck, tests, and build passed.
+| Item | Status | Evidence |
+|---|---|---|
+| AC3 accounts app | DONE | User visibility, management permissions, role assignment validation, and report metrics use active assignment helpers and merged scopes; director/auditor access remains read-only. Targeted reports and authorization tests passed on PostgreSQL (23 tests); Django teardown then found another session on `test_neondb`, which was removed after the run. |
+| AC4 primary-role authorization lint | DONE | `tests/test_authorization_lint.py` rejects primary-role access in permissions, views, and model querysets, allowlisting only the existing display-only response field. |
+
+## Decisions and owner inputs
+
+- D1–D9 are recorded in `docs/MASTER_GUIDE.md` §1.2. D1–D9 are implemented; D12 remains proposed.
+- D9 was confirmed by the owner on 2026-11-13; implementation evidence and remaining Step 5b work are tracked above. D12 remains proposed in `docs/MASTER_GUIDE.md` §1.2. D10 was confirmed by the owner on 2026-11-09 and implemented as the first Step 4 slice. D11 was approved by the owner on 2026-11-08.
+- D13 was confirmed by the owner on 2026-11-11 and recorded in `docs/MASTER_GUIDE.md` §1.2, §6.2 and `docs/DEVIATIONS.md`; implementation is complete, with PostgreSQL CI verification still required.
+- Finance approvals, custodians, limits, payees, statement sample, and fee structures remain outstanding; see `docs/MASTER_GUIDE.md` §14.
+
+## Latest recorded verification
+
+- Date: 2026-11-07. `docs/archive/SECTION_A_REMEDIATION.md` records CI run #11 with 101 PostgreSQL tests passed and no skips; backend and frontend checks are reported passing there.
+- Earlier CI run #7 is recorded as PostgreSQL 16 with 93 passed and no skipped tests.
+- No tests were run for this documentation-only reconstruction. Current HEAD is `729bd8d`; this tracker change is uncommitted.
+- Date: 2026-11-08. `python scripts/check_docs.py` passed on 16 Markdown/CSV files; negative cases for empty files, NUL bytes, and missing headings were verified. `git diff --check` passed. `pre-commit validate-config` could not run because `pre_commit` is not installed; YAML parsing could not run because PyYAML is not installed.
+- Date: 2026-11-08. Archived eight superseded documents with the required banner; README and progress references updated. `python scripts/check_docs.py` passed on 8 top-level Markdown/CSV files; archive banners and paths verified; `git diff --check` passed.
+- Date: 2026-11-08. Confirmed CI and Copilot instruction files exist; updated the instruction file to reference the master guide and refreshed README from verified repository configuration. `python scripts/check_docs.py`, local README-link validation, and `git diff --check` passed.
+- Date: 2026-11-08. D11 approved; `backend/tests/test_storage.py` passed (5 tests), Ruff check and format passed, `B2_*` and `R2_*` compatibility was verified, and `python scripts/check_docs.py` passed. Real B2 presigned PUT/HEAD/GET/DELETE and browser PUT passed; the temporary browser object was deleted.
+- Date: 2026-11-08. AC2 `tests/test_role_assignments.py` passed (7 tests, 4 subtests) on a uniquely named PostgreSQL test database; the isolated database was removed after the run. Ruff and `python manage.py check` passed.
+- Date: 2026-11-08. AC3 people authorization tests passed (4 tests) on a uniquely named PostgreSQL test database with migrations disabled to work around the existing missing `Course.version` migration; the isolated database was removed after the run. Ruff and `python manage.py check` passed.
+- Date: 2026-11-08. Added the missing academics `Course.version` migration; `makemigrations --check --dry-run` reports no drift. Regenerated/validated OpenAPI and TypeScript API types. Migration-enabled people authorization tests passed (4 tests); the stale-version academic test reached its expected 400 but failed its existing top-level-key assertion because the API nests the field error under `fields`. The isolated PostgreSQL test database was removed after verifying no sessions remained.
+- Date: 2026-11-08. AC3 enrollment authorization and existing enrollment flow tests passed (12 tests) with migrations enabled. Ruff check/format and migration drift checks passed; the isolated PostgreSQL test database was removed after verifying no sessions remained.
+- Date: 2026-11-08. AC3 scheduling authorization and existing scheduling/attendance tests passed (13 tests) with migrations enabled. Ruff check/format, Django checks, and migration drift checks passed; the isolated PostgreSQL test database was removed after verifying no sessions remained.
+- Date: 2026-11-08. AC3 attendance authorization and scheduling/attendance flow tests passed (13 tests) on an isolated PostgreSQL test database without migrations. Migration-enabled and final full-file reruns were blocked before tests during isolated database setup when PostgreSQL closed the connection. Ruff check/format, Django checks, and migration drift checks passed; isolated test databases were removed after verifying no sessions remained.
+- Date: 2026-11-09. Academics role-assignment authorization/regression subset passed (6 tests) on isolated in-memory SQLite; Ruff check/format and `git diff --check` passed. Full `tests.test_academics` ran 11 tests, with 10 passing and the documented stale-version response-shape assertion failing.
+- Date: 2026-11-09. Assessment authorization and flow tests passed (10 tests) on isolated in-memory SQLite; Ruff check/format and `makemigrations --check --dry-run` passed.
+- Date: 2026-11-09. Files upload/download authorization and regression subset passed (6 tests) on isolated in-memory SQLite; Ruff check/format and `git diff --check` passed.
+- Date: 2026-11-09. CMS authorization and public-content regression tests passed (4 tests) on isolated in-memory SQLite; Ruff check/format and `makemigrations --check --dry-run` passed.
+- Date: 2026-11-09. Org authorization, unit matrix, departments, units, and ownership tests passed (24 tests, 1 PostgreSQL-only skip) on isolated in-memory SQLite; Ruff check/format and `makemigrations --check --dry-run` passed.
+- Date: 2026-11-11. HOD approval completes and locks a class only after every active enrollment has a published grade for each class EXAM assessment; premature completion and post-completion submissions are rejected. Evidence: `tests.test_assessment.AssessmentFlowTests.test_class_completes_only_after_all_active_exam_grades_are_approved`; assessment tests passed (11) and scheduling/attendance tests passed (26) on isolated in-memory SQLite; Ruff and migration drift checks passed.
+- Date: 2026-11-11. Assessment templates are course-owned and class instances carry class group, due date, and weight; legacy assessments are backfilled to templates, and the workspace can reuse templates or create a template with an instance. Assessment, academics, scheduling/attendance, and report tests passed (67) on isolated in-memory SQLite; migration drift, Ruff, OpenAPI validation, generated TypeScript types, frontend typecheck/lint, and all 72 frontend tests passed. No live database migration was run.
+- Date: 2026-11-09. Accounts reports and authorization tests ran on PostgreSQL (23 tests passed); test-database teardown initially failed because another session remained on `test_neondb`, so only that authorized throwaway database was force-dropped afterward. The tracked-file NUL check passed (297 text files, no findings); the AC4 lint test, Ruff check/format, and `git diff --check` passed.
+- Date: 2026-11-09. Sprint 5.5 Step 5a passed all enrollment tests on isolated in-memory SQLite (13 passed, 1 PostgreSQL-only concurrency test skipped); migrations applied, Ruff and migration drift checks passed, and OpenAPI plus TypeScript API types were regenerated and type-checked.
+- Date: 2026-11-09. Sprint 5.5 Step 2 course lifecycle tests passed on isolated in-memory SQLite (13 tests); Ruff, OpenAPI validation, frontend typecheck/lint, and all 72 frontend unit tests passed. TypeScript API types were regenerated.
+- Date: 2026-11-09. Sprint 5.5 Step 3 completed. Curriculum reorder, visibility/archive, hidden-file access, and video URL host policy tests passed with `tests.test_academics` and `tests.test_files_authorization` on isolated in-memory SQLite (29 tests); Ruff, migration drift, frontend typecheck/lint, and 72 frontend tests passed.
+- Date: 2026-11-09. Sprint 5.5 Step 4 D10 enrollment-to-class link implemented. `tests.test_enrollment` passed on isolated in-memory SQLite (80 passed, 2 PostgreSQL-only skipped); migration drift and Django checks, Ruff check/format, OpenAPI validation, generated TypeScript API types, and frontend typecheck passed. PostgreSQL-only tests were not run locally.
+- Date: 2026-11-09. Sprint 5.5 Step 4 class lifecycle/creation slice: scheduling, enrollment, and assessment tests passed on isolated in-memory SQLite (48 passed, 1 PostgreSQL-only skipped); migration drift, Django checks, Ruff check/format, OpenAPI validation, generated API types, frontend typecheck/lint, and all 72 frontend tests passed. No live database migration was run; existing classes receive PLANNED as the migration default.
+- Date: 2026-11-09. Sprint 5.5 Step 4 AcademicPeriod D4 slice: org authorization and scheduling tests passed on isolated in-memory SQLite (29 tests); migration drift and Ruff checks passed, OpenAPI validated with non-fatal enum-name collision warnings only, frontend API types regenerated, and frontend typecheck/lint plus all 72 tests passed. `org.0008` has not been applied to a live database.
+- Date: 2026-11-10. Sprint 5.5 Step 4 ClassTeacher LEAD slice: scheduling, migration-backfill, assessment, enrollment, people, academics, reports, authorization, and matrix tests passed on isolated in-memory SQLite (113 passed, 2 PostgreSQL-only skips; 40 subtests). `makemigrations --check --dry-run` and Django checks passed; Ruff check/format passed; OpenAPI validated with seven non-fatal enum-name collision warnings and no schema errors; TypeScript types regenerated; frontend typecheck/lint and all 72 unit tests passed. The separate `test_guards.py` run exposed a pre-existing stale exemption for `org.AcademicPeriod` (the model now has optional `unit`); that unrelated guard was not changed. No live database migration or service operation was run.
+- Date: 2026-11-11. Sprint 5.5 D13 enrollment-grade slice implemented: migration converts legacy per-attempt grades with reversible archive data; grade revisions are enrollment-keyed and append-only; submission limits, late cutoffs, enrollment-specific grants, staff-recorded marks, separate approve/publish actions, official-grade preservation, transcript versions, and the assessment UI/API types are updated. Migration and assessment tests passed on isolated in-memory SQLite (15 passed); Django checks, migration drift, Ruff check/format, OpenAPI validation, generated TypeScript types, frontend typecheck/lint, all 72 frontend tests, and production build passed. OpenAPI generation reports non-fatal enum-name collision warnings; Vite reports the existing large-chunk advisory. PostgreSQL CI verification and the remaining roster attendance, QR roster authorization, and end-to-end Step 4 journey remain. No configured database migration or service operation was run.
+- Date: 2026-11-13. QR check-in now requires an ACTIVE enrollment in the scanned session's class; course access alone does not grant attendance. Focused check-in and roster-attendance tests passed on isolated in-memory SQLite (7 tests), including inactive enrollment, cross-class rejection, and check-in without CourseAccess. Roster bulk-marking tests had passed on 2026-11-12; D13 PostgreSQL CI verification remains.
+- Date: 2026-11-13. `tests.test_academic_journey.AcademicJourneyTests.test_course_to_attendance_to_published_grade_journey` passed on isolated in-memory SQLite. It exercises course creation/publication, class and lead creation, timetable, application approval and activation, roster attendance marking, and an offline staff-recorded grade through HOD approval/publication.
+- Date: 2026-11-13. D13 PostgreSQL verification passed on an isolated Neon PostgreSQL 16.16 branch: both migration tests and all 13 assessment tests passed. This exposed and fixed PostgreSQL row-locking on nullable related rows and deferred migration constraint events; migration drift check and Ruff passed. This was not a GitHub Actions run; that remains pending commit/push.
+- Date: 2026-11-13. Step 5b D9 implementation slice: 10 people authorization/registration/import tests, two `home_unit` backfill success/failure migration tests, and the finance student-visibility regression passed on isolated in-memory SQLite (13 total). Django checks, migration drift, Ruff check/format, OpenAPI validation, generated TypeScript API types, frontend production build, lint, and all 72 frontend tests passed. Schema generation emitted existing non-fatal serializer/enum warnings and Vite emitted the existing large-chunk advisory. No migration was applied to the configured database.
+- Date: 2026-11-13. Extended `tests.test_academic_journey.AcademicJourneyTests.test_course_to_attendance_to_published_grade_journey` to register an offline student through front-desk registration, invoice and record a payment, retrieve the scoped statement, generate a receipt PDF, mark attendance, publish a staff-recorded grade, and retrieve the printable transcript PDF. The isolated in-memory SQLite test passed. No migration was applied to the configured database; statement PDF remains tracked under finance B.5.
+- Date: 2026-11-13. Step 6 authorization coverage and privacy regression fixes: the focused people/file/academics suite passed on isolated in-memory SQLite (47 tests: 46 passed, 1 PostgreSQL-only concurrency test skipped). Updated the graded-course-move test fixture to supply its required assessment, enrollment, and source. `ruff check`, `ruff format --check`, Django checks, migration drift, docs integrity, and `git diff --check` passed. The concurrent-edit test and D13 remain pending PostgreSQL CI; no live migration was run.
+- A6 initial matrix slice: generated the URLConf operation inventory and enforced DIRECTOR/AUDITOR write denial across it. The matrix and related authorization suite passed on isolated in-memory SQLite (53 tests: 52 passed, 1 PostgreSQL-only skipped); additional actor profiles and scoped-row assertions remain in progress. No configured database was used.
+- Current A6 finance slice: invoice and payment list status/scoped-row assertions cover all 16 actor profiles; the mixed-role unit-scope regression is covered. Finance/A6 suites passed 23 tests with 4 PostgreSQL-only skips on isolated in-memory SQLite. Ruff, docs integrity, and `git diff --check` passed.

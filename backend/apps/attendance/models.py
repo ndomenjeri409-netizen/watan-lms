@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 
-from apps.accounts.roles import Role
+from apps.accounts.roles import GLOBAL_READ_ROLES, Role
 from common.models import BaseModel
 from common.scoping import ScopedQuerySet
 
@@ -10,41 +11,54 @@ class AttendanceSessionQuerySet(ScopedQuerySet):
     def for_user(self, user):
         from apps.enrollment.models import CourseAccess
 
-        if not user.is_authenticated or not user.role:
+        if not user.is_authenticated:
             return self.none()
-        if user.role in {Role.SUPER_ADMIN, Role.ADMIN, Role.DIRECTOR}:
+        if user.has_role_global(*GLOBAL_READ_ROLES):
             return self
-        if user.role == Role.HOD:
-            return self.filter(
-                class_group__course__department__role_scopes__user=user
-            ).distinct()
-        if user.role == Role.TEACHER:
-            return self.filter(class_group__teacher=user)
-        if user.role == Role.STUDENT:
-            return self.filter(
-                class_group__course_id__in=CourseAccess.objects.for_user(user).values(
-                    "course_id"
-                ),
+
+        scope = Q(pk__in=[])
+        department_ids = user.department_ids_for_hod()
+        if department_ids:
+            scope |= Q(class_group__course__department_id__in=department_ids)
+        unit_ids = user.unit_ids_for(Role.UNIT_MANAGER)
+        if unit_ids:
+            scope |= Q(class_group__course__unit_id__in=unit_ids)
+        if user.has_role(Role.TEACHER):
+            scope |= Q(
+                class_group__teacher_assignments__teacher=user,
+                class_group__teacher_assignments__is_active=True,
+            )
+        if user.has_role(Role.STUDENT):
+            active_courses = CourseAccess.objects.for_user(user).filter(is_active=True)
+            scope |= Q(
+                class_group__course_id__in=active_courses.values("course_id"),
                 is_open=True,
             )
-        return self.none()
+        return self.filter(scope).distinct()
 
 
 class AttendanceRecordQuerySet(ScopedQuerySet):
     def for_user(self, user):
-        if not user.is_authenticated or not user.role:
+        if not user.is_authenticated:
             return self.none()
-        if user.role in {Role.SUPER_ADMIN, Role.ADMIN, Role.DIRECTOR}:
+        if user.has_role_global(*GLOBAL_READ_ROLES):
             return self
-        if user.role == Role.HOD:
-            return self.filter(
-                session__class_group__course__department__role_scopes__user=user
-            ).distinct()
-        if user.role == Role.TEACHER:
-            return self.filter(session__class_group__teacher=user)
-        if user.role == Role.STUDENT:
-            return self.filter(student__user=user)
-        return self.none()
+
+        scope = Q(pk__in=[])
+        department_ids = user.department_ids_for_hod()
+        if department_ids:
+            scope |= Q(session__class_group__course__department_id__in=department_ids)
+        unit_ids = user.unit_ids_for(Role.UNIT_MANAGER)
+        if unit_ids:
+            scope |= Q(session__class_group__course__unit_id__in=unit_ids)
+        if user.has_role(Role.TEACHER):
+            scope |= Q(
+                session__class_group__teacher_assignments__teacher=user,
+                session__class_group__teacher_assignments__is_active=True,
+            )
+        if user.has_role(Role.STUDENT):
+            scope |= Q(student__user=user)
+        return self.filter(scope).distinct()
 
 
 class AttendanceSession(BaseModel):
@@ -96,7 +110,9 @@ class QrToken(BaseModel):
 class AttendanceRecord(BaseModel):
     class Status(models.TextChoices):
         PRESENT = "PRESENT", "Present"
+        ABSENT = "ABSENT", "Absent"
         LATE = "LATE", "Late"
+        EXCUSED = "EXCUSED", "Excused"
 
     session = models.ForeignKey(
         AttendanceSession, on_delete=models.PROTECT, related_name="records"

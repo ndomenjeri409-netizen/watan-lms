@@ -1,3 +1,5 @@
+> SUPERSEDED by MASTER_GUIDE.md; do not follow.
+
 # Section A Remediation — closing the six audit gaps
 
 Input: Copilot's Section A audit report (no code changed; focused tests pass on SQLite). All six checks reported "Fail", but they are **not equally serious**, and two items are decisions rather than bugs. This file orders the fixes and says what to decide first.
@@ -122,16 +124,16 @@ Evidence: `backend/tests/test_guards.py`; all four guard tests pass. Unit-less m
 
 Prerequisite: D2 confirmed.
 
-- [ ] **Department:** make `unit` non-null. Data migration with an explicit mapping file `docs/department_unit_map.csv` (code to unit code). Expected from your data: BFS, ICT, LEK, T&T to `WTI`; GDS to `WTA`. **If any department is unmapped the migration fails**; it never defaults.
-- [ ] **Program, Course, Enrollment, TimetableSlot:** add a direct non-null `unit` FK, backfilled from the parent (Course/Program from Department, Enrollment from Course, TimetableSlot from its Course/Class).
-- [ ] **Consistency:** validate on save and in the service layer that `child.unit == parent.unit` (for example Course.unit equals Department.unit; Enrollment.unit equals Course.unit); add a DB trigger or check where simple; add tests that mismatches are rejected.
-- [ ] Switch each model's queryset to `UnitScopedQuerySet` with `unit_field = "unit"` (direct field).
-- [ ] Update serializers so `unit` is read-only on children (derived), writable only on Department creation.
-- [ ] Re-run the A2 model guard until it passes; remove any exemption that was only a placeholder.
-- [ ] Regenerate OpenAPI and frontend types; fix the UI where unit is now required (Departments drawer already has a unit field).
-- [ ] Confirm with a SQL query before and after: row counts per unit match expectations; no rows with null unit.
+- [x] **Department:** make `unit` non-null. `docs/department_unit_map.csv` is the explicit code-to-unit mapping; an unmapped department or conflicting existing assignment makes the migration fail.
+- [x] **Program, Course, Enrollment, TimetableSlot:** add a direct non-null `unit` FK, backfilled from the parent (Course/Program from Department, Enrollment from Course, TimetableSlot from its Course/Class).
+- [x] **Consistency:** model/service validation rejects mismatches; PostgreSQL triggers enforce parent/child consistency and have a PostgreSQL-only test.
+- [x] Switch each model's queryset to `UnitScopedQuerySet` with `unit_field = "unit"` (direct field).
+- [x] Update serializers so `unit` is read-only on children (derived), writable only on Department creation.
+- [x] Re-run the A2 model guard; remove the direct-unit placeholders.
+- [x] Regenerate OpenAPI and frontend types; the Department form already submits its required unit.
+- [x] Confirm PostgreSQL row counts before/after migration on the isolated Neon branch; no rows with null unit.
 
-**Check:** zero rows with null unit; mismatch tests pass; A2 model guard passes.
+**Check:** A2 passes. The migration was applied to isolated Neon branch `a4-unit-ownership-test-20261107` and subsequently promoted to default `main`; department units match the CSV, and counts are Department WTI=4/WTA=1, Course WTI=1/WTA=0, Program/Enrollment/TimetableSlot=0, with zero null units. The PostgreSQL A4 tests pass (8 tests, 9 subtests).
 
 ---
 
@@ -139,7 +141,7 @@ Prerequisite: D2 confirmed.
 
 Prerequisite: D1 confirmed.
 
-- [ ] Rework the sequence table:
+- [x] Rework the sequence table:
 ```python
 class RegistrationSequence(models.Model):
     unit = models.ForeignKey("org.BusinessUnit", on_delete=models.PROTECT)
@@ -152,13 +154,13 @@ class RegistrationSequence(models.Model):
             models.UniqueConstraint(fields=["unit", "year"], condition=models.Q(department__isnull=True), name="uniq_regseq_unit"),
         ]
 ```
-- [ ] One function `format_registration_number(unit, department, year, seq)` builds the number per D1 (the single place the format lives).
-- [ ] Allocation stays atomic (`transaction.atomic` + `select_for_update`; create the row first with `get_or_create`, then lock).
-- [ ] `Student.registration_number` is **unique across the whole business** and immutable once issued.
-- [ ] **Migration:** keep every existing number unchanged. Map each existing sequence row to its unit through its department, set `next_number` to the highest existing sequence for that key plus one. A report lists any number that doesn't parse (do not fix automatically).
-- [ ] Tests: concurrent allocation produces distinct numbers; units without departments use the unit-level sequence; existing numbers are untouched; the formatter output matches D1.
+- [x] One function `format_registration_number(unit, department, year, seq)` builds `UNIT/DEPT/YEAR/SEQ` (or `UNIT/YEAR/SEQ` without a department), as confirmed by D1.
+- [x] Allocation is atomic (`transaction.atomic` + `select_for_update`; create the row first with `get_or_create`, then lock).
+- [x] `Student.registration_number` remains business-unique and is immutable through model saves and queryset updates.
+- [x] **Migration:** existing numbers remain unchanged. Sequence rows inherit their unit from their department; counters advance beyond parsed existing numbers. The migration reports unparsed values without modifying them; `report_registration_numbers` provides a read-only report.
+- [x] Tests cover concurrent allocation, unit-only sequences, unchanged/unparsed existing numbers, and the confirmed formatter.
 
-**Check:** two simultaneous enrolments never get the same number; old numbers still resolve.
+**Check:** PostgreSQL registration tests pass (9 passed, including concurrent allocation); focused SQLite tests and model guard pass (12 passed, 1 PostgreSQL-only skipped). A5 migrations were applied and verified on isolated Neon branch `a4-unit-ownership-test-20261107`, then promoted to default `main` after read-only preflight. At promotion, `main` had zero students and sequence rows; no pending migrations remain.
 
 ---
 
@@ -183,7 +185,7 @@ Largest step; do it last so it exercises everything fixed above. Build it **gene
 - [ ] Guard tests for scoped viewsets and unit-bearing models pass.
 - [ ] Audit rows always have an actor or system label, and an explicit scope.
 - [ ] No data row without a unit; parent/child unit consistency enforced.
-- [ ] Registration numbers are per unit, atomic, unique, and old numbers untouched.
+- [x] Registration numbers are per unit, atomic, unique, and old numbers untouched.
 - [ ] The authorization matrix covers every endpoint and role profile.
 
 Then continue with Sprint 6b.

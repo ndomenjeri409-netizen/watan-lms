@@ -6,7 +6,8 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from apps.accounts.roles import Role
+from apps.accounts.roles import ADMIN_ROLES, Role
+from common.permissions import ReadOnlyRoleWritePermission
 from common.scoping import ScopedViewSetMixin
 
 from .models import Application, CourseAccess, Enrollment
@@ -40,7 +41,7 @@ class ApplicationViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action == "create":
-            return [AllowAny()]
+            return [AllowAny(), ReadOnlyRoleWritePermission()]
         return super().get_permissions()
 
     def perform_create(self, serializer):
@@ -102,18 +103,27 @@ class EnrollmentViewSet(ScopedViewSetMixin, viewsets.ReadOnlyModelViewSet):
         serializer = TransitionEnrollmentSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         target = serializer.validated_data["status"]
-        if request.user.role == Role.STUDENT and target != Enrollment.Status.CANCELLED:
-            raise PermissionDenied("Students may only cancel their own enrollment.")
         if (
-            request.user.role == Role.HOD
-            and not enrollment.course.department.role_scopes.filter(
-                user=request.user
-            ).exists()
+            request.user.has_role(Role.STUDENT)
+            and target != Enrollment.Status.CANCELLED
         ):
-            raise PermissionDenied(
-                "You may only manage enrollments in your departments."
+            has_management_scope = (
+                request.user.has_role_global(*ADMIN_ROLES)
+                or (
+                    request.user.has_role(Role.HOD)
+                    and enrollment.course.department_id
+                    in request.user.department_ids_for_hod()
+                )
+                or request.user.has_role_for_unit(Role.UNIT_MANAGER, enrollment.unit_id)
             )
-        enrollment = transition_enrollment(enrollment, target, request.user)
+            if not has_management_scope:
+                raise PermissionDenied("Students may only cancel their own enrollment.")
+        enrollment = transition_enrollment(
+            enrollment,
+            target,
+            request.user,
+            class_group_id=serializer.validated_data.get("class_group"),
+        )
         return Response(self.get_serializer(enrollment).data)
 
 
@@ -123,12 +133,3 @@ class CourseAccessViewSet(ScopedViewSetMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = (EnrollmentPermission,)
     filterset_fields = ("student", "course", "is_active")
     search_fields = ("student__registration_number", "course__title", "course__code")
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        if (
-            self.request.user.role == Role.HOD
-            and not self.request.user.role_scopes.exists()
-        ):
-            return queryset.none()
-        return queryset

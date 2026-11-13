@@ -1,46 +1,55 @@
 from rest_framework.permissions import SAFE_METHODS, BasePermission
 
-from apps.accounts.roles import ADMIN_ROLES, Role
+from apps.accounts.roles import ADMIN_ROLES, GLOBAL_READ_ROLES, Role
 
 
 class AssessmentPermission(BasePermission):
     def has_permission(self, request, view):
-        role = getattr(request.user, "role", None)
+        user = request.user
+        if not user.is_authenticated:
+            return False
+
         action = getattr(view, "action", None)
         if action == "create":
             if view.__class__.__name__ == "SubmissionViewSet":
-                return role == Role.STUDENT
+                return user.has_role(Role.STUDENT)
             if view.__class__.__name__ == "GradeViewSet":
-                return role in ADMIN_ROLES | {Role.TEACHER}
-            return role in ADMIN_ROLES | {Role.HOD, Role.TEACHER}
+                return user.has_role_global(*ADMIN_ROLES) or user.has_role(
+                    Role.HOD, Role.UNIT_MANAGER, Role.TEACHER
+                )
+            return user.has_role_global(*ADMIN_ROLES) or user.has_role(
+                Role.HOD, Role.UNIT_MANAGER, Role.TEACHER
+            )
         if view.__class__.__name__ == "GradeViewSet" and action in {
             "update",
             "partial_update",
         }:
-            return role in ADMIN_ROLES | {Role.TEACHER}
-        if action in {"create", "update", "partial_update"}:
-            return role in ADMIN_ROLES | {Role.TEACHER}
-        if action in {"submit_for_approval"}:
-            return role in ADMIN_ROLES | {Role.TEACHER}
+            return user.has_role_global(*ADMIN_ROLES) or user.has_role(
+                Role.HOD, Role.UNIT_MANAGER, Role.TEACHER
+            )
+        if action in {"update", "partial_update"}:
+            return user.has_role_global(*ADMIN_ROLES) or user.has_role(
+                Role.HOD, Role.UNIT_MANAGER, Role.TEACHER
+            )
+        if action == "submit_for_approval":
+            return user.has_role_global(*ADMIN_ROLES) or user.has_role(Role.TEACHER)
         if action in {"approve", "reject"}:
-            return role in ADMIN_ROLES | {Role.HOD}
+            return user.has_role_global(*ADMIN_ROLES) or user.has_role(
+                Role.HOD, Role.UNIT_MANAGER
+            )
         if request.method in SAFE_METHODS:
-            return role in ADMIN_ROLES | {
-                Role.DIRECTOR,
-                Role.HOD,
-                Role.TEACHER,
-                Role.STUDENT,
-            }
-        return role in ADMIN_ROLES | {Role.HOD, Role.TEACHER}
+            return user.has_role_global(*GLOBAL_READ_ROLES) or user.has_role(
+                Role.HOD, Role.UNIT_MANAGER, Role.TEACHER, Role.STUDENT
+            )
+        return user.has_role_global(*ADMIN_ROLES) or user.has_role(
+            Role.HOD, Role.UNIT_MANAGER, Role.TEACHER
+        )
 
 
 class GradebookPermission(BasePermission):
     def has_permission(self, request, view):
-        return getattr(request.user, "role", None) in {
-            Role.SUPER_ADMIN,
-            Role.ADMIN,
-            Role.DIRECTOR,
-            Role.HOD,
-            Role.TEACHER,
-            Role.STUDENT,
-        }
+        user = request.user
+        return user.is_authenticated and (
+            user.has_role_global(*GLOBAL_READ_ROLES)
+            or user.has_role(Role.HOD, Role.UNIT_MANAGER, Role.TEACHER, Role.STUDENT)
+        )

@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db.models import Q
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
@@ -55,33 +56,12 @@ class ReportsOverviewView(APIView):
         if user.has_role(
             Role.SUPER_ADMIN, Role.ADMIN, Role.DIRECTOR, Role.HOD, Role.UNIT_MANAGER
         ):
-            if user.has_role(Role.UNIT_MANAGER):
-                manager_unit_ids = (
-                    (selected_unit,) if selected_unit is not None else user.unit_ids()
-                )
-                departments = Department.objects.filter(unit_id__in=manager_unit_ids)
-                programs = Program.objects.filter(
-                    department__unit_id__in=manager_unit_ids
-                )
-                courses = Course.objects.filter(
-                    department__unit_id__in=manager_unit_ids
-                )
-                students = Student.objects.filter(
-                    department__unit_id__in=manager_unit_ids
-                )
-                applications = Application.objects.filter(
-                    department__unit_id__in=manager_unit_ids
-                )
-                enrollments = Enrollment.objects.filter(
-                    course__department__unit_id__in=manager_unit_ids
-                )
-            else:
-                departments = Department.objects.for_user(user)
-                programs = Program.objects.for_user(user)
-                courses = Course.objects.for_user(user)
-                students = Student.objects.for_user(user)
-                applications = Application.objects.for_user(user)
-                enrollments = Enrollment.objects.for_user(user)
+            departments = Department.objects.for_user(user)
+            programs = Program.objects.for_user(user)
+            courses = Course.objects.for_user(user)
+            students = Student.objects.for_user(user)
+            applications = Application.objects.for_user(user)
+            enrollments = Enrollment.objects.for_user(user)
 
             departments = departments.filter(is_active=True)
             programs = programs.filter(is_active=True)
@@ -91,13 +71,11 @@ class ReportsOverviewView(APIView):
             enrollments = enrollments.filter(status=Enrollment.Status.PENDING)
             if selected_unit is not None:
                 departments = departments.filter(unit_id=selected_unit)
-                programs = programs.filter(department__unit_id=selected_unit)
-                courses = courses.filter(department__unit_id=selected_unit)
+                programs = programs.filter(unit_id=selected_unit)
+                courses = courses.filter(unit_id=selected_unit)
                 students = students.filter(department__unit_id=selected_unit)
                 applications = applications.filter(department__unit_id=selected_unit)
-                enrollments = enrollments.filter(
-                    course__department__unit_id=selected_unit
-                )
+                enrollments = enrollments.filter(unit_id=selected_unit)
             overview["departments"] = departments.count()
             overview["programs"] = programs.count()
             overview["courses"] = courses.count()
@@ -105,7 +83,7 @@ class ReportsOverviewView(APIView):
             overview["pending_applications"] = applications.count()
             overview["pending_enrollments"] = enrollments.count()
 
-        if user.has_role(Role.SUPER_ADMIN, Role.ADMIN):
+        if user.has_role_global(Role.SUPER_ADMIN, Role.ADMIN):
             visible_users = User.objects.for_user(user).filter(is_active=True)
             if selected_unit is not None:
                 visible_users = visible_users.filter(
@@ -124,20 +102,36 @@ class ReportsOverviewView(APIView):
             )
 
         if user.has_role(Role.TEACHER):
-            teacher_courses = Course.objects.for_user(user).filter(
-                is_active=True, status=Course.Status.PUBLISHED
+            teacher_unit_ids = user.unit_ids_for(Role.TEACHER)
+            teacher_courses = Course.objects.filter(
+                unit_id__in=teacher_unit_ids
+            ).filter(
+                Q(
+                    teacher_assignments__teacher=user,
+                    teacher_assignments__is_active=True,
+                )
+                | Q(status=Course.Status.PUBLISHED, is_active=True)
             )
             if selected_unit is not None:
-                teacher_courses = teacher_courses.filter(
-                    department__unit_id=selected_unit
+                teacher_courses = teacher_courses.filter(unit_id=selected_unit)
+            overview["courses"] = teacher_courses.distinct().count()
+            teacher_assessments = Assessment.objects.filter(
+                status=Assessment.Status.PUBLISHED,
+                template__course__unit_id__in=teacher_unit_ids,
+            ).filter(
+                Q(
+                    course__teacher_assignments__teacher=user,
+                    course__teacher_assignments__can_edit_content=True,
+                    course__teacher_assignments__is_active=True,
                 )
-            overview["courses"] = teacher_courses.count()
-            teacher_assessments = Assessment.objects.for_user(user).filter(
-                status=Assessment.Status.PUBLISHED
+                | Q(
+                    class_group__teacher_assignments__teacher=user,
+                    class_group__teacher_assignments__is_active=True,
+                )
             )
             if selected_unit is not None:
                 teacher_assessments = teacher_assessments.filter(
-                    course__department__unit_id=selected_unit
+                    template__course__department__unit_id=selected_unit
                 )
             teacher_submissions = Submission.objects.for_user(user).filter(
                 assessment__in=teacher_assessments

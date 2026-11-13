@@ -1,3 +1,5 @@
+> SUPERSEDED by MASTER_GUIDE.md; do not follow.
+
 # Sprint 0 — Foundation (Watan LMS v2)
 
 Companion to `WATAN_LMS_V2_BLUEPRINT.md`. Follow the steps in order. Tick each box only when its check passes.

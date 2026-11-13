@@ -1,3 +1,5 @@
+> SUPERSEDED by MASTER_GUIDE.md; do not follow.
+
 # Addendum — Four Business Units, Institutional Finance and Consolidated Audit
 
 Amends `WATAN_LMS_V2_BLUEPRINT.md`. Where the two disagree, **this addendum wins**.

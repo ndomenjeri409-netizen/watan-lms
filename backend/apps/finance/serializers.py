@@ -16,6 +16,7 @@ from .models import (
     Receipt,
     Refund,
 )
+from .permissions import finance_unit_ids
 
 
 class AccountSerializer(serializers.ModelSerializer):
@@ -313,7 +314,7 @@ def may_read_all_finance(user):
 
 
 def may_read_unit_finance(user, unit_id):
-    return may_read_all_finance(user) or unit_id in user.unit_ids()
+    return may_read_all_finance(user) or unit_id in finance_unit_ids(user)
 
 
 def may_approve_finance(user):

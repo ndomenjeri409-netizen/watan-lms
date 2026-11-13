@@ -30,10 +30,7 @@ class BusinessUnitListView(ListAPIView):
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return BusinessUnit.objects.none()
-        if (
-            self.request.user.has_global_read()
-            or self.request.user.has_group_bursar_assignment()
-        ):
+        if self.request.user.has_global_read():
             return BusinessUnit.objects.filter(is_active=True)
         return BusinessUnit.objects.filter(
             id__in=self.request.user.unit_ids(), is_active=True

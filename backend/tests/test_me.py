@@ -82,7 +82,12 @@ class MeTests(TestCase):
         self.assertTrue(response.json()["awaiting_approval"])
 
         campus = Campus.objects.create(name="Main", code="MAIN")
-        department = Department.objects.create(campus=campus, name="Travel", code="TRV")
+        unit = BusinessUnit.objects.create(
+            code="WTI", name="Watan Training Institute", kind=BusinessUnit.Kind.ACADEMIC
+        )
+        department = Department.objects.create(
+            unit=unit, campus=campus, name="Travel", code="TRV"
+        )
         Student.objects.create(
             user=user,
             department=department,

@@ -1,9 +1,80 @@
 from rest_framework import serializers
 
+from apps.academics.models import Course
+from apps.accounts.models import RoleAssignment, User
 from apps.accounts.roles import Role
-from apps.org.models import Department
 
-from .models import ClassGroup, Room, TimetableSlot
+from .models import ClassGroup, ClassTeacher, Room, TimetableSlot
+from .permissions import can_manage_department_schedule
+
+
+class ClassTeacherSerializer(serializers.ModelSerializer):
+    teacher_name = serializers.CharField(source="teacher.display_name", read_only=True)
+    teacher_email = serializers.EmailField(source="teacher.email", read_only=True)
+
+    class Meta:
+        model = ClassTeacher
+        validators = ()
+        fields = (
+            "id",
+            "unit",
+            "class_group",
+            "teacher",
+            "teacher_name",
+            "teacher_email",
+            "role",
+            "is_active",
+        )
+        read_only_fields = ("id", "unit", "teacher_name", "teacher_email", "is_active")
+
+    def validate(self, attrs):
+        user = self.context["request"].user
+        class_group = attrs.get(
+            "class_group", getattr(self.instance, "class_group", None)
+        )
+        teacher = attrs.get("teacher", getattr(self.instance, "teacher", None))
+        role = attrs.get("role", getattr(self.instance, "role", None))
+
+        if (
+            class_group
+            and not ClassGroup.objects.for_user(user).filter(pk=class_group.pk).exists()
+        ):
+            raise serializers.ValidationError(
+                {"class_group": "You may not assign teachers to this class."}
+            )
+        if class_group and not can_manage_department_schedule(
+            user, class_group.course.department
+        ):
+            raise serializers.ValidationError(
+                {"class_group": "You may only manage classes in your assigned scope."}
+            )
+        if (
+            teacher
+            and class_group
+            and not RoleAssignment.objects.filter(
+                user=teacher,
+                role=Role.TEACHER,
+                unit_id=class_group.course.unit_id,
+                is_active=True,
+            ).exists()
+        ):
+            raise serializers.ValidationError(
+                {"teacher": "Select an active teacher assigned to this unit."}
+            )
+        if (
+            role == ClassTeacher.Role.ASSISTANT
+            and class_group
+            and teacher
+            and class_group.teacher_assignments.filter(
+                teacher=teacher,
+                role=ClassTeacher.Role.LEAD,
+                is_active=True,
+            ).exists()
+        ):
+            raise serializers.ValidationError(
+                {"role": "Assign another lead teacher before changing this role."}
+            )
+        return attrs
 
 
 class RoomSerializer(serializers.ModelSerializer):
@@ -14,26 +85,34 @@ class RoomSerializer(serializers.ModelSerializer):
 
     def validate_department(self, department):
         user = self.context["request"].user
-        if user.role == Role.HOD and department is None:
-            raise serializers.ValidationError(
-                "Assign the room to one of your departments."
-            )
-        if (
-            user.role == Role.HOD
-            and department
-            and not Department.objects.filter(
-                pk=department.pk, role_scopes__user=user
-            ).exists()
+        if department is None and not user.has_role_global(
+            Role.SUPER_ADMIN, Role.ADMIN
         ):
+            if user.has_role(Role.HOD, Role.UNIT_MANAGER):
+                raise serializers.ValidationError(
+                    "Assign the room to a department in your scope."
+                )
+            return department
+        if department and not can_manage_department_schedule(user, department):
             raise serializers.ValidationError(
-                "You may only manage rooms in your departments."
+                "You may only manage rooms in your assigned scope."
             )
         return department
 
 
 class ClassGroupSerializer(serializers.ModelSerializer):
     course_title = serializers.CharField(source="course.title", read_only=True)
-    teacher_name = serializers.CharField(source="teacher.display_name", read_only=True)
+    lead_teacher = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), write_only=True, required=False
+    )
+    lead_teacher_id = serializers.SerializerMethodField()
+    lead_teacher_name = serializers.SerializerMethodField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance is None:
+            self.fields["lead_teacher"].required = True
+            self.fields["academic_period"].required = True
 
     class Meta:
         model = ClassGroup
@@ -41,43 +120,140 @@ class ClassGroupSerializer(serializers.ModelSerializer):
             "id",
             "course",
             "course_title",
-            "teacher",
-            "teacher_name",
+            "lead_teacher",
+            "lead_teacher_id",
+            "lead_teacher_name",
             "academic_period",
             "name",
             "code",
             "capacity",
+            "status",
             "is_active",
         )
-        read_only_fields = ("id", "course_title", "teacher_name")
+        read_only_fields = (
+            "id",
+            "course_title",
+            "lead_teacher_id",
+            "lead_teacher_name",
+            "status",
+        )
+
+    def create(self, validated_data):
+        validated_data.pop("lead_teacher")
+        return super().create(validated_data)
+
+    def get_lead_teacher_name(self, obj) -> str | None:
+        lead_assignment = self._get_lead_assignment(obj)
+        if lead_assignment is None:
+            return None
+        return lead_assignment.teacher.display_name or lead_assignment.teacher.email
+
+    def get_lead_teacher_id(self, obj) -> str | None:
+        lead_assignment = self._get_lead_assignment(obj)
+        return str(lead_assignment.teacher_id) if lead_assignment else None
+
+    @staticmethod
+    def _get_lead_assignment(obj):
+        return next(
+            (
+                assignment
+                for assignment in obj.teacher_assignments.all()
+                if assignment.role == ClassTeacher.Role.LEAD and assignment.is_active
+            ),
+            None,
+        )
 
     def validate(self, attrs):
         user = self.context["request"].user
         course = attrs.get("course", getattr(self.instance, "course", None))
-        teacher = attrs.get("teacher", getattr(self.instance, "teacher", None))
+        lead_teacher = attrs.get("lead_teacher")
+        creating = self.instance is None
+        has_unit_scope = bool(
+            course and can_manage_department_schedule(user, course.department)
+        )
+        has_teacher_scope = bool(
+            course
+            and user.has_role(Role.TEACHER)
+            and course.teacher_assignments.filter(
+                teacher=user, can_edit_content=True, is_active=True
+            ).exists()
+        )
         if course and not course.is_active:
             raise serializers.ValidationError({"course": "Select an active course."})
-        if teacher and teacher.role != Role.TEACHER:
+        if creating and course and course.status != Course.Status.PUBLISHED:
             raise serializers.ValidationError(
-                {"teacher": "The assigned user must have the Teacher role."}
+                {"course": "Publish the course before creating a class."}
             )
-        if user.role == Role.TEACHER and teacher and teacher.pk != user.pk:
+        academic_period = attrs.get(
+            "academic_period", getattr(self.instance, "academic_period", None)
+        )
+        if creating and not academic_period:
             raise serializers.ValidationError(
-                {"teacher": "You may only assign yourself to your class group."}
+                {"academic_period": "Select an academic period."}
+            )
+        if creating and not lead_teacher:
+            raise serializers.ValidationError(
+                {"lead_teacher": "Select a lead teacher for this class."}
+            )
+        if not creating and "lead_teacher" in attrs:
+            raise serializers.ValidationError(
+                {"lead_teacher": "Update the lead through class teacher assignments."}
+            )
+        if creating and academic_period and academic_period.kind is None:
+            raise serializers.ValidationError(
+                {"academic_period": "Select a period classified as TERM or INTAKE."}
+            )
+        if creating and academic_period and not academic_period.is_active:
+            raise serializers.ValidationError(
+                {"academic_period": "Select an active academic period."}
             )
         if (
-            user.role == Role.HOD
+            academic_period
             and course
-            and not course.department.role_scopes.filter(user=user).exists()
+            and academic_period.unit_id
+            and academic_period.unit_id != course.unit_id
         ):
             raise serializers.ValidationError(
-                {"course": "You may only schedule courses in your departments."}
+                {"academic_period": "Select a period in the course's business unit."}
             )
-        if user.role == Role.TEACHER and course and course.created_by_id != user.id:
+        if creating and not attrs.get("name", "").strip():
+            raise serializers.ValidationError({"name": "Enter a cohort name."})
+        capacity = attrs.get("capacity", getattr(self.instance, "capacity", 40))
+        if capacity < 1:
             raise serializers.ValidationError(
-                {"course": "You may only manage groups for your courses."}
+                {"capacity": "Capacity must be at least one."}
+            )
+        if course and not (has_unit_scope or has_teacher_scope):
+            raise serializers.ValidationError(
+                {"course": "You may only schedule courses in your assigned scope."}
+            )
+        if (
+            course
+            and lead_teacher
+            and not RoleAssignment.objects.filter(
+                user=lead_teacher,
+                role=Role.TEACHER,
+                unit_id=course.unit_id,
+                is_active=True,
+            ).exists()
+        ):
+            raise serializers.ValidationError(
+                {"teacher": "Select an active teacher assigned to this unit."}
+            )
+        if (
+            user.has_role(Role.TEACHER)
+            and not has_unit_scope
+            and lead_teacher
+            and lead_teacher.pk != user.pk
+        ):
+            raise serializers.ValidationError(
+                {"lead_teacher": "You may only assign yourself to your class group."}
             )
         return attrs
+
+
+class ClassGroupTransitionSerializer(serializers.Serializer):
+    status = serializers.ChoiceField(choices=ClassGroup.Status.choices)
 
 
 class TimetableSlotSerializer(serializers.ModelSerializer):
@@ -85,6 +261,7 @@ class TimetableSlotSerializer(serializers.ModelSerializer):
         model = TimetableSlot
         fields = (
             "id",
+            "unit",
             "class_group",
             "room",
             "weekday",
@@ -94,7 +271,7 @@ class TimetableSlotSerializer(serializers.ModelSerializer):
             "effective_until",
             "is_active",
         )
-        read_only_fields = ("id",)
+        read_only_fields = ("id", "unit")
 
     def validate(self, attrs):
         slot = self.instance
@@ -119,6 +296,13 @@ class TimetableSlotSerializer(serializers.ModelSerializer):
             )
         if room and not room.is_active:
             raise serializers.ValidationError({"room": "Select an active room."})
+        if class_group and class_group.status in {
+            ClassGroup.Status.COMPLETED,
+            ClassGroup.Status.CANCELLED,
+        }:
+            raise serializers.ValidationError(
+                {"class_group": "Completed or cancelled classes cannot be scheduled."}
+            )
         if (
             class_group
             and room
@@ -134,6 +318,11 @@ class TimetableSlotSerializer(serializers.ModelSerializer):
         if class_group and weekday is not None and starts_at and ends_at:
             from django.db.models import Q
 
+            teacher_ids = set(
+                class_group.teacher_assignments.filter(is_active=True).values_list(
+                    "teacher_id", flat=True
+                )
+            )
             existing = TimetableSlot.objects.filter(
                 weekday=weekday,
                 is_active=True,
@@ -149,9 +338,12 @@ class TimetableSlotSerializer(serializers.ModelSerializer):
                 existing = existing.exclude(pk=slot.pk)
             clashes = existing.filter(
                 Q(class_group=class_group)
-                | Q(class_group__teacher_id=class_group.teacher_id)
+                | Q(
+                    class_group__teacher_assignments__teacher_id__in=teacher_ids,
+                    class_group__teacher_assignments__is_active=True,
+                )
                 | (Q(room=room) if room else Q(pk__in=[]))
-            )
+            ).distinct()
             if clashes.exists():
                 raise serializers.ValidationError(
                     {

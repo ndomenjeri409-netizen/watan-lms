@@ -1,3 +1,5 @@
+> SUPERSEDED by MASTER_GUIDE.md; do not follow.
+
 # UI Foundation Plan — App Shell, Design System, Dashboard
 
 Do this **before building more pages**. Every page built on the plain top-nav layout would need restyling later; pages built on the shell inherit the new look automatically.

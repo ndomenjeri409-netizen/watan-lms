@@ -37,7 +37,7 @@ from .models import (
     Receipt,
     Refund,
 )
-from .permissions import FinancePermission, can_manage_unit
+from .permissions import FinancePermission, can_manage_unit, finance_unit_ids
 from .serializers import (
     AccountSerializer,
     AdjustmentCreateSerializer,
@@ -90,7 +90,7 @@ class CashAccountViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = super().get_queryset()
         if may_read_all_finance(self.request.user):
             return queryset
-        return queryset.filter(custody_unit_id__in=self.request.user.unit_ids())
+        return queryset.filter(custody_unit_id__in=finance_unit_ids(self.request.user))
 
 
 class FeeStructureViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
@@ -224,7 +224,7 @@ class PaymentViewSet(
             return queryset
         if user.has_role(Role.STUDENT):
             return queryset.filter(invoice__student__user=user)
-        return queryset.filter(invoice__unit_id__in=user.unit_ids())
+        return queryset.filter(invoice__unit_id__in=finance_unit_ids(user))
 
     @extend_schema(
         request=PaymentCreateSerializer,
@@ -290,7 +290,7 @@ class AdjustmentViewSet(
         user = self.request.user
         if may_read_all_finance(user):
             return queryset
-        return queryset.filter(invoice__unit_id__in=user.unit_ids())
+        return queryset.filter(invoice__unit_id__in=finance_unit_ids(user))
 
     def create(self, request, *args, **kwargs):
         serializer = AdjustmentCreateSerializer(data=request.data)
@@ -360,7 +360,7 @@ class RefundViewSet(
         user = self.request.user
         if may_read_all_finance(user):
             return queryset
-        return queryset.filter(payment__invoice__unit_id__in=user.unit_ids())
+        return queryset.filter(payment__invoice__unit_id__in=finance_unit_ids(user))
 
     def create(self, request, *args, **kwargs):
         serializer = RefundCreateSerializer(data=request.data)
@@ -471,7 +471,7 @@ class ReceiptPdfView(APIView):
                 object_key = f"generated/receipts/{receipt.pk.hex}/{uuid4().hex}.pdf"
                 try:
                     storage.put_object(
-                        Bucket=settings.R2_BUCKET,
+                        Bucket=settings.STORAGE_BUCKET,
                         Key=object_key,
                         Body=pdf_content,
                         ContentType="application/pdf",
@@ -499,7 +499,9 @@ class ReceiptPdfView(APIView):
                         receipt.save(update_fields=("generated_file", "updated_at"))
                 except DatabaseError:
                     try:
-                        storage.delete_object(Bucket=settings.R2_BUCKET, Key=object_key)
+                        storage.delete_object(
+                            Bucket=settings.STORAGE_BUCKET, Key=object_key
+                        )
                     except (BotoCoreError, ClientError) as exc:
                         raise StorageNotConfigured(
                             "The receipt file was uploaded but could not be linked or cleaned up."
@@ -509,7 +511,7 @@ class ReceiptPdfView(APIView):
         if pdf_content is None:
             try:
                 stored_object = storage.get_object(
-                    Bucket=settings.R2_BUCKET, Key=object_key
+                    Bucket=settings.STORAGE_BUCKET, Key=object_key
                 )
                 body = stored_object["Body"]
                 try:
@@ -586,7 +588,7 @@ class StudentStatementView(APIView):
     @extend_schema(responses=StudentStatementSerializer)
     def get(self, request, student_id):
         student = get_object_or_404(
-            Student.objects.select_related("department__unit"), pk=student_id
+            Student.objects.select_related("home_unit"), pk=student_id
         )
         is_student_owner = (
             request.user.has_role(Role.STUDENT) and student.user_id == request.user.pk
@@ -597,11 +599,13 @@ class StudentStatementView(APIView):
         student_unit_ids = set(
             receivable_lines.values_list("unit_id", flat=True).distinct()
         )
-        student_unit_ids.add(student.department.unit_id)
+        student_unit_ids.add(student.home_unit_id)
         if is_student_owner or may_read_all_finance(request.user):
             visible_unit_ids = student_unit_ids
         else:
-            visible_unit_ids = student_unit_ids.intersection(request.user.unit_ids())
+            visible_unit_ids = student_unit_ids.intersection(
+                finance_unit_ids(request.user)
+            )
             if not visible_unit_ids:
                 raise PermissionDenied("You may not view this student's statement.")
         lines = list(

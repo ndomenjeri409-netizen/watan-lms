@@ -1,6 +1,6 @@
 import type { components } from '../../api/schema'
 
-export type Role = components['schemas']['RoleAssignmentRoleEnum']
+export type Role = components['schemas']['UserAssignment']['role']
 export type Profile = components['schemas']['Me']
 
 const roleOrder: Role[] = [

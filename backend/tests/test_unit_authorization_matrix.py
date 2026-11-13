@@ -1,15 +1,24 @@
+from pathlib import Path
+
+import yaml
 from django.test import TestCase
 from rest_framework.test import APIClient
 
-from apps.academics.models import Course
-from apps.accounts.models import User
+from apps.academics.models import Course, CourseAssignment
+from apps.accounts.models import RoleScope, User
 from apps.accounts.roles import Role
+from apps.enrollment.models import Enrollment
 from apps.org.models import BusinessUnit, Department
 from apps.people.models import Student
+from apps.scheduling.models import ClassGroup, ClassTeacher
+
+MATRIX_PATH = Path(__file__).with_name("authz_matrix.yaml")
 
 
 class UnitAuthorizationMatrixTests(TestCase):
     def setUp(self):
+        with MATRIX_PATH.open(encoding="utf-8") as matrix_file:
+            self.matrix = yaml.safe_load(matrix_file)
         self.client = APIClient()
         self.unit_a = BusinessUnit.objects.create(
             code="WTI", name="Watan Training Institute", kind=BusinessUnit.Kind.ACADEMIC
@@ -24,6 +33,10 @@ class UnitAuthorizationMatrixTests(TestCase):
             unit=self.unit_b, name="Travel Department", code="TRV"
         )
         self.admin = User.objects.create_user("matrix-admin", role=Role.ADMIN)
+        self.super_admin = User.objects.create_user(
+            "matrix-super-admin", role=Role.SUPER_ADMIN
+        )
+        self.awaiting = User.objects.create_user("matrix-awaiting")
         self.manager_a = User.objects.create_user(
             "manager-a", role=Role.UNIT_MANAGER, unit=self.unit_a
         )
@@ -42,14 +55,26 @@ class UnitAuthorizationMatrixTests(TestCase):
         self.teacher = User.objects.create_user(
             "teacher", role=Role.TEACHER, unit=self.unit_a
         )
+        self.hod = User.objects.create_user("hod", role=Role.HOD, unit=self.unit_a)
+        RoleScope.objects.create(user=self.hod, department=self.department_a)
         self.student_user = User.objects.create_user("student")
-        Student.objects.create(
+        self.student_user_other = User.objects.create_user("student-other")
+        self.student_a = Student.objects.create(
             user=self.student_user,
             department=self.department_a,
             registration_number="INS-2026-0001",
             first_name="Student",
             last_name="One",
             email="student@example.test",
+            admission_year=2026,
+        )
+        self.student_b = Student.objects.create(
+            user=self.student_user_other,
+            department=self.department_b,
+            registration_number="TRV-2026-0001",
+            first_name="Other",
+            last_name="Student",
+            email="other-student@example.test",
             admission_year=2026,
         )
 
@@ -65,16 +90,77 @@ class UnitAuthorizationMatrixTests(TestCase):
         self.course_b_draft = self.create_course(
             self.department_b, self.teacher, "Travel draft", "TRVD", False
         )
+        self.class_group = ClassGroup.objects.create(
+            course=self.course_a,
+            name="Matrix class",
+            code="MATRIX-A",
+        )
+        Enrollment.objects.create(
+            student=self.student_a,
+            course=self.course_a,
+            class_group=self.class_group,
+            status=Enrollment.Status.ACTIVE,
+        )
+        ClassTeacher.objects.create(
+            class_group=self.class_group,
+            teacher=self.teacher,
+            role=ClassTeacher.Role.LEAD,
+        )
+        self.multi_role_user = User.objects.create_user("multi-role")
+        self.multi_role_user.assignments.create(
+            role=Role.UNIT_MANAGER, unit=self.unit_b
+        )
+        self.multi_role_user.assignments.create(role=Role.TEACHER, unit=self.unit_a)
+        self.multi_role_user.clear_role_cache()
+        CourseAssignment.objects.create(
+            course=self.course_a_draft,
+            teacher=self.multi_role_user,
+            can_edit_content=True,
+        )
+        ClassTeacher.objects.create(
+            class_group=self.class_group,
+            teacher=self.multi_role_user,
+            role=ClassTeacher.Role.ASSISTANT,
+        )
+        self.actor_profiles = {
+            "anonymous": None,
+            "awaiting": self.awaiting,
+            "super_admin": self.super_admin,
+            "admin": self.admin,
+            "director": self.director,
+            "auditor": self.auditor,
+            "unit_manager_own": self.manager_a,
+            "unit_manager_other": self.manager_b,
+            "hod": self.hod,
+            "teacher": self.teacher,
+            "bursar_unit": self.unit_bursar,
+            "bursar_group": self.group_bursar,
+            "cashier": self.cashier,
+            "student_self": self.student_user,
+            "student_other": self.student_user_other,
+            "multi_role": self.multi_role_user,
+        }
 
     @staticmethod
     def create_course(department, creator, title, code, published):
-        return Course.objects.create(
+        course = Course.objects.create(
             department=department,
             created_by=creator,
             title=title,
             code=code,
             status=Course.Status.PUBLISHED if published else Course.Status.DRAFT,
         )
+        if creator.assignments.filter(
+            role=Role.TEACHER,
+            unit=department.unit,
+            is_active=True,
+        ).exists():
+            CourseAssignment.objects.create(
+                course=course,
+                teacher=creator,
+                can_edit_content=True,
+            )
+        return course
 
     def response_as(self, user, method, url, data=None):
         self.client.force_authenticate(user)
@@ -83,100 +169,29 @@ class UnitAuthorizationMatrixTests(TestCase):
         return self.client.post(url, data or {}, format="json")
 
     def test_role_matrix_limits_units_departments_and_courses(self):
-        matrix = (
-            # user, visible units, department status/rows, visible courses
-            (
-                self.manager_a,
-                {"WTI"},
-                200,
-                {str(self.department_a.id)},
-                {self.course_a.id, self.course_a_draft.id},
-            ),
-            (
-                self.manager_b,
-                {"WTA"},
-                200,
-                {str(self.department_b.id)},
-                {self.course_b.id, self.course_b_draft.id},
-            ),
-            (
-                self.auditor,
-                {"WTI", "WTA"},
-                200,
-                {str(self.department_a.id), str(self.department_b.id)},
-                {
-                    self.course_a.id,
-                    self.course_b.id,
-                    self.course_a_draft.id,
-                    self.course_b_draft.id,
-                },
-            ),
-            (
-                self.director,
-                {"WTI", "WTA"},
-                200,
-                {str(self.department_a.id), str(self.department_b.id)},
-                {
-                    self.course_a.id,
-                    self.course_b.id,
-                    self.course_a_draft.id,
-                    self.course_b_draft.id,
-                },
-            ),
-            (
-                self.group_bursar,
-                {"WTI", "WTA"},
-                403,
-                set(),
-                {
-                    self.course_a.id,
-                    self.course_b.id,
-                    self.course_a_draft.id,
-                    self.course_b_draft.id,
-                },
-            ),
-            (
-                self.unit_bursar,
-                {"WTI"},
-                403,
-                set(),
-                {self.course_a.id},
-            ),
-            (self.cashier, {"WTI"}, 403, set(), {self.course_a.id}),
-            (
-                self.teacher,
-                {"WTI"},
-                403,
-                set(),
-                {self.course_a.id, self.course_a_draft.id},
-            ),
-            (self.student_user, set(), 403, set(), {self.course_a.id}),
-        )
-
-        for user, units, department_status, department_ids, course_ids in matrix:
-            with self.subTest(user=user.firebase_uid):
-                units_response = self.response_as(user, "GET", "/api/v1/units")
-                self.assertEqual(units_response.status_code, 200)
-                self.assertEqual(
-                    {item["code"] for item in units_response.json()["results"]}, units
-                )
-
-                department_response = self.response_as(
-                    user, "GET", "/api/v1/departments/"
-                )
-                self.assertEqual(department_response.status_code, department_status)
-                if department_status == 200:
-                    self.assertEqual(
-                        {item["id"] for item in department_response.json()["results"]},
-                        department_ids,
-                    )
-
-                courses_response = self.response_as(user, "GET", "/api/v1/courses/")
-                self.assertEqual(courses_response.status_code, 200)
-                self.assertEqual(
-                    {item["id"] for item in courses_response.json()["results"]},
-                    {str(course_id) for course_id in course_ids},
-                )
+        expected_profiles = set(self.matrix["actor_profiles"])
+        self.assertEqual(set(self.actor_profiles), expected_profiles)
+        for probe in self.matrix["scoped_reads"]:
+            if probe.get("rows_are_finance_fixture_ids"):
+                continue
+            self.assertEqual(set(probe["expected"]), expected_profiles)
+            for profile, expected in probe["expected"].items():
+                with self.subTest(profile=profile, path=probe["path"]):
+                    self.client.force_authenticate(self.actor_profiles[profile])
+                    response = self.client.get(probe["path"])
+                    self.assertEqual(response.status_code, expected["status"])
+                    if response.status_code == 200:
+                        rows = {
+                            row[probe["result_field"]]
+                            for row in response.json()["results"]
+                        }
+                        expected_rows = set(expected["rows"])
+                        if probe.get("rows_are_actor_profiles"):
+                            expected_rows = {
+                                str(self.actor_profiles[profile].pk)
+                                for profile in expected_rows
+                            }
+                        self.assertEqual(rows, expected_rows)
 
     def test_read_only_and_unit_users_cannot_write_across_units(self):
         for user in (

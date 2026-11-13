@@ -2,7 +2,7 @@ from apps.accounts.roles import ADMIN_ROLES, Role
 
 UPLOAD_POLICIES = {
     "material": {
-        "roles": ADMIN_ROLES | {Role.HOD, Role.TEACHER},
+        "roles": ADMIN_ROLES | {Role.HOD, Role.UNIT_MANAGER, Role.TEACHER},
         "max_bytes": 25 * 1024 * 1024,
         "content_types": {
             ".pdf": {"application/pdf"},
@@ -23,7 +23,17 @@ UPLOAD_POLICIES = {
         },
     },
     "cover_image": {
-        "roles": ADMIN_ROLES | {Role.HOD},
+        "roles": ADMIN_ROLES | {Role.HOD, Role.UNIT_MANAGER},
+        "max_bytes": 3 * 1024 * 1024,
+        "content_types": {
+            ".jpg": {"image/jpeg"},
+            ".jpeg": {"image/jpeg"},
+            ".png": {"image/png"},
+            ".webp": {"image/webp"},
+        },
+    },
+    "profile_photo": {
+        "roles": ADMIN_ROLES | {Role.UNIT_MANAGER, Role.BURSAR},
         "max_bytes": 3 * 1024 * 1024,
         "content_types": {
             ".jpg": {"image/jpeg"},

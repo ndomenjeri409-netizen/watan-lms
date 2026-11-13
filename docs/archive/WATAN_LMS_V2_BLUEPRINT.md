@@ -1,3 +1,5 @@
+> SUPERSEDED by MASTER_GUIDE.md; do not follow.
+
 # Watan LMS v2 — Greenfield Blueprint
 
 A new, standalone project built from zero, using everything v1 taught us. **Not** an in-place port of the Firestore app.

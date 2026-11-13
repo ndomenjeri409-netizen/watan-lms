@@ -10,6 +10,10 @@ FINANCE_READ_ROLES = GLOBAL_READ_ROLES | {
 FINANCE_WRITE_ROLES = ADMIN_ROLES | {Role.BURSAR, Role.UNIT_MANAGER}
 
 
+def finance_unit_ids(user):
+    return user.unit_ids_for(Role.BURSAR, Role.UNIT_MANAGER, Role.CASHIER)
+
+
 def can_manage_unit(user, unit):
     if user.has_role(*ADMIN_ROLES):
         return True
@@ -17,7 +21,7 @@ def can_manage_unit(user, unit):
         return True
     return (
         unit is not None
-        and unit.pk in user.unit_ids()
+        and unit.pk in finance_unit_ids(user)
         and user.has_role(Role.BURSAR, Role.UNIT_MANAGER, Role.CASHIER)
     )
 

@@ -6,6 +6,7 @@ from django.db.models import Sum
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
+from apps.enrollment.models import Enrollment
 from common.audit import get_object_unit, record_audit
 
 from .models import (
@@ -139,7 +140,16 @@ def create_invoice(
             fee_structure = FeeStructure.objects.select_related(
                 "unit", "receivable_account", "income_account"
             ).get(pk=fee_structure.pk, is_active=True)
-            if student.department.unit_id != fee_structure.unit_id:
+            is_visible_to_unit = (
+                student.home_unit_id == fee_structure.unit_id
+                or Enrollment.objects.filter(
+                    student=student, unit_id=fee_structure.unit_id
+                ).exists()
+                or Invoice.objects.filter(
+                    student=student, unit_id=fee_structure.unit_id
+                ).exists()
+            )
+            if not is_visible_to_unit:
                 raise ValidationError(
                     {"student": "The student does not belong to this unit."}
                 )

@@ -32,7 +32,7 @@ export const DialogContent = forwardRef<
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm text-subtle outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Close dialog">
+      <DialogPrimitive.Close       className="absolute right-2 top-2 flex size-11 items-center justify-center rounded-md text-subtle outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Close dialog">
         <span aria-hidden="true">×</span>
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>

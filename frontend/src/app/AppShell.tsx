@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import {
   Bell,
   BookOpen,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Menu,
@@ -12,7 +13,7 @@ import {
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import type { components } from '../api/schema'
 import type { User } from 'firebase/auth'
-import { Avatar, Badge, Button, Card, Drawer, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, Input, Tooltip, TooltipContent, TooltipTrigger } from '../components/ui'
+import { Avatar, Badge, Button, Card, Dialog, DialogContent, DialogDescription, DialogTitle, Drawer, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, Input, Tooltip, TooltipContent, TooltipTrigger } from '../components/ui'
 import { roleLabel } from '../features/me/roles'
 import { UnitProvider } from '../features/units/UnitProvider'
 import { useUnit } from '../features/units/useUnit'
@@ -102,12 +103,10 @@ function SidebarContent({
                         end={to === '/app' || to === '/app/me'}
                         onClick={onNavigate}
                         aria-label={collapsed ? label : undefined}
-                        className={({ isActive }) => cn(
+                        className={cn(
                           'flex min-h-10 items-center gap-3 rounded-md px-3 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                           collapsed && 'justify-center px-2',
-                          isActive
-                            ? 'border-l-[3px] border-primary bg-sidebar-active pl-[9px] font-medium text-white'
-                            : 'border-l-[3px] border-transparent pl-[9px] hover:bg-white/5 hover:text-white',
+                          'border-l-[3px] border-transparent pl-[9px] hover:bg-white/6 hover:text-white aria-[current=page]:border-primary aria-[current=page]:bg-sidebar-active aria-[current=page]:font-medium aria-[current=page]:text-white aria-[current=page]:hover:bg-sidebar-active aria-[current=page]:hover:text-white',
                         )}
                       >
                         <Icon size={18} aria-hidden="true" />
@@ -159,10 +158,12 @@ function Topbar({
 }) {
   const unit = useUnit()
   const [searchOpen, setSearchOpen] = useState(false)
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
   const [theme, setCurrentTheme] = useState<Theme>(getTheme)
   const searchInput = useRef<HTMLInputElement>(null)
+  const mobileSearchInput = useRef<HTMLInputElement>(null)
   const name = displayName(profile, firebaseUser)
-  const searchShortcut = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
+  const searchShortcut = typeof navigator !== 'undefined' && /Mac/i.test(navigator.platform)
     ? '⌘ K'
     : 'Ctrl K'
 
@@ -170,7 +171,8 @@ function Topbar({
     const handleShortcut = (event: KeyboardEvent) => {
       if (event.key.toLowerCase() !== 'k' || (!event.metaKey && !event.ctrlKey)) return
       event.preventDefault()
-      searchInput.current?.focus()
+      if (window.innerWidth >= 640) searchInput.current?.focus()
+      else setMobileSearchOpen(true)
     }
     window.addEventListener('keydown', handleShortcut)
     return () => window.removeEventListener('keydown', handleShortcut)
@@ -181,12 +183,15 @@ function Topbar({
     setTheme(nextTheme)
     setCurrentTheme(nextTheme)
   }
+  const mobileUnitLabel = unit.selectedValue === 'all'
+    ? 'All'
+    : unit.units.find((businessUnit) => businessUnit.id === unit.selectedValue)?.code ?? unit.unitLabel
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-line bg-surface/95 px-4 backdrop-blur sm:px-6">
+    <header className="sticky top-0 z-30 flex h-[calc(3.5rem+env(safe-area-inset-top))] min-h-14 flex-nowrap items-center gap-1 border-b border-line bg-surface/95 px-2 pt-[env(safe-area-inset-top)] backdrop-blur sm:h-16 sm:min-h-16 sm:gap-3 sm:px-6 sm:py-0">
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button className="lg:hidden" variant="ghost" size="sm" onClick={onOpenMobileNav} aria-label="Open navigation menu">
+          <Button className="order-0 size-11 shrink-0 p-0 sm:hidden" variant="ghost" size="sm" onClick={onOpenMobileNav} aria-label="Open navigation menu">
             <Menu size={19} aria-hidden="true" />
           </Button>
         </TooltipTrigger>
@@ -194,73 +199,111 @@ function Topbar({
       </Tooltip>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button className="hidden lg:inline-flex" variant="ghost" size="sm" onClick={onToggleSidebar} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
+          <Button className="order-0 hidden lg:inline-flex" variant="ghost" size="sm" onClick={onToggleSidebar} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
             {collapsed ? <ChevronRight size={19} aria-hidden="true" /> : <ChevronLeft size={19} aria-hidden="true" />}
           </Button>
         </TooltipTrigger>
         <TooltipContent>{collapsed ? 'Expand sidebar' : 'Collapse sidebar'}</TooltipContent>
       </Tooltip>
 
-      <div className="relative min-w-0 flex-1">
-        <div className="relative max-w-md">
-          <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-subtle" size={16} aria-hidden="true" />
-          <Input
-            ref={searchInput}
-            className="h-9 min-h-9 pl-9 pr-16"
-            aria-label="Search"
-            placeholder="Search"
-            onFocus={() => setSearchOpen(true)}
-            onChange={() => setSearchOpen(true)}
-            onKeyDown={(event) => {
-              if (event.key === 'Escape') setSearchOpen(false)
-            }}
-          />
-          <kbd className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-subtle">{searchShortcut}</kbd>
-        </div>
+      <div className="order-2 min-w-0 flex-1 sm:hidden" aria-hidden="true" />
+
+      <div className="relative order-1 hidden min-w-0 max-w-md flex-1 sm:block">
+        <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-subtle" size={16} aria-hidden="true" />
+        <Input
+          ref={searchInput}
+          className="h-10 min-h-10 w-full pl-9 pr-20"
+          aria-label="Search"
+          placeholder="Search"
+          onFocus={() => setSearchOpen(true)}
+          onChange={() => setSearchOpen(true)}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') setSearchOpen(false)
+          }}
+        />
         {searchOpen && (
-          <>
-            <button type="button" className="fixed inset-0 z-10 cursor-default" aria-label="Close search message" onClick={() => setSearchOpen(false)} />
-            <div className="absolute left-0 top-full z-20 mt-2 w-full max-w-md rounded-md border border-line bg-surface p-4 text-sm text-subtle shadow-lg" role="status">
-              Search is coming soon
-            </div>
-          </>
+          <div className="absolute left-0 top-full z-20 mt-2 w-full rounded-md border border-line bg-surface p-4 text-sm text-subtle shadow-lg" role="status">
+            Search is coming soon
+          </div>
         )}
+        <kbd className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 whitespace-nowrap text-xs text-subtle lg:[@media(hover:hover)_and_(pointer:fine)]:inline-flex">
+          {searchShortcut}
+        </kbd>
       </div>
 
       {unit.isError ? (
-        <span className="hidden text-xs text-danger-fg sm:inline" role="alert">Units unavailable</span>
+        <span className="order-2 hidden shrink-0 text-xs text-danger-fg sm:inline" role="alert">Units unavailable</span>
       ) : unit.isLoading ? (
-        <span className="hidden text-xs text-subtle sm:inline" role="status">Loading units…</span>
+        <span className="order-2 hidden shrink-0 text-xs text-subtle sm:inline" role="status">Loading units…</span>
       ) : unit.canSelectUnit ? (
-        <label className="sr-only" htmlFor="active-unit">Active business unit</label>
-      ) : null}
-      {!unit.isError && !unit.isLoading && unit.canSelectUnit ? (
-        <select
-          id="active-unit"
-          className="h-9 max-w-36 rounded-md border border-line bg-surface px-2 text-sm sm:max-w-48"
-          value={unit.selectedValue}
-          onChange={(event) => unit.selectUnit(event.target.value)}
-          aria-label="Active business unit"
-        >
-          {profile?.is_global_read && <option value="all">All units</option>}
-          {unit.units.map((businessUnit) => (
-            <option key={businessUnit.id} value={businessUnit.id}>{businessUnit.name}</option>
-          ))}
-        </select>
+        <>
+          <label className="sr-only" htmlFor="active-unit">Business unit</label>
+          <div className="relative order-1 h-11 min-w-11 shrink-0 sm:order-2 sm:h-10 sm:w-40 sm:min-w-0">
+            <span className="flex h-11 min-w-11 items-center justify-center rounded-full border border-line bg-surface-2 px-2 text-xs font-medium text-fg sm:hidden">
+              {mobileUnitLabel}
+            </span>
+            <select
+              id="active-unit"
+              className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:static sm:z-0 sm:block sm:h-10 sm:w-full sm:appearance-none sm:rounded-md sm:border sm:border-line sm:bg-surface-2 sm:px-3 sm:pr-9 sm:text-sm sm:text-fg sm:opacity-100"
+              value={unit.selectedValue}
+              onChange={(event) => unit.selectUnit(event.target.value)}
+              aria-label="Business unit"
+            >
+              {profile?.is_global_read && <option value="all">All units</option>}
+              {unit.units.map((businessUnit) => (
+                <option key={businessUnit.id} value={businessUnit.id}>{businessUnit.name}</option>
+              ))}
+            </select>
+            <ChevronDown
+              className="pointer-events-none absolute right-3 top-1/2 z-10 hidden -translate-y-1/2 text-subtle sm:block"
+              size={16}
+              aria-hidden="true"
+            />
+          </div>
+        </>
       ) : !unit.isError && !unit.isLoading && unit.units.length === 1 ? (
-        <Badge variant="neutral" className="max-w-24 truncate sm:max-w-36">{unit.unitLabel}</Badge>
+        <Badge variant="neutral" className="order-1 shrink-0 truncate sm:order-2 sm:max-w-36">{unit.unitLabel}</Badge>
       ) : null}
+
+      <Button
+        className="order-3 size-11 shrink-0 p-0 sm:hidden"
+        variant="ghost"
+        size="sm"
+        onClick={() => setMobileSearchOpen(true)}
+        aria-label="Open search"
+      >
+        <Search size={19} aria-hidden="true" />
+      </Button>
+      <Dialog open={mobileSearchOpen} onOpenChange={setMobileSearchOpen}>
+        <DialogContent
+          className="left-1/2 top-[calc(env(safe-area-inset-top)+3.5rem)] w-[calc(100vw-1rem)] max-w-none -translate-x-1/2 translate-y-0 rounded-lg p-4 sm:hidden"
+          onOpenAutoFocus={(event) => {
+            event.preventDefault()
+            mobileSearchInput.current?.focus()
+          }}
+        >
+          <DialogTitle>Search</DialogTitle>
+          <DialogDescription>Search is coming soon</DialogDescription>
+          <Input ref={mobileSearchInput} className="mt-4 h-11 min-h-11" aria-label="Search" placeholder="Search" />
+        </DialogContent>
+      </Dialog>
 
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button variant="ghost" size="sm" onClick={toggleTheme} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}>
+          <Button
+            className="order-4 size-11 shrink-0 p-0 [@media(max-width:359px)]:hidden sm:size-10 lg:size-9"
+            variant="ghost"
+            size="sm"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          >
             {theme === 'dark' ? <Sun size={18} aria-hidden="true" /> : <Moon size={18} aria-hidden="true" />}
           </Button>
         </TooltipTrigger>
         <TooltipContent>Switch to {theme === 'dark' ? 'light' : 'dark'} mode</TooltipContent>
       </Tooltip>
       {notifications > 0 && (
-        <Button variant="ghost" size="sm" aria-label={`${notifications} notifications`}>
+        <Button className="order-5 hidden lg:inline-flex" variant="ghost" size="sm" aria-label={`${notifications} notifications`}>
           <span className="relative">
             <Bell size={18} aria-hidden="true" />
             <span className="absolute -right-2 -top-2 min-w-4 rounded-full bg-primary px-1 text-center text-[10px] leading-4 text-primary-fg">{notifications}</span>
@@ -269,9 +312,14 @@ function Topbar({
       )}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="sm" className="gap-2 px-1.5" aria-label={`Account menu for ${name}`}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="order-6 size-11 shrink-0 p-0 sm:size-10 lg:h-9 lg:w-auto lg:gap-2 lg:px-1.5"
+            aria-label={`Account menu for ${name}`}
+          >
             <Avatar className="size-8" src={firebaseUser.photoURL} alt={name} />
-            <span className="hidden max-w-32 truncate text-sm sm:block">{name}</span>
+            <span className="hidden max-w-32 truncate text-sm lg:block">{name}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="min-w-56">
@@ -282,6 +330,9 @@ function Topbar({
             {assignmentUnits(profile) && <p className="mt-1 text-xs">{assignmentUnits(profile)}</p>}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
+          <DropdownMenuItem className="min-h-11 [@media(min-width:360px)]:hidden" onSelect={toggleTheme}>
+            Switch to {theme === 'dark' ? 'light' : 'dark'} mode
+          </DropdownMenuItem>
           <DropdownMenuItem asChild><Link to="/app/me">My profile</Link></DropdownMenuItem>
           <DropdownMenuItem onSelect={() => void logout()}>Sign out</DropdownMenuItem>
         </DropdownMenuContent>
@@ -308,7 +359,12 @@ export function AppShell({
   return (
     <UnitProvider profile={profile}>
     <div className="min-h-dvh bg-app text-fg">
-      <a className="skip-link" href="#main">Skip to content</a>
+      <a
+        className="sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-50 focus-visible:not-sr-only focus-visible:rounded-md focus-visible:bg-primary focus-visible:px-4 focus-visible:py-2 focus-visible:font-medium focus-visible:text-primary-fg focus-visible:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        href="#main"
+      >
+        Skip to content
+      </a>
       <div className="flex min-h-dvh">
         <aside className={cn('sticky top-0 hidden h-dvh shrink-0 transition-[width] duration-200 lg:block', collapsed ? 'w-20' : 'w-64')} aria-label="Sidebar">
           <SidebarContent profile={profile} firebaseUser={firebaseUser} collapsed={collapsed} />

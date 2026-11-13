@@ -8,3 +8,17 @@ repos:
     rev: v1.5.0
     hooks:
       - id: detect-private-key
+  - repo: local
+    hooks:
+      - id: check-docs-integrity
+        name: check docs integrity
+        entry: python scripts/check_docs.py
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: check-no-nul
+        name: check tracked files for NUL bytes
+        entry: python scripts/check_no_nul.py
+        language: system
+        pass_filenames: false
+        always_run: true

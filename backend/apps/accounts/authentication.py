@@ -43,6 +43,36 @@ def verify_revoked_token(request):
     return decoded
 
 
+def _activate_student_account(user):
+    from django.db import transaction
+
+    from apps.people.models import Student
+    from common.audit import get_object_audit_scope, record_audit
+
+    student = getattr(user, "student_profile", None)
+    if student is None or student.account_status != Student.AccountStatus.INVITED:
+        return
+
+    with transaction.atomic():
+        student = Student.objects.select_for_update().get(pk=student.pk)
+        if student.account_status != Student.AccountStatus.INVITED:
+            return
+
+        before = {"account_status": student.account_status}
+        student.account_status = Student.AccountStatus.ACTIVE
+        student.save(update_fields=("account_status", "updated_at"))
+        unit, group_level = get_object_audit_scope(student)
+        record_audit(
+            actor=user,
+            action="student_account_activated",
+            obj=student,
+            unit=unit,
+            group_level=group_level,
+            before=before,
+            after={"account_status": student.account_status},
+        )
+
+
 class FirebaseAuthentication(BaseAuthentication):
     def authenticate(self, request):
         header = request.headers.get("Authorization", "")
@@ -55,7 +85,7 @@ class FirebaseAuthentication(BaseAuthentication):
         except (FirebaseError, ValueError) as exc:
             raise AuthenticationFailed("Invalid or expired session") from exc
 
-        user, _ = User.objects.get_or_create(
+        user, _ = User.objects.select_related("student_profile").get_or_create(
             firebase_uid=decoded["uid"],
             defaults={
                 "email": decoded.get("email", ""),
@@ -64,6 +94,7 @@ class FirebaseAuthentication(BaseAuthentication):
         )
         if not user.is_active:
             raise AuthenticationFailed("Account disabled")
+        _activate_student_account(user)
         return (user, decoded)
 
     def authenticate_header(self, request):

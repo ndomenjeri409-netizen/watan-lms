@@ -1,21 +1,119 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { api } from '../api/client'
 import type { components } from '../api/schema'
 import { apiErrorMessage } from '../lib/apiError'
 import { PageHeader } from '../app/PageHeader'
 import { auth } from '../lib/firebase'
+import { t } from '../lib/i18n'
 import { useMe } from '../features/me/useMe'
 import { hasRole } from '../features/me/roles'
+import { Button } from '../components/ui'
 
 type Assessment = components['schemas']['Assessment']
+type AssessmentTemplate = components['schemas']['AssessmentTemplate']
 type Submission = components['schemas']['Submission']
 type Grade = components['schemas']['Grade']
+type GradeRevision = components['schemas']['GradeRevision']
 type AssessmentKind = 'ASSIGNMENT' | 'QUIZ' | 'EXAM' | 'PROJECT'
 
+type TranscriptVersionSummary = {
+  version: number
+  is_revised: boolean
+  revision_date: string | null
+  created_at: string
+}
 
 function assertApiSuccess(error: unknown, fallback: string) {
   if (error) throw new Error(apiErrorMessage(error, fallback))
+}
+
+function GradeRevisionHistory({ grade }: { grade: Grade }) {
+  const [open, setOpen] = useState(false)
+  const revisionsQuery = useQuery({
+    queryKey: ['grade-revisions', grade.id],
+    enabled: open,
+    queryFn: async () => {
+      const { data, error } = await api.GET('/api/v1/grades/{id}/revisions/', {
+        params: { path: { id: grade.id } },
+      })
+      assertApiSuccess(error, 'Unable to load grade history.')
+      if (!data) throw new Error('The server returned no grade history.')
+      return data.results as GradeRevision[]
+    },
+  })
+
+  return (
+    <div className="space-y-2">
+      <Button variant="ghost" size="sm" onClick={() => setOpen((value) => !value)}>
+        {open ? t('Hide revision history') : t('View revision history')}
+      </Button>
+      {open && revisionsQuery.isPending && <p role="status">{t('Loading grade history…')}</p>}
+      {open && revisionsQuery.isError && <p role="alert" className="text-danger-fg">{revisionsQuery.error.message}</p>}
+      {open && revisionsQuery.data?.map((revision) => (
+        <p className="text-sm text-subtle" key={revision.id}>
+          {t('Revision')} {revision.revision} · {revision.status} · {revision.score ?? '—'}
+          {revision.change_note ? ` · ${revision.change_note}` : ''}
+          {revision.is_late ? ` · ${t('Late')}` : ''}
+        </p>
+      ))}
+    </div>
+  )
+}
+
+function AttemptGrantForm({
+  assessmentId,
+  enrollmentId,
+  onCreated,
+}: {
+  assessmentId: string
+  enrollmentId: string
+  onCreated: () => void
+}) {
+  const [open, setOpen] = useState(false)
+  const [message, setMessage] = useState('')
+  const grant = useMutation({
+    mutationFn: async (reason: string) => {
+      const { data, error } = await api.POST('/api/v1/assessments/{id}/re-open/', {
+        params: { path: { id: assessmentId } },
+        body: { enrollment: enrollmentId, reason },
+      })
+      assertApiSuccess(error, 'The attempt grant could not be created.')
+      if (!data) throw new Error('The server returned no attempt grant.')
+      return data
+    },
+    onSuccess: () => {
+      setMessage(t('Attempt granted for seven days.'))
+      setOpen(false)
+      onCreated()
+    },
+    onError: (error) => setMessage(error.message),
+  })
+
+  return (
+    <div className="space-y-2">
+      <Button variant="ghost" size="sm" onClick={() => setOpen((value) => !value)}>
+        {open ? t('Cancel grant') : t('Grant an attempt')}
+      </Button>
+      {open && (
+        <form
+          className="flex flex-wrap items-end gap-2"
+          onSubmit={(event) => {
+            event.preventDefault()
+            const reason = new FormData(event.currentTarget).get('reason')?.toString().trim() ?? ''
+            if (reason) grant.mutate(reason)
+          }}
+        >
+          <label className="min-w-40 flex-1 text-xs">
+            {t('Reason')}
+            <input className="mt-1 block w-full rounded border p-2" name="reason" maxLength={500} required />
+          </label>
+          <Button size="sm" loading={grant.isPending}>{t('Grant')}</Button>
+        </form>
+      )}
+      {message && <p className="text-xs" role="status">{message}</p>}
+    </div>
+  )
 }
 
 function SubmissionDownload({ submission }: { submission: Submission }) {
@@ -45,7 +143,19 @@ function SubmissionDownload({ submission }: { submission: Submission }) {
   )
 }
 
-function AssessmentUpload({ assessment }: { assessment: Assessment }) {
+function AssessmentUpload({
+  assessment,
+  attemptsUsed,
+  submissionGrantsUsed,
+  activeGrantUntil,
+  canSubmit,
+}: {
+  assessment: Assessment
+  attemptsUsed: number
+  submissionGrantsUsed: number
+  activeGrantUntil: string | null
+  canSubmit: boolean
+}) {
   const queryClient = useQueryClient()
   const [message, setMessage] = useState('')
   const submission = useMutation({
@@ -92,7 +202,13 @@ function AssessmentUpload({ assessment }: { assessment: Assessment }) {
   })
 
   return (
-    <form
+    <div className="space-y-2">
+      <p className="text-sm text-subtle">
+        {t('Attempts used')}: {attemptsUsed} / {(assessment.max_attempts ?? 1) + submissionGrantsUsed}
+        {assessment.late_until && ` · ${t('Late submissions accepted until')} ${new Date(assessment.late_until).toLocaleString()}`}
+        {activeGrantUntil && ` · ${t('Extra attempt until')} ${new Date(activeGrantUntil).toLocaleString()}`}
+      </p>
+      <form
       className="flex flex-wrap items-end gap-3"
       onSubmit={(event) => {
         event.preventDefault()
@@ -109,11 +225,13 @@ function AssessmentUpload({ assessment }: { assessment: Assessment }) {
         Submission file (PDF, Word, text or image; max 20 MB)
         <input className="mt-1 block w-full rounded border p-2" name="file" type="file" accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png" required />
       </label>
-      <button className="rounded bg-primary px-4 py-2 text-sm text-primary-fg disabled:opacity-50" disabled={submission.isPending}>
+      <button className="rounded bg-primary px-4 py-2 text-sm text-primary-fg disabled:opacity-50" disabled={submission.isPending || !canSubmit}>
         {submission.isPending ? 'Uploading…' : 'Submit'}
       </button>
+      {!canSubmit && <p className="w-full text-sm text-subtle">{t('The submission window or attempt limit has been reached. Request an attempt grant from staff.')}</p>}
       {message && <p className="w-full text-sm" role="status">{message}</p>}
-    </form>
+      </form>
+    </div>
   )
 }
 
@@ -122,12 +240,21 @@ export function AssessmentWorkspace() {
   const queryClient = useQueryClient()
   const [formError, setFormError] = useState('')
   const [selectedCourse, setSelectedCourse] = useState('')
+  const [assessmentCourse, setAssessmentCourse] = useState('')
+  const [selectedTemplate, setSelectedTemplate] = useState('')
   const [rejectNotes, setRejectNotes] = useState<Record<string, string>>({})
-  const canManage = hasRole(profile, 'SUPER_ADMIN', 'ADMIN', 'HOD', 'TEACHER')
-  const canGrade = hasRole(profile, 'SUPER_ADMIN', 'ADMIN', 'TEACHER')
+  const [editingGradeCell, setEditingGradeCell] = useState('')
+  const [currentTime, setCurrentTime] = useState(() => Date.now())
+  const canManage = hasRole(profile, 'SUPER_ADMIN', 'ADMIN', 'HOD', 'UNIT_MANAGER', 'TEACHER')
+  const canGrade = hasRole(profile, 'SUPER_ADMIN', 'ADMIN', 'HOD', 'UNIT_MANAGER', 'TEACHER')
   const isStudent = hasRole(profile, 'STUDENT')
   const isTeacher = hasRole(profile, 'TEACHER')
-  const canReview = hasRole(profile, 'SUPER_ADMIN', 'ADMIN', 'HOD')
+  const canReview = hasRole(profile, 'SUPER_ADMIN', 'ADMIN', 'HOD', 'UNIT_MANAGER')
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setCurrentTime(Date.now()), 30_000)
+    return () => window.clearInterval(timer)
+  }, [])
 
   const coursesQuery = useQuery({
     queryKey: ['courses', 'assessment-workspace'],
@@ -149,6 +276,16 @@ export function AssessmentWorkspace() {
       return data.results
     },
   })
+  const templatesQuery = useQuery({
+    queryKey: ['assessment-templates'],
+    enabled: canManage,
+    queryFn: async () => {
+      const { data, error } = await api.GET('/api/v1/assessment-templates/')
+      assertApiSuccess(error, 'Unable to load assessment templates.')
+      if (!data) throw new Error('The server returned no assessment templates.')
+      return data.results
+    },
+  })
   const assessmentsQuery = useQuery({
     queryKey: ['assessments'],
     queryFn: async () => {
@@ -162,7 +299,9 @@ export function AssessmentWorkspace() {
     queryKey: ['submissions'],
     enabled: canManage || isStudent,
     queryFn: async () => {
-      const { data, error } = await api.GET('/api/v1/submissions/')
+      const { data, error } = await api.GET('/api/v1/submissions/', {
+        params: { query: { page_size: 100 } },
+      })
       assertApiSuccess(error, 'Unable to load submissions.')
       if (!data) throw new Error('The server returned no submissions.')
       return data.results
@@ -177,18 +316,55 @@ export function AssessmentWorkspace() {
       return data.results
     },
   })
+  const attemptGrantsQuery = useQuery({
+    queryKey: ['assessment-attempt-grants'],
+    enabled: canManage || isStudent,
+    queryFn: async () => {
+      const { data, error } = await api.GET('/api/v1/assessment-attempt-grants/', {
+        params: { query: { page_size: 100 } },
+      })
+      assertApiSuccess(error, 'Unable to load attempt grants.')
+      if (!data) throw new Error('The server returned no attempt grants.')
+      return data.results
+    },
+  })
+  const transcriptVersionsQuery = useQuery({
+    queryKey: ['transcript-versions'],
+    enabled: isStudent,
+    queryFn: async () => {
+      const { data, error } = await api.GET('/api/v1/transcripts/me/versions/')
+      assertApiSuccess(error, 'Unable to load transcript versions.')
+      if (!data) throw new Error('The server returned no transcript versions.')
+      return (data as { versions: TranscriptVersionSummary[] }).versions
+    },
+  })
 
   const createAssessment = useMutation({
     mutationFn: async (form: FormData) => {
+      let templateId = form.get('template')?.toString() ?? ''
+      if (!templateId) {
+        const { data: template, error: templateError } = await api.POST('/api/v1/assessment-templates/', {
+          body: {
+            course: form.get('course')?.toString() ?? '',
+            title: form.get('title')?.toString() ?? '',
+            instructions: form.get('instructions')?.toString() ?? '',
+            kind: (form.get('kind')?.toString() || 'ASSIGNMENT') as AssessmentKind,
+            maximum_score: form.get('maximum_score')?.toString() ?? '100',
+          },
+        })
+        assertApiSuccess(templateError, 'The assessment template could not be created.')
+        if (!template) throw new Error('The server returned no assessment template.')
+        templateId = template.id
+      }
+
       const { data, error } = await api.POST('/api/v1/assessments/', {
         body: {
-          course: form.get('course')?.toString() ?? '',
-          class_group: form.get('class_group')?.toString() || null,
-          title: form.get('title')?.toString() ?? '',
-          instructions: form.get('instructions')?.toString() ?? '',
-          kind: (form.get('kind')?.toString() || 'ASSIGNMENT') as AssessmentKind,
-          maximum_score: form.get('maximum_score')?.toString() ?? '100',
+          template: templateId,
+          class_group: form.get('class_group')?.toString() ?? '',
+          weight: form.get('weight')?.toString() ?? '1',
           due_at: form.get('due_at')?.toString() || null,
+          late_until: form.get('late_until')?.toString() || null,
+          max_attempts: Number(form.get('max_attempts')?.toString() || 1),
         },
       })
       assertApiSuccess(error, 'The assessment could not be created.')
@@ -197,7 +373,10 @@ export function AssessmentWorkspace() {
     },
     onSuccess: async () => {
       setFormError('')
-      await queryClient.invalidateQueries({ queryKey: ['assessments'] })
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['assessments'] }),
+        queryClient.invalidateQueries({ queryKey: ['assessment-templates'] }),
+      ])
     },
     onError: (error) => setFormError(error.message),
   })
@@ -216,9 +395,21 @@ export function AssessmentWorkspace() {
   })
 
   const createGrade = useMutation({
-    mutationFn: async ({ submission, score, feedback }: { submission: Submission; score: string; feedback: string }) => {
+    mutationFn: async ({ assessmentId, enrollmentId, score, feedback, change_note }: {
+      assessmentId: string
+      enrollmentId: string
+      score: string
+      feedback: string
+      change_note: string
+    }) => {
       const { data, error } = await api.POST('/api/v1/grades/', {
-        body: { submission: submission.id, score, feedback },
+        body: {
+          assessment: assessmentId,
+          enrollment: enrollmentId,
+          score,
+          feedback,
+          change_note,
+        },
       })
       assertApiSuccess(error, 'The grade could not be saved.')
       if (!data) throw new Error('The server returned no grade.')
@@ -226,28 +417,40 @@ export function AssessmentWorkspace() {
     },
     onSuccess: async () => {
       setFormError('')
-      await queryClient.invalidateQueries({ queryKey: ['grades'] })
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['grades'] }),
+        queryClient.invalidateQueries({ queryKey: ['gradebook'] }),
+        queryClient.invalidateQueries({ queryKey: ['assessment-attempt-grants'] }),
+      ])
     },
     onError: (error) => setFormError(error.message),
   })
 
   const updateGrade = useMutation({
-    mutationFn: async ({ grade, score, feedback }: { grade: Grade; score: string; feedback: string }) => {
+    mutationFn: async ({ grade, score, feedback, changeNote }: {
+      grade: Grade
+      score: string
+      feedback: string
+      changeNote: string
+    }) => {
       const { error } = await api.PATCH('/api/v1/grades/{id}/', {
         params: { path: { id: grade.id } },
-        body: { score, feedback },
+        body: { score, feedback, change_note: changeNote || undefined },
       })
       assertApiSuccess(error, 'The returned grade could not be updated.')
     },
     onSuccess: async () => {
       setFormError('')
-      await queryClient.invalidateQueries({ queryKey: ['grades'] })
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['grades'] }),
+        queryClient.invalidateQueries({ queryKey: ['gradebook'] }),
+      ])
     },
     onError: (error) => setFormError(error.message),
   })
 
   const gradeAction = useMutation({
-    mutationFn: async ({ grade, action, note }: { grade: Grade; action: 'submit-for-approval' | 'approve' | 'reject'; note?: string }) => {
+    mutationFn: async ({ grade, action, note }: { grade: Grade; action: 'submit-for-approval' | 'approve' | 'publish' | 'approve-and-publish' | 'reject'; note?: string }) => {
       const { error } = action === 'reject'
         ? await api.POST('/api/v1/grades/{id}/reject/', {
             params: { path: { id: grade.id } },
@@ -257,20 +460,39 @@ export function AssessmentWorkspace() {
           ? await api.POST('/api/v1/grades/{id}/approve/', {
               params: { path: { id: grade.id } },
             })
-          : await api.POST('/api/v1/grades/{id}/submit-for-approval/', {
+          : action === 'publish'
+            ? await api.POST('/api/v1/grades/{id}/publish/', {
+                params: { path: { id: grade.id } },
+              })
+            : action === 'approve-and-publish'
+              ? await api.POST('/api/v1/grades/{id}/approve-and-publish/', {
+                  params: { path: { id: grade.id } },
+                })
+              : await api.POST('/api/v1/grades/{id}/submit-for-approval/', {
               params: { path: { id: grade.id } },
             })
       assertApiSuccess(error, 'The grade workflow action failed.')
     },
     onSuccess: async () => {
       setFormError('')
-      await queryClient.invalidateQueries({ queryKey: ['grades'] })
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['grades'] }),
+        queryClient.invalidateQueries({ queryKey: ['gradebook'] }),
+      ])
     },
     onError: (error) => setFormError(error.message),
   })
 
   const gradeBySubmission = useMemo(
-    () => new Map((gradesQuery.data ?? []).map((grade) => [grade.submission, grade])),
+    () => new Map(
+      (gradesQuery.data ?? [])
+        .filter((grade): grade is Grade & { submission: string } => Boolean(grade.submission))
+        .map((grade) => [grade.submission, grade]),
+    ),
+    [gradesQuery.data],
+  )
+  const gradeByEnrollmentAssessment = useMemo(
+    () => new Map((gradesQuery.data ?? []).map((grade) => [`${grade.assessment}:${grade.enrollment}`, grade])),
     [gradesQuery.data],
   )
   const assessments = assessmentsQuery.data ?? []
@@ -279,7 +501,7 @@ export function AssessmentWorkspace() {
     !isTeacher
     || course.created_by === profile?.id
     || (groupsQuery.data ?? []).some(
-      (group) => group.course === course.id && group.teacher === profile?.id,
+      (group) => group.course === course.id && group.lead_teacher_id === profile?.id,
     ),
   )
   const gradebookCourses = isTeacher
@@ -305,10 +527,11 @@ export function AssessmentWorkspace() {
     },
   })
 
-  async function downloadTranscript() {
+  async function downloadTranscript(version?: number) {
     const token = await auth.currentUser?.getIdToken()
     if (!token) throw new Error('Sign in again before downloading the transcript.')
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/transcripts/me/`, {
+    const versionQuery = version ? `?version=${version}` : ''
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/transcripts/me/${versionQuery}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     if (!response.ok) throw new Error(apiErrorMessage(await response.json(), 'The transcript could not be downloaded.'))
@@ -319,15 +542,38 @@ export function AssessmentWorkspace() {
     link.click()
     URL.revokeObjectURL(url)
   }
+  const [transcriptVersion, setTranscriptVersion] = useState('')
 
   return (
     <section className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <PageHeader title="Assessments & grades" />
         {isStudent && (
-          <button className="rounded border border-line px-3 py-2 text-sm underline" onClick={() => void downloadTranscript().catch((error: unknown) => setFormError(apiErrorMessage(error, 'The transcript could not be downloaded.')))}>
-            Download transcript PDF
-          </button>
+          <div className="flex items-center gap-2">
+            <label className="text-sm">
+              {t('Transcript version')}
+              <select
+                className="ml-2 rounded border border-line p-2"
+                value={transcriptVersion}
+                onChange={(event) => setTranscriptVersion(event.target.value)}
+              >
+                <option value="">{t('Latest')}</option>
+                {(transcriptVersionsQuery.data ?? []).map((version) => (
+                  <option key={version.version} value={version.version}>
+                    {t('Version')} {version.version}{version.is_revised ? ` · ${t('Revised')}` : ''}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <Button
+              variant="secondary"
+              onClick={() => void downloadTranscript(
+                transcriptVersion ? Number(transcriptVersion) : undefined,
+              ).catch((error: unknown) => setFormError(apiErrorMessage(error, 'The transcript could not be downloaded.')))}
+            >
+              {t('Download transcript PDF')}
+            </Button>
+          </div>
         )}
       </div>
       {formError && <p role="alert" className="rounded border border-danger/40 bg-danger/10 p-3 text-danger-fg">{formError}</p>}
@@ -336,6 +582,9 @@ export function AssessmentWorkspace() {
           {assessmentsQuery.error?.message ?? gradesQuery.error?.message ?? submissionsQuery.error?.message}
         </p>
       )}
+      {attemptGrantsQuery.isError && <p role="alert" className="text-danger-fg">{attemptGrantsQuery.error.message}</p>}
+      {transcriptVersionsQuery.isError && <p role="alert" className="text-danger-fg">{transcriptVersionsQuery.error.message}</p>}
+      {templatesQuery.isError && <p role="alert" className="text-danger-fg">{templatesQuery.error.message}</p>}
 
       {canManage && (
         <form
@@ -343,40 +592,57 @@ export function AssessmentWorkspace() {
           onSubmit={(event) => {
             event.preventDefault()
             createAssessment.mutate(new FormData(event.currentTarget))
-            event.currentTarget.reset()
           }}
         >
           <h2 className="text-xl font-semibold sm:col-span-2">Create assessment</h2>
           <label className="text-sm">Course
-            <select className="mt-1 w-full rounded border p-2" name="course" required>
+            <select className="mt-1 w-full rounded border p-2" name="course" required value={assessmentCourse} onChange={(event) => {
+              setAssessmentCourse(event.target.value)
+              setSelectedTemplate('')
+            }}>
               <option value="">Select a course</option>
               {availableCourses.map((course) => <option key={course.id} value={course.id}>{course.title} ({course.code})</option>)}
             </select>
           </label>
-          <label className="text-sm">Class group (optional)
-            <select className="mt-1 w-full rounded border p-2" name="class_group" defaultValue="">
-              <option value="">All course students</option>
-              {(groupsQuery.data ?? []).map((group) => <option key={group.id} value={group.id}>{group.course_title} — {group.name}</option>)}
+          <label className="text-sm">Template
+            <select className="mt-1 w-full rounded border p-2" name="template" value={selectedTemplate} onChange={(event) => setSelectedTemplate(event.target.value)}>
+              <option value="">Create a new template</option>
+              {(templatesQuery.data ?? []).filter((template: AssessmentTemplate) => template.course === assessmentCourse).map((template) => <option key={template.id} value={template.id}>{template.title}</option>)}
             </select>
           </label>
-          <label className="text-sm">Title
-            <input className="mt-1 w-full rounded border p-2" name="title" required maxLength={200} />
+          <label className="text-sm">Class group
+            <select className="mt-1 w-full rounded border p-2" name="class_group" required defaultValue="">
+              <option value="">Select a class group</option>
+              {(groupsQuery.data ?? []).filter((group) => group.course === assessmentCourse).map((group) => <option key={group.id} value={group.id}>{group.name}</option>)}
+            </select>
           </label>
-          <label className="text-sm">Type
+          {!selectedTemplate && <label className="text-sm">Title
+            <input className="mt-1 w-full rounded border p-2" name="title" required maxLength={200} />
+          </label>}
+          {!selectedTemplate && <label className="text-sm">Type
             <select className="mt-1 w-full rounded border p-2" name="kind">
               <option value="ASSIGNMENT">Assignment</option><option value="QUIZ">Quiz</option><option value="EXAM">Exam</option><option value="PROJECT">Project</option>
             </select>
-          </label>
-          <label className="text-sm">Maximum score
+          </label>}
+          {!selectedTemplate && <label className="text-sm">Maximum score
             <input className="mt-1 w-full rounded border p-2" name="maximum_score" type="number" min="0.01" step="0.01" defaultValue="100" required />
+          </label>}
+          <label className="text-sm">Weight
+            <input className="mt-1 w-full rounded border p-2" name="weight" type="number" min="0.01" step="0.01" defaultValue="1" required />
           </label>
           <label className="text-sm">Due date
             <input className="mt-1 w-full rounded border p-2" name="due_at" type="datetime-local" />
           </label>
-          <label className="text-sm sm:col-span-2">Instructions
-            <textarea className="mt-1 w-full rounded border p-2" name="instructions" rows={3} />
+          <label className="text-sm">{t('Late submission cutoff')}
+            <input className="mt-1 w-full rounded border p-2" name="late_until" type="datetime-local" />
           </label>
-          <button className="rounded bg-primary px-4 py-2 text-primary-fg disabled:opacity-50 sm:col-span-2" disabled={createAssessment.isPending}>
+          <label className="text-sm">{t('Maximum attempts')}
+            <input className="mt-1 w-full rounded border p-2" name="max_attempts" type="number" min="1" step="1" defaultValue="1" required />
+          </label>
+          {!selectedTemplate && <label className="text-sm sm:col-span-2">Instructions
+            <textarea className="mt-1 w-full rounded border p-2" name="instructions" rows={3} />
+          </label>}
+          <button className="rounded bg-primary px-4 py-2 text-primary-fg disabled:opacity-50 sm:col-span-2" disabled={createAssessment.isPending || !assessmentCourse}>
             {createAssessment.isPending ? 'Saving…' : 'Save draft'}
           </button>
         </form>
@@ -385,70 +651,100 @@ export function AssessmentWorkspace() {
       <section className="space-y-3">
         <h2 className="text-xl font-semibold">Assessments</h2>
         {assessmentsQuery.isPending && <p role="status">Loading assessments…</p>}
-        {assessments.map((assessment) => (
-          <article className="space-y-3 rounded-xl border border-line bg-white p-4" key={assessment.id}>
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <h3 className="font-semibold">{assessment.title}</h3>
-                <p className="text-sm text-subtle">{assessment.course_title} · {assessment.kind} · {assessment.maximum_score} points</p>
-                <p className="text-sm text-subtle">
-                  {assessment.class_group_name ? `Group: ${assessment.class_group_name} · ` : ''}
-                  {assessment.due_at ? `Due ${new Date(assessment.due_at).toLocaleString()}` : 'No due date'}
-                  {' · '}{assessment.status}
-                </p>
-              </div>
-              {isStudent && (
-                <section className="space-y-3">
-                  <h2 className="text-xl font-semibold">My submissions</h2>
-                  {(submissionsQuery.data ?? []).map((submission) => {
-                    const grade = gradeBySubmission.get(submission.id)
-                    return (
-                      <article className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-white p-4" key={submission.id}>
-                        <div>
-                          <h3 className="font-semibold">{submission.assessment_title} · attempt {submission.attempt_number}</h3>
-                          <p className="text-sm text-subtle">{submission.file_name} · submitted {new Date(submission.submitted_at).toLocaleString()}</p>
-                          {grade && <p className="text-sm">{grade.status === 'PUBLISHED' ? `${grade.score}/${grade.maximum_score} · ${grade.feedback || 'No feedback'}` : 'Grade pending publication'}</p>}
-                        </div>
-                      </article>
-                    )
-                  })}
-                  {submissionsQuery.data?.length === 0 && <p className="text-subtle">You have not submitted any work yet.</p>}
-                </section>
-              )}
-
-              {canManage && (
-                <div className="flex gap-3 text-sm">
-                  {assessment.status === 'DRAFT' && <button className="underline" onClick={() => changeAssessment.mutate({ assessment, action: 'publish' })}>Publish</button>}
-                  {assessment.status === 'PUBLISHED' && <button className="underline" onClick={() => changeAssessment.mutate({ assessment, action: 'close' })}>Close submissions</button>}
+        {assessments.map((assessment) => {
+          const attempts = (submissionsQuery.data ?? []).filter((item) => item.assessment === assessment.id)
+          const grants = (attemptGrantsQuery.data ?? []).filter((grant) => grant.assessment === assessment.id)
+          const submissionGrantsUsed = grants.filter((grant) => grant.used_for === 'SUBMISSION').length
+          const activeGrantUntil = grants.find(
+            (grant) => !grant.used_at && new Date(grant.valid_until).getTime() > currentTime,
+          )?.valid_until ?? null
+          const activeGrant = Boolean(activeGrantUntil)
+          const maxAttempts = assessment.max_attempts ?? 1
+          const lateWindowOpen = !assessment.due_at
+            || currentTime <= new Date(assessment.late_until ?? assessment.due_at).getTime()
+          const attemptsAvailable = attempts.length < maxAttempts + submissionGrantsUsed
+          const canSubmit = (assessment.status === 'PUBLISHED' && (activeGrant || (lateWindowOpen && attemptsAvailable)))
+            || (assessment.status === 'CLOSED' && activeGrant)
+          return (
+            <article className="space-y-3 rounded-xl border border-line bg-white p-4" key={assessment.id}>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h3 className="font-semibold">{assessment.title}</h3>
+                  <p className="text-sm text-subtle">{assessment.course_title} · {assessment.kind} · {assessment.maximum_score} points</p>
+                  <p className="text-sm text-subtle">
+                    {assessment.class_group_name ? `Group: ${assessment.class_group_name} · ` : ''}
+                    {assessment.due_at ? `Due ${new Date(assessment.due_at).toLocaleString()}` : 'No due date'}
+                    {assessment.late_until && ` · ${t('Late cutoff')} ${new Date(assessment.late_until).toLocaleString()}`}
+                    {' · '}{assessment.status}
+                    {` · ${t('Maximum attempts')}: ${maxAttempts}`}
+                  </p>
                 </div>
+                {canManage && (
+                  <div className="flex gap-3 text-sm">
+                    {assessment.status === 'DRAFT' && <button className="underline" onClick={() => changeAssessment.mutate({ assessment, action: 'publish' })}>Publish</button>}
+                    {assessment.status === 'PUBLISHED' && <button className="underline" onClick={() => changeAssessment.mutate({ assessment, action: 'close' })}>Close submissions</button>}
+                  </div>
+                )}
+              </div>
+              {assessment.instructions && <p className="whitespace-pre-wrap text-sm">{assessment.instructions}</p>}
+              {isStudent && ['PUBLISHED', 'CLOSED'].includes(assessment.status) && (
+                <AssessmentUpload
+                  assessment={assessment}
+                  attemptsUsed={attempts.length}
+                  submissionGrantsUsed={submissionGrantsUsed}
+                  activeGrantUntil={activeGrantUntil}
+                  canSubmit={canSubmit}
+                />
               )}
-            </div>
-            {assessment.instructions && <p className="whitespace-pre-wrap text-sm">{assessment.instructions}</p>}
-            {isStudent && assessment.status === 'PUBLISHED' && <AssessmentUpload assessment={assessment} />}
-          </article>
-        ))}
+            </article>
+          )
+        })}
         {assessments.length === 0 && !assessmentsQuery.isPending && <p className="text-subtle">No assessments are available yet.</p>}
       </section>
+
+      {isStudent && (
+        <section className="space-y-3">
+          <h2 className="text-xl font-semibold">{t('My submissions')}</h2>
+          {(submissionsQuery.data ?? []).map((submission) => (
+            <article className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-white p-4" key={submission.id}>
+              <div>
+                <h3 className="font-semibold">{submission.assessment_title} · {t('Attempt')} {submission.attempt_number}</h3>
+                <p className="text-sm text-subtle">
+                  {submission.file_name} · {t('Submitted')} {new Date(submission.submitted_at).toLocaleString()}
+                  {submission.is_late && ` · ${t('Late')}`}
+                </p>
+              </div>
+            </article>
+          ))}
+          {submissionsQuery.data?.length === 0 && <p className="text-subtle">{t('You have not submitted any work yet.')}</p>}
+        </section>
+      )}
 
       {canManage && (
         <section className="space-y-3">
           <h2 className="text-xl font-semibold">Submission queue</h2>
           {(submissionsQuery.data ?? []).map((submission) => {
             const grade = gradeBySubmission.get(submission.id)
-            const assessment = assessments.find((item) => item.id === submission.assessment)
             return (
               <article className="space-y-3 rounded-xl border border-line bg-white p-4" key={submission.id}>
                 <div>
                   <h3 className="font-semibold">{submission.student_name} · {submission.registration_number}</h3>
-                  <p className="text-sm text-subtle">{submission.assessment_title} · attempt {submission.attempt_number} · submitted {new Date(submission.submitted_at).toLocaleString()}</p>
+                  <p className="text-sm text-subtle">
+                    {submission.assessment_title} · {t('Attempt')} {submission.attempt_number} · {t('Submitted')} {new Date(submission.submitted_at).toLocaleString()}
+                    {submission.is_late && ` · ${t('Late')}`}
+                  </p>
                   <p className="text-sm">{submission.file_name} · <SubmissionDownload submission={submission} /></p>
                 </div>
                 {grade ? (
                   <div className="space-y-2 border-t pt-3">
-                    <p className="text-sm">{grade.score}/{grade.maximum_score} · {grade.status} · revision {grade.revision}</p>
+                    <p className="text-sm">
+                      {grade.score ?? '—'}/{grade.maximum_score} · {grade.status} · {t('revision')} {grade.revision}
+                      {grade.official_score !== null && ` · ${t('Official')}: ${grade.official_score}`}
+                      {grade.regrade_pending && ` · ${t('New grade pending publication')}`}
+                    </p>
                     {grade.feedback && <p className="text-sm">{grade.feedback}</p>}
                     {grade.review_note && <p className="text-sm text-danger-fg">Returned: {grade.review_note}</p>}
-                    {canGrade && (grade.status === 'DRAFT' || grade.status === 'REJECTED') && (
+                    {canGrade && ['DRAFT', 'REJECTED', 'PUBLISHED'].includes(grade.status) && (
                       <form
                         className="flex flex-wrap items-end gap-3"
                         onSubmit={(event) => {
@@ -458,6 +754,7 @@ export function AssessmentWorkspace() {
                             grade,
                             score: values.get('score')?.toString() ?? '',
                             feedback: values.get('feedback')?.toString() ?? '',
+                            changeNote: values.get('change_note')?.toString() ?? '',
                           })
                         }}
                       >
@@ -467,7 +764,10 @@ export function AssessmentWorkspace() {
                         <label className="min-w-48 flex-1 text-sm">Feedback
                           <input className="mt-1 block w-full rounded border p-2" name="feedback" defaultValue={grade.feedback} />
                         </label>
-                        <button className="rounded border px-3 py-2 text-sm disabled:opacity-50" disabled={updateGrade.isPending}>Save correction</button>
+                        <label className="min-w-48 flex-1 text-sm">{t('Change note')}
+                          <input className="mt-1 block w-full rounded border p-2" name="change_note" required />
+                        </label>
+                        <Button variant="secondary" loading={updateGrade.isPending}>{t('Save new revision')}</Button>
                       </form>
                     )}
                     <div className="flex flex-wrap gap-3 text-sm">
@@ -476,37 +776,21 @@ export function AssessmentWorkspace() {
                       )}
                       {canReview && grade.status === 'PENDING_APPROVAL' && (
                         <>
-                          <button className="underline" onClick={() => gradeAction.mutate({ grade, action: 'approve' })}>Approve & publish</button>
+                          <button className="underline" onClick={() => gradeAction.mutate({ grade, action: 'approve' })}>{t('Approve only')}</button>
+                          <button className="underline" onClick={() => gradeAction.mutate({ grade, action: 'approve-and-publish' })}>{t('Approve & publish')}</button>
                           <label className="flex gap-2">
                             <input className="rounded border px-2" placeholder="Reason to return" value={rejectNotes[grade.id] ?? ''} onChange={(event) => setRejectNotes((current) => ({ ...current, [grade.id]: event.target.value }))} />
                             <button className="underline" onClick={() => gradeAction.mutate({ grade, action: 'reject', note: rejectNotes[grade.id] ?? '' })}>Return</button>
                           </label>
                         </>
                       )}
+                      {canReview && grade.status === 'APPROVED' && (
+                        <button className="underline" onClick={() => gradeAction.mutate({ grade, action: 'publish' })}>{t('Publish approved grade')}</button>
+                      )}
                     </div>
+                    <GradeRevisionHistory grade={grade} />
                   </div>
-                ) : canGrade ? (
-                  <form
-                    className="flex flex-wrap items-end gap-3 border-t pt-3"
-                    onSubmit={(event) => {
-                      event.preventDefault()
-                      const values = new FormData(event.currentTarget)
-                      createGrade.mutate({
-                        submission,
-                        score: values.get('score')?.toString() ?? '',
-                        feedback: values.get('feedback')?.toString() ?? '',
-                      })
-                    }}
-                  >
-                    <label className="text-sm">Score
-                      <input className="mt-1 block w-28 rounded border p-2" name="score" type="number" min="0" max={assessment?.maximum_score ?? undefined} step="0.01" required />
-                    </label>
-                    <label className="min-w-48 flex-1 text-sm">Feedback
-                      <input className="mt-1 block w-full rounded border p-2" name="feedback" />
-                    </label>
-                    <button className="rounded bg-primary px-4 py-2 text-sm text-primary-fg disabled:opacity-50" disabled={createGrade.isPending}>Save draft grade</button>
-                  </form>
-                ) : <p className="text-sm text-subtle">No grade has been entered.</p>}
+                ) : <p className="text-sm text-subtle">{t('No grade record is available for this submission.')}</p>}
               </article>
             )
           })}
@@ -543,8 +827,117 @@ export function AssessmentWorkspace() {
                   <tr className="border-t border-line" key={student.id}>
                     <td className="p-3 font-medium">{isStudent ? gradebookQuery.data.course.title : `${student.name} (${student.registration_number})`}</td>
                     {gradebookQuery.data.assessments.map((assessment) => {
-                      const grade = student.grades[assessment.id]
-                      return <td className="p-3" key={assessment.id}>{grade ? `${grade.score} · ${grade.status}` : '—'}</td>
+                      const cellKey = `${assessment.id}:${student.enrollment_id}`
+                      const grade = gradeByEnrollmentAssessment.get(cellKey)
+                      const entry = student.grades[assessment.id]
+                      const canEditStaffMark = Boolean(
+                        canGrade
+                        && grade?.source === 'STAFF_RECORDED'
+                        && ['DRAFT', 'REJECTED', 'PUBLISHED'].includes(grade.status),
+                      )
+                      const showMarkForm = canGrade
+                        && editingGradeCell === cellKey
+                        && (!grade || canEditStaffMark)
+                      return (
+                        <td className="min-w-52 space-y-2 p-3 align-top" key={assessment.id}>
+                          {entry ? (
+                            <p>
+                              {entry.official_score ?? entry.score ?? '—'} · {entry.status}
+                              {entry.regrade_pending && <span className="block text-xs text-subtle">{t('New grade pending publication')}</span>}
+                            </p>
+                          ) : <p className="text-subtle">—</p>}
+                          {grade && <GradeRevisionHistory grade={grade} />}
+                          {grade && (
+                            <div className="flex flex-wrap gap-2 text-xs">
+                              {canGrade && ['DRAFT', 'REJECTED'].includes(grade.status) && (
+                                <button className="underline" onClick={() => gradeAction.mutate({ grade, action: 'submit-for-approval' })}>
+                                  {t('Submit for approval')}
+                                </button>
+                              )}
+                              {canReview && grade.status === 'PENDING_APPROVAL' && (
+                                <>
+                                  <button className="underline" onClick={() => gradeAction.mutate({ grade, action: 'approve' })}>
+                                    {t('Approve only')}
+                                  </button>
+                                  <button className="underline" onClick={() => gradeAction.mutate({ grade, action: 'approve-and-publish' })}>
+                                    {t('Approve & publish')}
+                                  </button>
+                                  <button className="underline" onClick={() => gradeAction.mutate({ grade, action: 'reject', note: rejectNotes[grade.id] ?? '' })}>
+                                    {t('Return')}
+                                  </button>
+                                </>
+                              )}
+                              {canReview && grade.status === 'APPROVED' && (
+                                <button className="underline" onClick={() => gradeAction.mutate({ grade, action: 'publish' })}>
+                                  {t('Publish')}
+                                </button>
+                              )}
+                            </div>
+                          )}
+                          {canGrade && !isStudent && !grade && (
+                            <Button variant="ghost" size="sm" onClick={() => setEditingGradeCell(cellKey)}>
+                              {t('Record offline mark')}
+                            </Button>
+                          )}
+                          {canEditStaffMark && (
+                            <Button variant="ghost" size="sm" onClick={() => setEditingGradeCell(cellKey)}>
+                              {t('Edit staff mark')}
+                            </Button>
+                          )}
+                          {showMarkForm && (
+                            <form
+                              className="space-y-2"
+                              onSubmit={(event) => {
+                                event.preventDefault()
+                                const values = new FormData(event.currentTarget)
+                                const score = values.get('score')?.toString() ?? ''
+                                const feedback = values.get('feedback')?.toString() ?? ''
+                                const changeNote = values.get('change_note')?.toString() ?? ''
+                                if (grade) {
+                                  updateGrade.mutate({
+                                    grade,
+                                    score,
+                                    feedback,
+                                    changeNote,
+                                  })
+                                } else {
+                                  createGrade.mutate({
+                                    assessmentId: assessment.id,
+                                    enrollmentId: student.enrollment_id,
+                                    score,
+                                    feedback,
+                                    change_note: changeNote,
+                                  })
+                                }
+                                setEditingGradeCell('')
+                              }}
+                            >
+                              <label className="block text-xs">{t('Score')}
+                                <input className="mt-1 block w-full rounded border p-2" name="score" type="number" min="0" max={assessment.maximum_score} step="0.01" defaultValue={grade?.score ?? ''} required />
+                              </label>
+                              <label className="block text-xs">{t('Feedback')}
+                                <input className="mt-1 block w-full rounded border p-2" name="feedback" defaultValue={grade?.feedback ?? ''} />
+                              </label>
+                              <label className="block text-xs">{t('Change note')}
+                                <input className="mt-1 block w-full rounded border p-2" name="change_note" required />
+                              </label>
+                              <div className="flex gap-2">
+                                <Button size="sm" loading={createGrade.isPending || updateGrade.isPending}>{t('Save draft')}</Button>
+                                <Button type="button" variant="ghost" size="sm" onClick={() => setEditingGradeCell('')}>{t('Cancel')}</Button>
+                              </div>
+                            </form>
+                          )}
+                          {canManage && !isStudent && (
+                            <AttemptGrantForm
+                              assessmentId={assessment.id}
+                              enrollmentId={student.enrollment_id}
+                              onCreated={() => {
+                                void queryClient.invalidateQueries({ queryKey: ['assessment-attempt-grants'] })
+                              }}
+                            />
+                          )}
+                        </td>
+                      )
                     })}
                   </tr>
                 ))}

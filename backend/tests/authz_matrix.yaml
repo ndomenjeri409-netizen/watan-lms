@@ -1,0 +1,832 @@
+version: 1
+actors:
+  DIRECTOR:
+    role: DIRECTOR
+  AUDITOR:
+    role: AUDITOR
+read_only_write_status: &id001
+  DIRECTOR: 403
+  AUDITOR: 403
+actor_profiles:
+  - anonymous
+  - awaiting
+  - super_admin
+  - admin
+  - director
+  - auditor
+  - unit_manager_own
+  - unit_manager_other
+  - hod
+  - teacher
+  - bursar_unit
+  - bursar_group
+  - cashier
+  - student_self
+  - student_other
+  - multi_role
+scoped_reads:
+  - path: /api/v1/units
+    result_field: code
+    expected:
+      anonymous: {status: 401}
+      awaiting: {status: 200, rows: []}
+      super_admin: {status: 200, rows: [WTI, WTA]}
+      admin: {status: 200, rows: [WTI, WTA]}
+      director: {status: 200, rows: [WTI, WTA]}
+      auditor: {status: 200, rows: [WTI, WTA]}
+      unit_manager_own: {status: 200, rows: [WTI]}
+      unit_manager_other: {status: 200, rows: [WTA]}
+      hod: {status: 200, rows: [WTI]}
+      teacher: {status: 200, rows: [WTI]}
+      bursar_unit: {status: 200, rows: [WTI]}
+      bursar_group: {status: 200, rows: [WTI, WTA]}
+      cashier: {status: 200, rows: [WTI]}
+      student_self: {status: 200, rows: []}
+      student_other: {status: 200, rows: []}
+      multi_role: {status: 200, rows: [WTI, WTA]}
+  - path: /api/v1/departments/
+    result_field: code
+    expected:
+      anonymous: {status: 401}
+      awaiting: {status: 403}
+      super_admin: {status: 200, rows: [INS, TRV]}
+      admin: {status: 200, rows: [INS, TRV]}
+      director: {status: 200, rows: [INS, TRV]}
+      auditor: {status: 200, rows: [INS, TRV]}
+      unit_manager_own: {status: 200, rows: [INS]}
+      unit_manager_other: {status: 200, rows: [TRV]}
+      hod: {status: 200, rows: [INS]}
+      teacher: {status: 403}
+      bursar_unit: {status: 403}
+      bursar_group: {status: 403}
+      cashier: {status: 403}
+      student_self: {status: 403}
+      student_other: {status: 403}
+      multi_role: {status: 200, rows: [TRV]}
+  - path: /api/v1/courses/
+    result_field: code
+    expected:
+      anonymous: {status: 200, rows: [INST, TRVL]}
+      awaiting: {status: 200, rows: []}
+      super_admin: {status: 200, rows: [INST, TRVL, INSD, TRVD]}
+      admin: {status: 200, rows: [INST, TRVL, INSD, TRVD]}
+      director: {status: 200, rows: [INST, TRVL, INSD, TRVD]}
+      auditor: {status: 200, rows: [INST, TRVL, INSD, TRVD]}
+      unit_manager_own: {status: 200, rows: [INST, INSD]}
+      unit_manager_other: {status: 200, rows: [TRVL, TRVD]}
+      hod: {status: 200, rows: [INST, INSD]}
+      teacher: {status: 200, rows: [INST, INSD]}
+      bursar_unit: {status: 200, rows: [INST]}
+      bursar_group: {status: 200, rows: [INST, TRVL, INSD, TRVD]}
+      cashier: {status: 200, rows: [INST]}
+      student_self: {status: 200, rows: [INST]}
+      student_other: {status: 200, rows: [TRVL]}
+      multi_role: {status: 200, rows: [INST, TRVL, INSD, TRVD]}
+  - path: /api/v1/students/
+    result_field: registration_number
+    expected:
+      anonymous: {status: 401}
+      awaiting: {status: 403}
+      super_admin: {status: 200, rows: [INS-2026-0001, TRV-2026-0001]}
+      admin: {status: 200, rows: [INS-2026-0001, TRV-2026-0001]}
+      director: {status: 200, rows: [INS-2026-0001, TRV-2026-0001]}
+      auditor: {status: 200, rows: [INS-2026-0001, TRV-2026-0001]}
+      unit_manager_own: {status: 200, rows: [INS-2026-0001]}
+      unit_manager_other: {status: 200, rows: [TRV-2026-0001]}
+      hod: {status: 200, rows: [INS-2026-0001]}
+      teacher: {status: 200, rows: [INS-2026-0001]}
+      bursar_unit: {status: 200, rows: [INS-2026-0001]}
+      bursar_group: {status: 200, rows: []}
+      cashier: {status: 200, rows: [INS-2026-0001]}
+      student_self: {status: 200, rows: [INS-2026-0001]}
+      student_other: {status: 200, rows: [TRV-2026-0001]}
+      multi_role: {status: 200, rows: [INS-2026-0001, TRV-2026-0001]}
+  - path: /api/v1/users/
+    result_field: id
+    rows_are_actor_profiles: true
+    expected:
+      anonymous: {status: 401}
+      awaiting: {status: 403}
+      super_admin:
+        status: 200
+        rows: [awaiting, super_admin, admin, director, auditor, unit_manager_own, unit_manager_other, hod, teacher, bursar_unit, bursar_group, cashier, student_self, student_other, multi_role]
+      admin:
+        status: 200
+        rows: [awaiting, super_admin, admin, director, auditor, unit_manager_own, unit_manager_other, hod, teacher, bursar_unit, bursar_group, cashier, student_self, student_other, multi_role]
+      director:
+        status: 200
+        rows: [awaiting, super_admin, admin, director, auditor, unit_manager_own, unit_manager_other, hod, teacher, bursar_unit, bursar_group, cashier, student_self, student_other, multi_role]
+      auditor: {status: 403}
+      unit_manager_own:
+        status: 200
+        rows: [unit_manager_own, hod, teacher, bursar_unit, cashier, multi_role]
+      unit_manager_other: {status: 200, rows: [unit_manager_other, multi_role]}
+      hod: {status: 200, rows: [hod]}
+      teacher: {status: 403}
+      bursar_unit: {status: 403}
+      bursar_group: {status: 403}
+      cashier: {status: 403}
+      student_self: {status: 403}
+      student_other: {status: 403}
+      multi_role: {status: 200, rows: [unit_manager_other, multi_role]}
+  - path: /api/v1/invoices/
+    result_field: id
+    rows_are_finance_fixture_ids: true
+    expected:
+      anonymous: {status: 401}
+      awaiting: {status: 403}
+      super_admin: {status: 200, rows: [own_invoice]}
+      admin: {status: 200, rows: [own_invoice]}
+      director: {status: 200, rows: [own_invoice]}
+      auditor: {status: 200, rows: [own_invoice]}
+      unit_manager_own: {status: 200, rows: [own_invoice]}
+      unit_manager_other: {status: 200, rows: []}
+      hod: {status: 403}
+      teacher: {status: 403}
+      bursar_unit: {status: 200, rows: [own_invoice]}
+      bursar_group: {status: 200, rows: [own_invoice]}
+      cashier: {status: 200, rows: [own_invoice]}
+      student_self: {status: 200, rows: [own_invoice]}
+      student_other: {status: 200, rows: []}
+      multi_role: {status: 200, rows: []}
+  - path: /api/v1/payments/
+    result_field: id
+    rows_are_finance_fixture_ids: true
+    expected:
+      anonymous: {status: 401}
+      awaiting: {status: 403}
+      super_admin: {status: 200, rows: [own_payment]}
+      admin: {status: 200, rows: [own_payment]}
+      director: {status: 200, rows: [own_payment]}
+      auditor: {status: 200, rows: [own_payment]}
+      unit_manager_own: {status: 200, rows: [own_payment]}
+      unit_manager_other: {status: 200, rows: []}
+      hod: {status: 403}
+      teacher: {status: 403}
+      bursar_unit: {status: 200, rows: [own_payment]}
+      bursar_group: {status: 200, rows: [own_payment]}
+      cashier: {status: 200, rows: [own_payment]}
+      student_self: {status: 200, rows: [own_payment]}
+      student_other: {status: 200, rows: []}
+      multi_role: {status: 200, rows: []}
+endpoints:
+- method: DELETE
+  path: /api/v1/academic-periods/{id}/
+  expected: *id001
+- method: DELETE
+  path: /api/v1/assessments/{id}/
+  expected: *id001
+- method: DELETE
+  path: /api/v1/blog/{slug}/
+  expected: *id001
+- method: DELETE
+  path: /api/v1/campuses/{id}/
+  expected: *id001
+- method: DELETE
+  path: /api/v1/class-groups/{id}/
+  expected: *id001
+- method: DELETE
+  path: /api/v1/class-teachers/{id}/
+  expected: *id001
+- method: DELETE
+  path: /api/v1/course-assignments/{id}/
+  expected: *id001
+- method: DELETE
+  path: /api/v1/course-modules/{id}/
+  expected: *id001
+- method: DELETE
+  path: /api/v1/course-units/{id}/
+  expected: *id001
+- method: DELETE
+  path: /api/v1/departments/{id}/
+  expected: *id001
+- method: DELETE
+  path: /api/v1/faqs/{id}/
+  expected: *id001
+- method: DELETE
+  path: /api/v1/fee-structures/{id}/
+  expected: *id001
+- method: DELETE
+  path: /api/v1/guardians/{id}/
+  expected: *id001
+- method: DELETE
+  path: /api/v1/lessons/{id}/
+  expected: *id001
+- method: DELETE
+  path: /api/v1/materials/{id}/
+  expected: *id001
+- method: DELETE
+  path: /api/v1/pages/{slug}/
+  expected: *id001
+- method: DELETE
+  path: /api/v1/programs/{id}/
+  expected: *id001
+- method: DELETE
+  path: /api/v1/rooms/{id}/
+  expected: *id001
+- method: DELETE
+  path: /api/v1/timetable/{id}/
+  expected: *id001
+- method: DELETE
+  path: /api/v1/users/{id}/assignments/{assignment_id}/
+  expected: *id001
+- method: GET
+  path: /api/v1/academic-periods/
+  expected: {}
+- method: GET
+  path: /api/v1/academic-periods/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/accounts/
+  expected: {}
+- method: GET
+  path: /api/v1/accounts/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/adjustments/
+  expected: {}
+- method: GET
+  path: /api/v1/adjustments/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/applications/
+  expected: {}
+- method: GET
+  path: /api/v1/applications/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/assessment-attempt-grants/
+  expected: {}
+- method: GET
+  path: /api/v1/assessment-attempt-grants/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/assessment-templates/
+  expected: {}
+- method: GET
+  path: /api/v1/assessment-templates/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/assessments/
+  expected: {}
+- method: GET
+  path: /api/v1/assessments/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/attendance/records/
+  expected: {}
+- method: GET
+  path: /api/v1/attendance/records/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/attendance/sessions/
+  expected: {}
+- method: GET
+  path: /api/v1/attendance/sessions/{id}/roster/
+  expected: {}
+- method: GET
+  path: /api/v1/blog/
+  expected: {}
+- method: GET
+  path: /api/v1/blog/{slug}/
+  expected: {}
+- method: GET
+  path: /api/v1/campuses/
+  expected: {}
+- method: GET
+  path: /api/v1/campuses/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/cash-accounts/
+  expected: {}
+- method: GET
+  path: /api/v1/cash-accounts/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/class-groups/
+  expected: {}
+- method: GET
+  path: /api/v1/class-groups/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/class-teachers/
+  expected: {}
+- method: GET
+  path: /api/v1/class-teachers/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/course-access/
+  expected: {}
+- method: GET
+  path: /api/v1/course-access/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/course-assignments/
+  expected: {}
+- method: GET
+  path: /api/v1/course-assignments/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/course-modules/
+  expected: {}
+- method: GET
+  path: /api/v1/course-modules/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/course-units/
+  expected: {}
+- method: GET
+  path: /api/v1/course-units/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/courses/
+  expected: {}
+- method: GET
+  path: /api/v1/courses/{slug}/
+  expected: {}
+- method: GET
+  path: /api/v1/departments/
+  expected: {}
+- method: GET
+  path: /api/v1/departments/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/enrollments/
+  expected: {}
+- method: GET
+  path: /api/v1/enrollments/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/faqs/
+  expected: {}
+- method: GET
+  path: /api/v1/faqs/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/fee-structures/
+  expected: {}
+- method: GET
+  path: /api/v1/fee-structures/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/files/{id}/download-url/
+  expected: {}
+- method: GET
+  path: /api/v1/gradebook/
+  expected: {}
+- method: GET
+  path: /api/v1/grades/
+  expected: {}
+- method: GET
+  path: /api/v1/grades/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/grades/{id}/revisions/
+  expected: {}
+- method: GET
+  path: /api/v1/guardians/
+  expected: {}
+- method: GET
+  path: /api/v1/guardians/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/invoices/
+  expected: {}
+- method: GET
+  path: /api/v1/invoices/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/journal-entries/
+  expected: {}
+- method: GET
+  path: /api/v1/journal-entries/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/lessons/
+  expected: {}
+- method: GET
+  path: /api/v1/lessons/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/materials/
+  expected: {}
+- method: GET
+  path: /api/v1/materials/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/me
+  expected: {}
+- method: GET
+  path: /api/v1/pages/
+  expected: {}
+- method: GET
+  path: /api/v1/pages/{slug}/
+  expected: {}
+- method: GET
+  path: /api/v1/payments/
+  expected: {}
+- method: GET
+  path: /api/v1/payments/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/programs/
+  expected: {}
+- method: GET
+  path: /api/v1/programs/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/receipts/{receipt_id}/pdf/
+  expected: {}
+- method: GET
+  path: /api/v1/refunds/
+  expected: {}
+- method: GET
+  path: /api/v1/refunds/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/reports/overview
+  expected: {}
+- method: GET
+  path: /api/v1/rooms/
+  expected: {}
+- method: GET
+  path: /api/v1/rooms/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/staff-profiles/
+  expected: {}
+- method: GET
+  path: /api/v1/staff-profiles/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/students/
+  expected: {}
+- method: GET
+  path: /api/v1/students/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/students/{student_id}/statement/
+  expected: {}
+- method: GET
+  path: /api/v1/submissions/
+  expected: {}
+- method: GET
+  path: /api/v1/submissions/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/timetable/
+  expected: {}
+- method: GET
+  path: /api/v1/timetable/{id}/
+  expected: {}
+- method: GET
+  path: /api/v1/transcripts/me/
+  expected: {}
+- method: GET
+  path: /api/v1/transcripts/me/versions/
+  expected: {}
+- method: GET
+  path: /api/v1/transcripts/{student_id}/
+  expected: {}
+- method: GET
+  path: /api/v1/transcripts/{student_id}/versions/
+  expected: {}
+- method: GET
+  path: /api/v1/units
+  expected: {}
+- method: GET
+  path: /api/v1/users/
+  expected: {}
+- method: GET
+  path: /api/v1/users/{id}/
+  expected: {}
+- method: PATCH
+  path: /api/v1/academic-periods/{id}/
+  expected: *id001
+- method: PATCH
+  path: /api/v1/assessment-templates/{id}/
+  expected: *id001
+- method: PATCH
+  path: /api/v1/assessments/{id}/
+  expected: *id001
+- method: PATCH
+  path: /api/v1/blog/{slug}/
+  expected: *id001
+- method: PATCH
+  path: /api/v1/campuses/{id}/
+  expected: *id001
+- method: PATCH
+  path: /api/v1/class-groups/{id}/
+  expected: *id001
+- method: PATCH
+  path: /api/v1/course-modules/{id}/
+  expected: *id001
+- method: PATCH
+  path: /api/v1/course-units/{id}/
+  expected: *id001
+- method: PATCH
+  path: /api/v1/courses/{slug}/
+  expected: *id001
+- method: PATCH
+  path: /api/v1/departments/{id}/
+  expected: *id001
+- method: PATCH
+  path: /api/v1/faqs/{id}/
+  expected: *id001
+- method: PATCH
+  path: /api/v1/fee-structures/{id}/
+  expected: *id001
+- method: PATCH
+  path: /api/v1/grades/{id}/
+  expected: *id001
+- method: PATCH
+  path: /api/v1/guardians/{id}/
+  expected: *id001
+- method: PATCH
+  path: /api/v1/lessons/{id}/
+  expected: *id001
+- method: PATCH
+  path: /api/v1/materials/{id}/
+  expected: *id001
+- method: PATCH
+  path: /api/v1/me
+  expected: *id001
+- method: PATCH
+  path: /api/v1/pages/{slug}/
+  expected: *id001
+- method: PATCH
+  path: /api/v1/programs/{id}/
+  expected: *id001
+- method: PATCH
+  path: /api/v1/rooms/{id}/
+  expected: *id001
+- method: PATCH
+  path: /api/v1/timetable/{id}/
+  expected: *id001
+- method: POST
+  path: /api/v1/academic-periods/
+  expected: *id001
+- method: POST
+  path: /api/v1/adjustments/
+  expected: *id001
+- method: POST
+  path: /api/v1/adjustments/{id}/approve/
+  expected: *id001
+- method: POST
+  path: /api/v1/adjustments/{id}/reverse/
+  expected: *id001
+- method: POST
+  path: /api/v1/applications/
+  expected: *id001
+- method: POST
+  path: /api/v1/applications/{id}/approve/
+  expected: *id001
+- method: POST
+  path: /api/v1/applications/{id}/reject/
+  expected: *id001
+- method: POST
+  path: /api/v1/assessment-templates/
+  expected: *id001
+- method: POST
+  path: /api/v1/assessments/
+  expected: *id001
+- method: POST
+  path: /api/v1/assessments/{id}/close/
+  expected: *id001
+- method: POST
+  path: /api/v1/assessments/{id}/publish/
+  expected: *id001
+- method: POST
+  path: /api/v1/assessments/{id}/re-open/
+  expected: *id001
+- method: POST
+  path: /api/v1/attendance/check-in/
+  expected: *id001
+- method: POST
+  path: /api/v1/attendance/sessions/open/
+  expected: *id001
+- method: POST
+  path: /api/v1/attendance/sessions/{id}/close/
+  expected: *id001
+- method: POST
+  path: /api/v1/attendance/sessions/{id}/mark/
+  expected: *id001
+- method: POST
+  path: /api/v1/attendance/sessions/{id}/qr/
+  expected: *id001
+- method: POST
+  path: /api/v1/blog/
+  expected: *id001
+- method: POST
+  path: /api/v1/campuses/
+  expected: *id001
+- method: POST
+  path: /api/v1/class-groups/
+  expected: *id001
+- method: POST
+  path: /api/v1/class-groups/{id}/transition/
+  expected: *id001
+- method: POST
+  path: /api/v1/class-teachers/
+  expected: *id001
+- method: POST
+  path: /api/v1/course-assignments/
+  expected: *id001
+- method: POST
+  path: /api/v1/course-modules/
+  expected: *id001
+- method: POST
+  path: /api/v1/course-modules/reorder/
+  expected: *id001
+- method: POST
+  path: /api/v1/course-units/
+  expected: *id001
+- method: POST
+  path: /api/v1/course-units/reorder/
+  expected: *id001
+- method: POST
+  path: /api/v1/courses/
+  expected: *id001
+- method: POST
+  path: /api/v1/courses/{slug}/archive/
+  expected: *id001
+- method: POST
+  path: /api/v1/courses/{slug}/duplicate/
+  expected: *id001
+- method: POST
+  path: /api/v1/courses/{slug}/publish/
+  expected: *id001
+- method: POST
+  path: /api/v1/courses/{slug}/unpublish/
+  expected: *id001
+- method: POST
+  path: /api/v1/departments/
+  expected: *id001
+- method: POST
+  path: /api/v1/enrollments/{id}/transition/
+  expected: *id001
+- method: POST
+  path: /api/v1/faqs/
+  expected: *id001
+- method: POST
+  path: /api/v1/fee-structures/
+  expected: *id001
+- method: POST
+  path: /api/v1/files/uploads/
+  expected: *id001
+- method: POST
+  path: /api/v1/files/{id}/complete/
+  expected: *id001
+- method: POST
+  path: /api/v1/grades/
+  expected: *id001
+- method: POST
+  path: /api/v1/grades/{id}/approve-and-publish/
+  expected: *id001
+- method: POST
+  path: /api/v1/grades/{id}/approve/
+  expected: *id001
+- method: POST
+  path: /api/v1/grades/{id}/publish/
+  expected: *id001
+- method: POST
+  path: /api/v1/grades/{id}/reject/
+  expected: *id001
+- method: POST
+  path: /api/v1/grades/{id}/submit-for-approval/
+  expected: *id001
+- method: POST
+  path: /api/v1/guardians/
+  expected: *id001
+- method: POST
+  path: /api/v1/invoices/
+  expected: *id001
+- method: POST
+  path: /api/v1/invoices/{id}/void/
+  expected: *id001
+- method: POST
+  path: /api/v1/lessons/
+  expected: *id001
+- method: POST
+  path: /api/v1/lessons/reorder/
+  expected: *id001
+- method: POST
+  path: /api/v1/materials/
+  expected: *id001
+- method: POST
+  path: /api/v1/pages/
+  expected: *id001
+- method: POST
+  path: /api/v1/payments/
+  expected: *id001
+- method: POST
+  path: /api/v1/payments/{id}/reverse/
+  expected: *id001
+- method: POST
+  path: /api/v1/programs/
+  expected: *id001
+- method: POST
+  path: /api/v1/refunds/
+  expected: *id001
+- method: POST
+  path: /api/v1/refunds/{id}/approve/
+  expected: *id001
+- method: POST
+  path: /api/v1/refunds/{id}/reverse/
+  expected: *id001
+- method: POST
+  path: /api/v1/rooms/
+  expected: *id001
+- method: POST
+  path: /api/v1/students/
+  expected: *id001
+- method: POST
+  path: /api/v1/students/duplicate-lookup/
+  expected: *id001
+- method: POST
+  path: /api/v1/students/enroll-in-unit/
+  expected: *id001
+- method: POST
+  path: /api/v1/students/import/
+  expected: *id001
+- method: POST
+  path: /api/v1/students/{id}/change-status/
+  expected: *id001
+- method: POST
+  path: /api/v1/students/{id}/invite/
+  expected: *id001
+- method: POST
+  path: /api/v1/students/{id}/transfer/
+  expected: *id001
+- method: POST
+  path: /api/v1/submissions/
+  expected: *id001
+- method: POST
+  path: /api/v1/timetable/
+  expected: *id001
+- method: POST
+  path: /api/v1/users/invite/
+  expected: *id001
+- method: POST
+  path: /api/v1/users/{id}/assignments/
+  expected: *id001
+- method: PUT
+  path: /api/v1/academic-periods/{id}/
+  expected: *id001
+- method: PUT
+  path: /api/v1/assessment-templates/{id}/
+  expected: *id001
+- method: PUT
+  path: /api/v1/assessments/{id}/
+  expected: *id001
+- method: PUT
+  path: /api/v1/blog/{slug}/
+  expected: *id001
+- method: PUT
+  path: /api/v1/campuses/{id}/
+  expected: *id001
+- method: PUT
+  path: /api/v1/class-groups/{id}/
+  expected: *id001
+- method: PUT
+  path: /api/v1/course-modules/{id}/
+  expected: *id001
+- method: PUT
+  path: /api/v1/course-units/{id}/
+  expected: *id001
+- method: PUT
+  path: /api/v1/courses/{slug}/
+  expected: *id001
+- method: PUT
+  path: /api/v1/departments/{id}/
+  expected: *id001
+- method: PUT
+  path: /api/v1/faqs/{id}/
+  expected: *id001
+- method: PUT
+  path: /api/v1/fee-structures/{id}/
+  expected: *id001
+- method: PUT
+  path: /api/v1/grades/{id}/
+  expected: *id001
+- method: PUT
+  path: /api/v1/guardians/{id}/
+  expected: *id001
+- method: PUT
+  path: /api/v1/lessons/{id}/
+  expected: *id001
+- method: PUT
+  path: /api/v1/materials/{id}/
+  expected: *id001
+- method: PUT
+  path: /api/v1/pages/{slug}/
+  expected: *id001
+- method: PUT
+  path: /api/v1/programs/{id}/
+  expected: *id001
+- method: PUT
+  path: /api/v1/rooms/{id}/
+  expected: *id001
+- method: PUT
+  path: /api/v1/timetable/{id}/
+  expected: *id001

@@ -207,6 +207,77 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/assessment-attempt-grants/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["assessment_attempt_grants_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/assessment-attempt-grants/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["assessment_attempt_grants_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/assessment-templates/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["assessment_templates_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["assessment_templates_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/assessment-templates/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["assessment_templates_retrieve"];
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        put: operations["assessment_templates_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        patch: operations["assessment_templates_partial_update"];
+        trace?: never;
+    };
     "/api/v1/assessments/": {
         parameters: {
             query?: never;
@@ -273,6 +344,23 @@ export interface paths {
         put?: never;
         /** @description Use on every ModelViewSet to guarantee row-level scoping. */
         post: operations["assessments_publish_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/assessments/{id}/re-open/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["assessments_re_open_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -363,6 +451,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/attendance/sessions/{id}/mark/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["attendance_sessions_mark_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/attendance/sessions/{id}/qr/": {
         parameters: {
             query?: never;
@@ -374,6 +479,23 @@ export interface paths {
         put?: never;
         /** @description Use on every ModelViewSet to guarantee row-level scoping. */
         post: operations["attendance_sessions_qr_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/attendance/sessions/{id}/roster/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["attendance_sessions_roster_list"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -543,6 +665,59 @@ export interface paths {
         patch: operations["class_groups_partial_update"];
         trace?: never;
     };
+    "/api/v1/class-groups/{id}/transition/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["class_groups_transition_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/class-teachers/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["class_teachers_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["class_teachers_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/class-teachers/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["class_teachers_retrieve"];
+        put?: never;
+        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        delete: operations["class_teachers_destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/course-access/": {
         parameters: {
             query?: never;
@@ -572,6 +747,42 @@ export interface paths {
         put?: never;
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/course-assignments/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["course_assignments_list"];
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["course_assignments_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/course-assignments/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["course_assignments_retrieve"];
+        put?: never;
+        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        delete: operations["course_assignments_destroy"];
         options?: never;
         head?: never;
         patch?: never;
@@ -615,6 +826,23 @@ export interface paths {
         patch: operations["course_modules_partial_update"];
         trace?: never;
     };
+    "/api/v1/course-modules/reorder/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["course_modules_reorder_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/course-units/": {
         parameters: {
             query?: never;
@@ -653,6 +881,23 @@ export interface paths {
         patch: operations["course_units_partial_update"];
         trace?: never;
     };
+    "/api/v1/course-units/reorder/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["course_units_reorder_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/courses/": {
         parameters: {
             query?: never;
@@ -683,12 +928,79 @@ export interface paths {
         /** @description Use on every ModelViewSet to guarantee row-level scoping. */
         put: operations["courses_update"];
         post?: never;
-        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
-        delete: operations["courses_destroy"];
+        delete?: never;
         options?: never;
         head?: never;
         /** @description Use on every ModelViewSet to guarantee row-level scoping. */
         patch: operations["courses_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/courses/{slug}/archive/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["courses_archive_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/courses/{slug}/duplicate/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["courses_duplicate_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/courses/{slug}/publish/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["courses_publish_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/courses/{slug}/unpublish/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["courses_unpublish_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/departments/": {
@@ -974,6 +1286,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/grades/{id}/approve-and-publish/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["grades_approve_and_publish_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/grades/{id}/publish/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["grades_publish_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/grades/{id}/reject/": {
         parameters: {
             query?: never;
@@ -985,6 +1331,23 @@ export interface paths {
         put?: never;
         /** @description Use on every ModelViewSet to guarantee row-level scoping. */
         post: operations["grades_reject_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/grades/{id}/revisions/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        get: operations["grades_revisions_list"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1166,6 +1529,23 @@ export interface paths {
         head?: never;
         /** @description Use on every ModelViewSet to guarantee row-level scoping. */
         patch: operations["lessons_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/lessons/reorder/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["lessons_reorder_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/materials/": {
@@ -1524,7 +1904,8 @@ export interface paths {
         /** @description Use on every ModelViewSet to guarantee row-level scoping. */
         get: operations["students_list"];
         put?: never;
-        post?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["students_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1548,6 +1929,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/students/{id}/change-status/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["students_change_status_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/students/{id}/invite/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["students_invite_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/students/{id}/transfer/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["students_transfer_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/students/{student_id}/statement/": {
         parameters: {
             query?: never;
@@ -1558,6 +1990,57 @@ export interface paths {
         get: operations["students_statement_retrieve"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/students/duplicate-lookup/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["students_duplicate_lookup_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/students/enroll-in-unit/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["students_enroll_in_unit_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/students/import/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Use on every ModelViewSet to guarantee row-level scoping. */
+        post: operations["students_import_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1653,6 +2136,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/transcripts/{student_id}/versions/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["transcripts_versions_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/transcripts/me/": {
         parameters: {
             query?: never;
@@ -1661,6 +2160,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["transcripts_me_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/transcripts/me/versions/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["transcripts_me_versions_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1717,7 +2232,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/users/{id}/role/": {
+    "/api/v1/users/{id}/assignments/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["users_assignments_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/{id}/assignments/{assignment_id}/": {
         parameters: {
             query?: never;
             header?: never;
@@ -1727,10 +2258,10 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        delete?: never;
+        delete: operations["users_assignments_destroy"];
         options?: never;
         head?: never;
-        patch: operations["users_role_partial_update"];
+        patch?: never;
         trace?: never;
     };
     "/api/v1/users/invite/": {
@@ -1761,15 +2292,27 @@ export interface components {
             starts_on: string;
             /** Format: date */
             ends_on: string;
+            kind: (components["schemas"]["AcademicPeriodKindEnum"] | components["schemas"]["NullEnum"]) | null;
+            /** Format: uuid */
+            unit?: string | null;
             is_current?: boolean;
             is_active?: boolean;
         };
+        /**
+         * @description * `TERM` - Term
+         *     * `INTAKE` - Intake
+         * @enum {string}
+         */
+        AcademicPeriodKindEnum: "TERM" | "INTAKE";
         AcademicPeriodRequest: {
             name: string;
             /** Format: date */
             starts_on: string;
             /** Format: date */
             ends_on: string;
+            kind: (components["schemas"]["AcademicPeriodKindEnum"] | components["schemas"]["NullEnum"]) | null;
+            /** Format: uuid */
+            unit?: string | null;
             is_current?: boolean;
             is_active?: boolean;
         };
@@ -1783,6 +2326,13 @@ export interface components {
             readonly parent: string | null;
             readonly is_active: boolean;
         };
+        /**
+         * @description * `NONE` - None
+         *     * `INVITED` - Invited
+         *     * `ACTIVE` - Active
+         * @enum {string}
+         */
+        AccountStatusEnum: "NONE" | "INVITED" | "ACTIVE";
         Adjustment: {
             /** Format: uuid */
             readonly id: string;
@@ -1814,8 +2364,7 @@ export interface components {
             readonly course_code: string;
             first_name: string;
             last_name: string;
-            /** Format: email */
-            email: string;
+            email?: string;
             phone?: string;
             statement?: string;
             readonly status: components["schemas"]["ApplicationStatusEnum"];
@@ -1837,8 +2386,7 @@ export interface components {
             course: string;
             first_name: string;
             last_name: string;
-            /** Format: email */
-            email: string;
+            email?: string;
             phone?: string;
             statement?: string;
         };
@@ -1860,37 +2408,68 @@ export interface components {
             /** Format: uuid */
             readonly id: string;
             /** Format: uuid */
-            course: string;
+            template: string;
+            readonly template_title: string;
+            readonly title: string;
+            readonly instructions: string;
+            /** Format: uuid */
+            readonly course: string;
             readonly course_title: string;
             /** Format: uuid */
             class_group?: string | null;
             readonly class_group_name: string | null;
             /** Format: uuid */
             readonly created_by: string;
-            title: string;
-            instructions?: string;
-            kind: components["schemas"]["Kind1c8Enum"];
+            readonly kind: components["schemas"]["Kind1c8Enum"];
             /** Format: decimal */
-            maximum_score: string;
+            readonly maximum_score: string;
             /** Format: date-time */
             due_at?: string | null;
+            /** Format: date-time */
+            late_until?: string | null;
+            /** Format: int64 */
+            max_attempts?: number;
+            /** Format: decimal */
+            weight?: string;
             readonly status: components["schemas"]["AssessmentStatusEnum"];
             readonly submission_count: number;
             /** Format: date-time */
             readonly created_at: string;
         };
+        AssessmentAttemptGrant: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            readonly assessment: string;
+            /** Format: uuid */
+            readonly enrollment: string;
+            readonly student_name: string;
+            /** Format: uuid */
+            readonly granted_by: string;
+            readonly reason: string;
+            /** Format: date-time */
+            readonly valid_until: string;
+            /** Format: date-time */
+            readonly used_at: string | null;
+            /** Format: uuid */
+            readonly used_by: string | null;
+            readonly used_for: (components["schemas"]["UsedForEnum"] | components["schemas"]["NullEnum"]) | null;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
         AssessmentRequest: {
             /** Format: uuid */
-            course: string;
+            template: string;
             /** Format: uuid */
             class_group?: string | null;
-            title: string;
-            instructions?: string;
-            kind: components["schemas"]["Kind1c8Enum"];
-            /** Format: decimal */
-            maximum_score: string;
             /** Format: date-time */
             due_at?: string | null;
+            /** Format: date-time */
+            late_until?: string | null;
+            /** Format: int64 */
+            max_attempts?: number;
+            /** Format: decimal */
+            weight?: string;
         };
         /**
          * @description * `DRAFT` - Draft
@@ -1899,6 +2478,49 @@ export interface components {
          * @enum {string}
          */
         AssessmentStatusEnum: "DRAFT" | "PUBLISHED" | "CLOSED";
+        AssessmentTemplate: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            course: string;
+            readonly course_title: string;
+            /** Format: uuid */
+            readonly created_by: string;
+            title: string;
+            instructions?: string;
+            kind: components["schemas"]["Kind1c8Enum"];
+            /** Format: decimal */
+            maximum_score: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        AssessmentTemplateRequest: {
+            /** Format: uuid */
+            course: string;
+            title: string;
+            instructions?: string;
+            kind: components["schemas"]["Kind1c8Enum"];
+            /** Format: decimal */
+            maximum_score: string;
+        };
+        AttemptGrantCreateRequest: {
+            /** Format: uuid */
+            enrollment: string;
+            reason: string;
+            /** Format: date-time */
+            valid_until?: string;
+        };
+        AttendanceMarkItemRequest: {
+            /** Format: uuid */
+            student: string;
+            status: components["schemas"]["Status51aEnum"];
+        };
+        AttendanceMarkRequest: {
+            records: components["schemas"]["AttendanceMarkItemRequest"][];
+        };
+        AttendanceMarkResponse: {
+            records: components["schemas"]["AttendanceRecord"][];
+        };
         AttendanceRecord: {
             /** Format: uuid */
             readonly id: string;
@@ -1908,16 +2530,19 @@ export interface components {
             readonly student: string;
             readonly registration_number: string;
             readonly student_name: string;
-            readonly status: components["schemas"]["AttendanceRecordStatusEnum"];
+            readonly status: components["schemas"]["Status51aEnum"];
             /** Format: date-time */
             readonly checked_in_at: string;
         };
-        /**
-         * @description * `PRESENT` - Present
-         *     * `LATE` - Late
-         * @enum {string}
-         */
-        AttendanceRecordStatusEnum: "PRESENT" | "LATE";
+        AttendanceRosterEntry: {
+            /** Format: uuid */
+            student: string;
+            student_name: string;
+            registration_number: string;
+            status: (components["schemas"]["Status51aEnum"] | components["schemas"]["NullEnum"]) | null;
+            /** Format: date-time */
+            checked_in_at: string | null;
+        };
         AttendanceSession: {
             /** Format: uuid */
             readonly id: string;
@@ -2035,28 +2660,61 @@ export interface components {
             /** Format: uuid */
             course: string;
             readonly course_title: string;
+            readonly lead_teacher_id: string | null;
+            readonly lead_teacher_name: string | null;
             /** Format: uuid */
-            teacher: string;
-            readonly teacher_name: string;
-            /** Format: uuid */
-            academic_period?: string | null;
+            academic_period: string | null;
             name: string;
             code: string;
+            /** Format: int64 */
             capacity?: number;
+            readonly status: components["schemas"]["StatusBafEnum"];
             is_active?: boolean;
         };
         ClassGroupRequest: {
             /** Format: uuid */
             course: string;
             /** Format: uuid */
-            teacher: string;
+            lead_teacher: string;
             /** Format: uuid */
-            academic_period?: string | null;
+            academic_period: string | null;
             name: string;
             code: string;
+            /** Format: int64 */
             capacity?: number;
             is_active?: boolean;
         };
+        ClassGroupTransitionRequest: {
+            status: components["schemas"]["StatusBafEnum"];
+        };
+        ClassTeacher: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            readonly unit: string;
+            /** Format: uuid */
+            class_group: string;
+            /** Format: uuid */
+            teacher: string;
+            readonly teacher_name: string;
+            /** Format: email */
+            readonly teacher_email: string;
+            role?: components["schemas"]["ClassTeacherRoleEnum"];
+            readonly is_active: boolean;
+        };
+        ClassTeacherRequest: {
+            /** Format: uuid */
+            class_group: string;
+            /** Format: uuid */
+            teacher: string;
+            role?: components["schemas"]["ClassTeacherRoleEnum"];
+        };
+        /**
+         * @description * `LEAD` - Lead teacher
+         *     * `ASSISTANT` - Assistant teacher
+         * @enum {string}
+         */
+        ClassTeacherRoleEnum: "LEAD" | "ASSISTANT";
         ContentPage: {
             /** Format: uuid */
             readonly id: string;
@@ -2079,6 +2737,8 @@ export interface components {
             /** Format: uuid */
             readonly id: string;
             /** Format: uuid */
+            readonly unit: string;
+            /** Format: uuid */
             department: string;
             /** Format: uuid */
             program?: string | null;
@@ -2092,8 +2752,10 @@ export interface components {
             learning_outcomes?: unknown;
             /** Format: uuid */
             cover_image?: string | null;
-            status?: components["schemas"]["CourseStatusEnum"];
-            is_active?: boolean;
+            readonly status: components["schemas"]["CourseStatusEnum"];
+            readonly is_active: boolean;
+            version?: number;
+            readonly has_classes: boolean;
             /** Format: date-time */
             readonly created_at: string;
             /** Format: date-time */
@@ -2108,6 +2770,28 @@ export interface components {
             readonly course_slug: string;
             readonly is_active: boolean;
         };
+        CourseAssignment: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            readonly unit: string;
+            /** Format: uuid */
+            course: string;
+            /** Format: uuid */
+            teacher: string;
+            readonly teacher_name: string;
+            /** Format: email */
+            readonly teacher_email: string;
+            can_edit_content?: boolean;
+            readonly is_active: boolean;
+        };
+        CourseAssignmentRequest: {
+            /** Format: uuid */
+            course: string;
+            /** Format: uuid */
+            teacher: string;
+            can_edit_content?: boolean;
+        };
         CourseModule: {
             /** Format: uuid */
             readonly id: string;
@@ -2115,16 +2799,19 @@ export interface components {
             course: string;
             title: string;
             description?: string;
+            /** Format: int64 */
             position: number;
-            is_active?: boolean;
+            readonly is_active: boolean;
+            is_visible?: boolean;
         };
         CourseModuleRequest: {
             /** Format: uuid */
             course: string;
             title: string;
             description?: string;
+            /** Format: int64 */
             position: number;
-            is_active?: boolean;
+            is_visible?: boolean;
         };
         CourseRequest: {
             /** Format: uuid */
@@ -2139,8 +2826,7 @@ export interface components {
             learning_outcomes?: unknown;
             /** Format: uuid */
             cover_image?: string | null;
-            status?: components["schemas"]["CourseStatusEnum"];
-            is_active?: boolean;
+            version?: number;
         };
         /**
          * @description * `DRAFT` - Draft
@@ -2148,6 +2834,14 @@ export interface components {
          * @enum {string}
          */
         CourseStatusEnum: "DRAFT" | "PUBLISHED";
+        CourseVersionRequest: {
+            version: number;
+        };
+        CurriculumReorderRequest: {
+            /** Format: uuid */
+            parent_id: string;
+            ids: string[];
+        };
         Department: {
             /** Format: uuid */
             readonly id: string;
@@ -2182,9 +2876,31 @@ export interface components {
             download_url: string;
             expires_in: number;
         };
+        EnrollStudentInUnitRequest: {
+            /** Format: uuid */
+            class_group: string;
+            /** Format: uuid */
+            student?: string;
+            enrollment_token?: string;
+        };
+        EnrollStudentInUnitResult: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            student: string;
+            /** Format: uuid */
+            unit: string;
+            /** Format: uuid */
+            course: string;
+            /** Format: uuid */
+            class_group: string;
+            status: string;
+        };
         Enrollment: {
             /** Format: uuid */
             readonly id: string;
+            /** Format: uuid */
+            readonly unit: string;
             /** Format: uuid */
             readonly student: string;
             readonly student_profile: components["schemas"]["Student"];
@@ -2192,6 +2908,8 @@ export interface components {
             readonly course: string;
             readonly course_title: string;
             readonly course_code: string;
+            /** Format: uuid */
+            readonly class_group: string | null;
             /** Format: uuid */
             readonly application: string | null;
             readonly status: components["schemas"]["Status2aaEnum"];
@@ -2207,12 +2925,14 @@ export interface components {
             readonly id: string;
             question: string;
             answer: string;
+            /** Format: int64 */
             position?: number;
             is_published?: boolean;
         };
         FAQRequest: {
             question: string;
             answer: string;
+            /** Format: int64 */
             position?: number;
             is_published?: boolean;
         };
@@ -2258,23 +2978,37 @@ export interface components {
             /** Format: uuid */
             readonly id: string;
             /** Format: uuid */
-            submission: string;
+            assessment: string;
+            /** Format: uuid */
+            enrollment: string;
+            /** Format: uuid */
+            submission?: string | null;
+            readonly source: components["schemas"]["SourceEnum"];
+            readonly attempt_number: number | null;
             readonly student_name: string;
             readonly registration_number: string;
             readonly assessment_title: string;
             /** Format: decimal */
             readonly maximum_score: string;
             /** Format: decimal */
-            score: string;
+            score?: string | null;
+            /** Format: decimal */
+            readonly official_score: string | null;
+            /** Format: date-time */
+            readonly official_published_at: string | null;
+            readonly regrade_pending: boolean;
             feedback?: string;
-            readonly status: components["schemas"]["Status3d8Enum"];
+            readonly status: components["schemas"]["Status652Enum"];
             readonly revision: number;
+            readonly is_late: boolean;
             /** Format: uuid */
-            readonly graded_by: string;
+            readonly graded_by: string | null;
             /** Format: uuid */
             readonly approved_by: string | null;
             /** Format: date-time */
             readonly approved_at: string | null;
+            /** Format: uuid */
+            readonly published_by: string | null;
             /** Format: date-time */
             readonly published_at: string | null;
             readonly review_note: string;
@@ -2283,31 +3017,74 @@ export interface components {
         };
         GradeRequest: {
             /** Format: uuid */
-            submission: string;
+            assessment: string;
+            /** Format: uuid */
+            enrollment: string;
+            /** Format: uuid */
+            submission?: string | null;
             /** Format: decimal */
-            score: string;
+            score?: string | null;
             feedback?: string;
+            change_note?: string;
         };
         GradeReviewRequest: {
             note?: string;
         };
+        GradeRevision: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly revision: number;
+            /** Format: uuid */
+            readonly submission: string | null;
+            readonly source: components["schemas"]["SourceEnum"];
+            readonly attempt_number: number | null;
+            /** Format: decimal */
+            readonly score: string | null;
+            readonly feedback: string;
+            readonly status: components["schemas"]["Status652Enum"];
+            /** Format: uuid */
+            readonly changed_by: string | null;
+            readonly change_note: string;
+            /** Format: uuid */
+            readonly approved_by: string | null;
+            /** Format: date-time */
+            readonly approved_at: string | null;
+            /** Format: uuid */
+            readonly published_by: string | null;
+            /** Format: date-time */
+            readonly published_at: string | null;
+            readonly review_note: string;
+            readonly is_late: boolean;
+            /** Format: uuid */
+            readonly attempt_grant: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
         GradebookAssessment: {
             /** Format: uuid */
             id: string;
+            /** Format: uuid */
+            class_group: string | null;
             title: string;
             kind: components["schemas"]["Kind1c8Enum"];
             /** Format: decimal */
             maximum_score: string;
             /** Format: date-time */
             due_at: string | null;
+            /** Format: date-time */
+            late_until: string | null;
+            max_attempts: number;
         };
         GradebookEntry: {
             /** Format: uuid */
             grade_id: string;
             /** Format: decimal */
-            score: string;
-            status: components["schemas"]["Status3d8Enum"];
+            score: string | null;
+            /** Format: decimal */
+            official_score: string | null;
+            status: components["schemas"]["Status652Enum"];
             revision: number;
+            regrade_pending: boolean;
         };
         GradebookResponse: {
             course: {
@@ -2319,6 +3096,10 @@ export interface components {
         GradebookStudent: {
             /** Format: uuid */
             id: string;
+            /** Format: uuid */
+            enrollment_id: string;
+            /** Format: uuid */
+            class_group: string | null;
             registration_number: string;
             name: string;
             grades: {
@@ -2344,6 +3125,10 @@ export interface components {
             email?: string;
             phone?: string;
             is_active?: boolean;
+        };
+        InviteStudentRequest: {
+            /** Format: email */
+            email?: string;
         };
         InviteUserRequest: {
             /** Format: email */
@@ -2455,9 +3240,12 @@ export interface components {
             title: string;
             description?: string;
             video_url?: string;
+            /** Format: int64 */
             position: number;
+            /** Format: int64 */
             duration_minutes?: number;
-            is_active?: boolean;
+            readonly is_active: boolean;
+            is_visible?: boolean;
         };
         LessonRequest: {
             /** Format: uuid */
@@ -2465,9 +3253,11 @@ export interface components {
             title: string;
             description?: string;
             video_url?: string;
+            /** Format: int64 */
             position: number;
+            /** Format: int64 */
             duration_minutes?: number;
-            is_active?: boolean;
+            is_visible?: boolean;
         };
         Material: {
             /** Format: uuid */
@@ -2479,7 +3269,8 @@ export interface components {
             url?: string;
             /** Format: uuid */
             file?: string | null;
-            is_active?: boolean;
+            readonly is_active: boolean;
+            is_visible?: boolean;
         };
         /**
          * @description * `LINK` - External link
@@ -2495,7 +3286,7 @@ export interface components {
             url?: string;
             /** Format: uuid */
             file?: string | null;
-            is_active?: boolean;
+            is_visible?: boolean;
         };
         Me: {
             /** Format: uuid */
@@ -2577,6 +3368,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["Application"][];
         };
+        PaginatedAssessmentAttemptGrantList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["AssessmentAttemptGrant"][];
+        };
         PaginatedAssessmentList: {
             /** @example 123 */
             count: number;
@@ -2592,6 +3398,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["Assessment"][];
         };
+        PaginatedAssessmentTemplateList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["AssessmentTemplate"][];
+        };
         PaginatedAttendanceRecordList: {
             /** @example 123 */
             count: number;
@@ -2606,6 +3427,21 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["AttendanceRecord"][];
+        };
+        PaginatedAttendanceRosterEntryList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["AttendanceRosterEntry"][];
         };
         PaginatedAttendanceSessionList: {
             /** @example 123 */
@@ -2697,6 +3533,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["ClassGroup"][];
         };
+        PaginatedClassTeacherList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["ClassTeacher"][];
+        };
         PaginatedContentPageList: {
             /** @example 123 */
             count: number;
@@ -2726,6 +3577,21 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["CourseAccess"][];
+        };
+        PaginatedCourseAssignmentList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["CourseAssignment"][];
         };
         PaginatedCourseList: {
             /** @example 123 */
@@ -2831,6 +3697,21 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["Grade"][];
+        };
+        PaginatedGradeRevisionList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["GradeRevision"][];
         };
         PaginatedGuardianList: {
             /** @example 123 */
@@ -3063,21 +3944,34 @@ export interface components {
             starts_on?: string;
             /** Format: date */
             ends_on?: string;
+            kind?: (components["schemas"]["AcademicPeriodKindEnum"] | components["schemas"]["NullEnum"]) | null;
+            /** Format: uuid */
+            unit?: string | null;
             is_current?: boolean;
             is_active?: boolean;
         };
         PatchedAssessmentRequest: {
             /** Format: uuid */
-            course?: string;
+            template?: string;
             /** Format: uuid */
             class_group?: string | null;
+            /** Format: date-time */
+            due_at?: string | null;
+            /** Format: date-time */
+            late_until?: string | null;
+            /** Format: int64 */
+            max_attempts?: number;
+            /** Format: decimal */
+            weight?: string;
+        };
+        PatchedAssessmentTemplateRequest: {
+            /** Format: uuid */
+            course?: string;
             title?: string;
             instructions?: string;
             kind?: components["schemas"]["Kind1c8Enum"];
             /** Format: decimal */
             maximum_score?: string;
-            /** Format: date-time */
-            due_at?: string | null;
         };
         PatchedBlogPostRequest: {
             title?: string;
@@ -3094,21 +3988,16 @@ export interface components {
             code?: string;
             is_active?: boolean;
         };
-        PatchedChangeRoleRequest: {
-            role?: (components["schemas"]["Role688Enum"] | components["schemas"]["NullEnum"]) | null;
-            /** Format: uuid */
-            unit_id?: string;
-            department_ids?: string[];
-        };
         PatchedClassGroupRequest: {
             /** Format: uuid */
             course?: string;
             /** Format: uuid */
-            teacher?: string;
+            lead_teacher?: string;
             /** Format: uuid */
             academic_period?: string | null;
             name?: string;
             code?: string;
+            /** Format: int64 */
             capacity?: number;
             is_active?: boolean;
         };
@@ -3125,8 +4014,9 @@ export interface components {
             course?: string;
             title?: string;
             description?: string;
+            /** Format: int64 */
             position?: number;
-            is_active?: boolean;
+            is_visible?: boolean;
         };
         PatchedCourseRequest: {
             /** Format: uuid */
@@ -3141,8 +4031,7 @@ export interface components {
             learning_outcomes?: unknown;
             /** Format: uuid */
             cover_image?: string | null;
-            status?: components["schemas"]["CourseStatusEnum"];
-            is_active?: boolean;
+            version?: number;
         };
         PatchedDepartmentWriteRequest: {
             /** Format: uuid */
@@ -3156,6 +4045,7 @@ export interface components {
         PatchedFAQRequest: {
             question?: string;
             answer?: string;
+            /** Format: int64 */
             position?: number;
             is_published?: boolean;
         };
@@ -3178,10 +4068,15 @@ export interface components {
         };
         PatchedGradeRequest: {
             /** Format: uuid */
-            submission?: string;
+            assessment?: string;
+            /** Format: uuid */
+            enrollment?: string;
+            /** Format: uuid */
+            submission?: string | null;
             /** Format: decimal */
-            score?: string;
+            score?: string | null;
             feedback?: string;
+            change_note?: string;
         };
         PatchedGuardianRequest: {
             /** Format: uuid */
@@ -3198,9 +4093,11 @@ export interface components {
             title?: string;
             description?: string;
             video_url?: string;
+            /** Format: int64 */
             position?: number;
+            /** Format: int64 */
             duration_minutes?: number;
-            is_active?: boolean;
+            is_visible?: boolean;
         };
         PatchedMaterialRequest: {
             /** Format: uuid */
@@ -3210,7 +4107,7 @@ export interface components {
             url?: string;
             /** Format: uuid */
             file?: string | null;
-            is_active?: boolean;
+            is_visible?: boolean;
         };
         PatchedMeUpdateRequest: {
             display_name?: string;
@@ -3228,6 +4125,7 @@ export interface components {
             department?: string | null;
             name?: string;
             code?: string;
+            /** Format: int64 */
             capacity?: number;
             is_active?: boolean;
         };
@@ -3252,8 +4150,9 @@ export interface components {
             module?: string;
             title?: string;
             description?: string;
+            /** Format: int64 */
             position?: number;
-            is_active?: boolean;
+            is_visible?: boolean;
         };
         Payment: {
             /** Format: uuid */
@@ -3295,6 +4194,8 @@ export interface components {
         Program: {
             /** Format: uuid */
             readonly id: string;
+            /** Format: uuid */
+            readonly unit: string;
             /** Format: uuid */
             department: string;
             name: string;
@@ -3382,8 +4283,14 @@ export interface components {
          */
         Role688Enum: "SUPER_ADMIN" | "ADMIN" | "DIRECTOR" | "AUDITOR" | "UNIT_MANAGER" | "HOD" | "TEACHER" | "BURSAR" | "CASHIER";
         RoleAssignment: {
-            readonly role: components["schemas"]["RoleAssignmentRoleEnum"];
+            readonly role: components["schemas"]["RoleE94Enum"];
             readonly unit: components["schemas"]["BusinessUnitSummary"] | null;
+        };
+        RoleAssignmentCreateRequest: {
+            role: components["schemas"]["Role688Enum"];
+            /** Format: uuid */
+            unit?: string;
+            department_ids?: string[];
         };
         /**
          * @description * `SUPER_ADMIN` - Super Admin
@@ -3398,7 +4305,7 @@ export interface components {
          *     * `STUDENT` - Student
          * @enum {string}
          */
-        RoleAssignmentRoleEnum: "SUPER_ADMIN" | "ADMIN" | "DIRECTOR" | "AUDITOR" | "UNIT_MANAGER" | "HOD" | "TEACHER" | "BURSAR" | "CASHIER" | "STUDENT";
+        RoleE94Enum: "SUPER_ADMIN" | "ADMIN" | "DIRECTOR" | "AUDITOR" | "UNIT_MANAGER" | "HOD" | "TEACHER" | "BURSAR" | "CASHIER" | "STUDENT";
         Room: {
             /** Format: uuid */
             readonly id: string;
@@ -3406,6 +4313,7 @@ export interface components {
             department?: string | null;
             name: string;
             code: string;
+            /** Format: int64 */
             capacity?: number;
             is_active?: boolean;
         };
@@ -3414,9 +4322,16 @@ export interface components {
             department?: string | null;
             name: string;
             code: string;
+            /** Format: int64 */
             capacity?: number;
             is_active?: boolean;
         };
+        /**
+         * @description * `SUBMISSION` - Submission
+         *     * `STAFF_RECORDED` - Staff recorded
+         * @enum {string}
+         */
+        SourceEnum: "SUBMISSION" | "STAFF_RECORDED";
         /**
          * @description * `INVOICE` - Invoice
          *     * `PAYMENT` - Payment
@@ -3442,6 +4357,16 @@ export interface components {
             is_active?: boolean;
         };
         /**
+         * @description * `APPLICANT` - Applicant
+         *     * `ACTIVE` - Active
+         *     * `COMPLETED` - Completed
+         *     * `WITHDRAWN` - Withdrawn
+         *     * `SUSPENDED` - Suspended
+         *     * `DEFERRED` - Deferred
+         * @enum {string}
+         */
+        Status22cEnum: "APPLICANT" | "ACTIVE" | "COMPLETED" | "WITHDRAWN" | "SUSPENDED" | "DEFERRED";
+        /**
          * @description * `PENDING` - Pending
          *     * `APPROVED` - Approved
          *     * `ACTIVE` - Active
@@ -3452,13 +4377,22 @@ export interface components {
          */
         Status2aaEnum: "PENDING" | "APPROVED" | "ACTIVE" | "COMPLETED" | "REJECTED" | "CANCELLED";
         /**
+         * @description * `PRESENT` - Present
+         *     * `ABSENT` - Absent
+         *     * `LATE` - Late
+         *     * `EXCUSED` - Excused
+         * @enum {string}
+         */
+        Status51aEnum: "PRESENT" | "ABSENT" | "LATE" | "EXCUSED";
+        /**
          * @description * `DRAFT` - Draft
          *     * `PENDING_APPROVAL` - Pending approval
+         *     * `APPROVED` - Approved
          *     * `PUBLISHED` - Published
          *     * `REJECTED` - Rejected
          * @enum {string}
          */
-        Status3d8Enum: "DRAFT" | "PENDING_APPROVAL" | "PUBLISHED" | "REJECTED";
+        Status652Enum: "DRAFT" | "PENDING_APPROVAL" | "APPROVED" | "PUBLISHED" | "REJECTED";
         /**
          * @description * `REQUESTED` - Requested
          *     * `POSTED` - Posted
@@ -3466,6 +4400,15 @@ export interface components {
          * @enum {string}
          */
         Status803Enum: "REQUESTED" | "POSTED" | "REVERSED";
+        /**
+         * @description * `PLANNED` - Planned
+         *     * `OPEN` - Open
+         *     * `RUNNING` - Running
+         *     * `COMPLETED` - Completed
+         *     * `CANCELLED` - Cancelled
+         * @enum {string}
+         */
+        StatusBafEnum: "PLANNED" | "OPEN" | "RUNNING" | "COMPLETED" | "CANCELLED";
         StoredFile: {
             /** Format: uuid */
             readonly id: string;
@@ -3490,6 +4433,9 @@ export interface components {
             /** Format: uuid */
             readonly user: string | null;
             /** Format: uuid */
+            readonly home_unit: string;
+            readonly home_unit_code: string;
+            /** Format: uuid */
             readonly department: string;
             /** Format: uuid */
             readonly program: string | null;
@@ -3499,17 +4445,84 @@ export interface components {
             /** Format: email */
             readonly email: string;
             readonly phone: string;
+            /** Format: date */
+            readonly date_of_birth: string | null;
+            readonly national_id: string;
+            /** Format: uuid */
+            readonly photo_file: string | null;
             readonly admission_year: number;
+            readonly status: components["schemas"]["Status22cEnum"];
             readonly is_active: boolean;
+            readonly account_status: components["schemas"]["AccountStatusEnum"];
+            readonly class_groups: string;
             /** Format: date-time */
             readonly created_at: string;
+        };
+        StudentDuplicateConflict: {
+            message: string;
+            requires_exact_lookup?: boolean;
+            requires_confirmation?: boolean;
+            lookup_token?: string;
+            visible_matches?: components["schemas"]["StudentDuplicateSummary"][];
+            matches?: components["schemas"]["StudentDuplicateSummary"][];
+        };
+        StudentDuplicateLookupMatch: {
+            name: string;
+            home_unit: string;
+            registration_number: string;
+            enrollment_token: string;
+        };
+        StudentDuplicateLookupRequest: {
+            token: string;
+            phone?: string;
+            registration_number?: string;
+        };
+        StudentDuplicateLookupResult: {
+            matches: components["schemas"]["StudentDuplicateLookupMatch"][];
+        };
+        StudentDuplicateSummary: {
+            /** Format: uuid */
+            id?: string;
+            name: string;
+            home_unit: string;
+            registration_number: string;
+        };
+        StudentImportRequest: {
+            /** Format: binary */
+            file: string;
+        };
+        StudentImportResult: {
+            created: number;
+            row_errors: components["schemas"]["StudentImportRowError"][];
+        };
+        StudentImportRowError: {
+            row: number;
+            message: string;
         };
         StudentProvisioningSummary: {
             /** Format: uuid */
             id: string;
             registration_number: string;
-            /** Format: email */
             email: string;
+        };
+        StudentRegistrationRequest: {
+            /** Format: uuid */
+            unit: string;
+            /** Format: uuid */
+            class_group: string;
+            /** Format: uuid */
+            program?: string | null;
+            first_name: string;
+            last_name: string;
+            phone: string;
+            email?: string;
+            /** Format: date */
+            date_of_birth?: string | null;
+            national_id?: string;
+            /** Format: uuid */
+            photo_file?: string | null;
+            /** @default false */
+            confirm_duplicate: boolean;
         };
         StudentStatement: {
             /** Format: uuid */
@@ -3531,6 +4544,14 @@ export interface components {
             /** Format: decimal */
             readonly credit: string;
         };
+        StudentStatusRequest: {
+            status: components["schemas"]["Status22cEnum"];
+            reason: string;
+        };
+        StudentTransferRequest: {
+            /** Format: uuid */
+            home_unit: string;
+        };
         Submission: {
             /** Format: uuid */
             readonly id: string;
@@ -3547,6 +4568,7 @@ export interface components {
             file: string;
             readonly file_name: string;
             note?: string;
+            readonly is_late: boolean;
             /** Format: date-time */
             readonly submitted_at: string;
         };
@@ -3560,6 +4582,8 @@ export interface components {
         TimetableSlot: {
             /** Format: uuid */
             readonly id: string;
+            /** Format: uuid */
+            readonly unit: string;
             /** Format: uuid */
             class_group: string;
             /** Format: uuid */
@@ -3593,6 +4617,8 @@ export interface components {
         };
         TransitionEnrollmentRequest: {
             status: components["schemas"]["Status2aaEnum"];
+            /** Format: uuid */
+            class_group?: string;
         };
         /**
          * @description * `ASSET` - Asset
@@ -3610,16 +4636,19 @@ export interface components {
             module: string;
             title: string;
             description?: string;
+            /** Format: int64 */
             position: number;
-            is_active?: boolean;
+            readonly is_active: boolean;
+            is_visible?: boolean;
         };
         UnitRequest: {
             /** Format: uuid */
             module: string;
             title: string;
             description?: string;
+            /** Format: int64 */
             position: number;
-            is_active?: boolean;
+            is_visible?: boolean;
         };
         UploadRequestRequest: {
             purpose: components["schemas"]["PurposeEnum"];
@@ -3635,6 +4664,12 @@ export interface components {
                 [key: string]: string;
             };
         };
+        /**
+         * @description * `SUBMISSION` - Submission
+         *     * `STAFF_RECORDED` - Staff recorded
+         * @enum {string}
+         */
+        UsedForEnum: "SUBMISSION" | "STAFF_RECORDED";
         User: {
             /** Format: uuid */
             readonly id: string;
@@ -3644,8 +4679,17 @@ export interface components {
             readonly role: string | null;
             readonly is_active: boolean;
             readonly department_ids: string[];
+            readonly assignments: components["schemas"]["UserAssignment"][];
+            readonly status: string;
             /** Format: date-time */
             readonly created_at: string;
+        };
+        UserAssignment: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly role: components["schemas"]["RoleE94Enum"];
+            readonly unit: components["schemas"]["BusinessUnitSummary"] | null;
+            readonly is_active: boolean;
         };
         /**
          * @description * `0` - Monday
@@ -4125,10 +5169,66 @@ export interface operations {
             };
         };
     };
-    assessments_list: {
+    assessment_attempt_grants_list: {
         parameters: {
             query?: {
-                class_group?: string;
+                assessment?: string;
+                enrollment?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `SUBMISSION` - Submission
+                 *     * `STAFF_RECORDED` - Staff recorded
+                 */
+                used_for?: "STAFF_RECORDED" | "SUBMISSION" | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedAssessmentAttemptGrantList"];
+                };
+            };
+        };
+    };
+    assessment_attempt_grants_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this assessment attempt grant. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssessmentAttemptGrant"];
+                };
+            };
+        };
+    };
+    assessment_templates_list: {
+        parameters: {
+            query?: {
                 course?: string;
                 /**
                  * @description * `ASSIGNMENT` - Assignment
@@ -4145,12 +5245,152 @@ export interface operations {
                 page_size?: number;
                 /** @description A search term. */
                 search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedAssessmentTemplateList"];
+                };
+            };
+        };
+    };
+    assessment_templates_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssessmentTemplateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AssessmentTemplateRequest"];
+                "multipart/form-data": components["schemas"]["AssessmentTemplateRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssessmentTemplate"];
+                };
+            };
+        };
+    };
+    assessment_templates_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this assessment template. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssessmentTemplate"];
+                };
+            };
+        };
+    };
+    assessment_templates_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this assessment template. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssessmentTemplateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AssessmentTemplateRequest"];
+                "multipart/form-data": components["schemas"]["AssessmentTemplateRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssessmentTemplate"];
+                };
+            };
+        };
+    };
+    assessment_templates_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this assessment template. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAssessmentTemplateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedAssessmentTemplateRequest"];
+                "multipart/form-data": components["schemas"]["PatchedAssessmentTemplateRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssessmentTemplate"];
+                };
+            };
+        };
+    };
+    assessments_list: {
+        parameters: {
+            query?: {
+                class_group?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
                 /**
                  * @description * `DRAFT` - Draft
                  *     * `PUBLISHED` - Published
                  *     * `CLOSED` - Closed
                  */
                 status?: "CLOSED" | "DRAFT" | "PUBLISHED";
+                template__course?: string;
+                /**
+                 * @description * `ASSIGNMENT` - Assignment
+                 *     * `QUIZ` - Quiz
+                 *     * `EXAM` - Exam
+                 *     * `PROJECT` - Project
+                 */
+                template__kind?: "ASSIGNMENT" | "EXAM" | "PROJECT" | "QUIZ";
             };
             header?: never;
             path?: never;
@@ -4336,6 +5576,34 @@ export interface operations {
             };
         };
     };
+    assessments_re_open_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this assessment. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttemptGrantCreateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AttemptGrantCreateRequest"];
+                "multipart/form-data": components["schemas"]["AttemptGrantCreateRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssessmentAttemptGrant"];
+                };
+            };
+        };
+    };
     attendance_check_in_create: {
         parameters: {
             query?: never;
@@ -4375,9 +5643,11 @@ export interface operations {
                 session?: string;
                 /**
                  * @description * `PRESENT` - Present
+                 *     * `ABSENT` - Absent
                  *     * `LATE` - Late
+                 *     * `EXCUSED` - Excused
                  */
-                status?: "LATE" | "PRESENT";
+                status?: "ABSENT" | "EXCUSED" | "LATE" | "PRESENT";
                 student?: string;
             };
             header?: never;
@@ -4470,6 +5740,34 @@ export interface operations {
             };
         };
     };
+    attendance_sessions_mark_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this attendance session. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttendanceMarkRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AttendanceMarkRequest"];
+                "multipart/form-data": components["schemas"]["AttendanceMarkRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttendanceMarkResponse"];
+                };
+            };
+        };
+    };
     attendance_sessions_qr_create: {
         parameters: {
             query?: never;
@@ -4488,6 +5786,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["QrIssue"];
+                };
+            };
+        };
+    };
+    attendance_sessions_roster_list: {
+        parameters: {
+            query?: {
+                class_group?: string;
+                is_open?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this attendance session. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedAttendanceRosterEntryList"];
                 };
             };
         };
@@ -4889,7 +6220,14 @@ export interface operations {
                 page_size?: number;
                 /** @description A search term. */
                 search?: string;
-                teacher?: string;
+                /**
+                 * @description * `PLANNED` - Planned
+                 *     * `OPEN` - Open
+                 *     * `RUNNING` - Running
+                 *     * `COMPLETED` - Completed
+                 *     * `CANCELLED` - Cancelled
+                 */
+                status?: "CANCELLED" | "COMPLETED" | "OPEN" | "PLANNED" | "RUNNING";
             };
             header?: never;
             path?: never;
@@ -5031,6 +6369,138 @@ export interface operations {
             };
         };
     };
+    class_groups_transition_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this class group. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClassGroupTransitionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ClassGroupTransitionRequest"];
+                "multipart/form-data": components["schemas"]["ClassGroupTransitionRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClassGroup"];
+                };
+            };
+        };
+    };
+    class_teachers_list: {
+        parameters: {
+            query?: {
+                class_group?: string;
+                is_active?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /**
+                 * @description * `LEAD` - Lead teacher
+                 *     * `ASSISTANT` - Assistant teacher
+                 */
+                role?: "ASSISTANT" | "LEAD";
+                /** @description A search term. */
+                search?: string;
+                teacher?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedClassTeacherList"];
+                };
+            };
+        };
+    };
+    class_teachers_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClassTeacherRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ClassTeacherRequest"];
+                "multipart/form-data": components["schemas"]["ClassTeacherRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClassTeacher"];
+                };
+            };
+        };
+    };
+    class_teachers_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this class teacher. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClassTeacher"];
+                };
+            };
+        };
+    };
+    class_teachers_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this class teacher. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     course_access_list: {
         parameters: {
             query?: {
@@ -5081,6 +6551,105 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["CourseAccess"];
                 };
+            };
+        };
+    };
+    course_assignments_list: {
+        parameters: {
+            query?: {
+                course?: string;
+                is_active?: boolean;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                teacher?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedCourseAssignmentList"];
+                };
+            };
+        };
+    };
+    course_assignments_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CourseAssignmentRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CourseAssignmentRequest"];
+                "multipart/form-data": components["schemas"]["CourseAssignmentRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CourseAssignment"];
+                };
+            };
+        };
+    };
+    course_assignments_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this course assignment. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CourseAssignment"];
+                };
+            };
+        };
+    };
+    course_assignments_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this course assignment. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -5225,6 +6794,31 @@ export interface operations {
                 "application/json": components["schemas"]["PatchedCourseModuleRequest"];
                 "application/x-www-form-urlencoded": components["schemas"]["PatchedCourseModuleRequest"];
                 "multipart/form-data": components["schemas"]["PatchedCourseModuleRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CourseModule"];
+                };
+            };
+        };
+    };
+    course_modules_reorder_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CurriculumReorderRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CurriculumReorderRequest"];
+                "multipart/form-data": components["schemas"]["CurriculumReorderRequest"];
             };
         };
         responses: {
@@ -5392,6 +6986,31 @@ export interface operations {
             };
         };
     };
+    course_units_reorder_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CurriculumReorderRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CurriculumReorderRequest"];
+                "multipart/form-data": components["schemas"]["CurriculumReorderRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Unit"];
+                };
+            };
+        };
+    };
     courses_list: {
         parameters: {
             query?: {
@@ -5501,26 +7120,6 @@ export interface operations {
             };
         };
     };
-    courses_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     courses_partial_update: {
         parameters: {
             query?: never;
@@ -5535,6 +7134,114 @@ export interface operations {
                 "application/json": components["schemas"]["PatchedCourseRequest"];
                 "application/x-www-form-urlencoded": components["schemas"]["PatchedCourseRequest"];
                 "multipart/form-data": components["schemas"]["PatchedCourseRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Course"];
+                };
+            };
+        };
+    };
+    courses_archive_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CourseVersionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CourseVersionRequest"];
+                "multipart/form-data": components["schemas"]["CourseVersionRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Course"];
+                };
+            };
+        };
+    };
+    courses_duplicate_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CourseVersionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CourseVersionRequest"];
+                "multipart/form-data": components["schemas"]["CourseVersionRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Course"];
+                };
+            };
+        };
+    };
+    courses_publish_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CourseVersionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CourseVersionRequest"];
+                "multipart/form-data": components["schemas"]["CourseVersionRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Course"];
+                };
+            };
+        };
+    };
+    courses_unpublish_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CourseVersionRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CourseVersionRequest"];
+                "multipart/form-data": components["schemas"]["CourseVersionRequest"];
             };
         };
         responses: {
@@ -6196,6 +7903,8 @@ export interface operations {
     grades_list: {
         parameters: {
             query?: {
+                assessment?: string;
+                enrollment?: string;
                 /** @description Which field to use when ordering the results. */
                 ordering?: string;
                 /** @description A page number within the paginated result set. */
@@ -6207,12 +7916,11 @@ export interface operations {
                 /**
                  * @description * `DRAFT` - Draft
                  *     * `PENDING_APPROVAL` - Pending approval
+                 *     * `APPROVED` - Approved
                  *     * `PUBLISHED` - Published
                  *     * `REJECTED` - Rejected
                  */
-                status?: "DRAFT" | "PENDING_APPROVAL" | "PUBLISHED" | "REJECTED";
-                submission__assessment?: string;
-                submission__student?: string;
+                status?: "APPROVED" | "DRAFT" | "PENDING_APPROVAL" | "PUBLISHED" | "REJECTED";
             };
             header?: never;
             path?: never;
@@ -6355,6 +8063,50 @@ export interface operations {
             };
         };
     };
+    grades_approve_and_publish_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this grade. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Grade"];
+                };
+            };
+        };
+    };
+    grades_publish_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this grade. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Grade"];
+                };
+            };
+        };
+    };
     grades_reject_create: {
         parameters: {
             query?: never;
@@ -6379,6 +8131,47 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Grade"];
+                };
+            };
+        };
+    };
+    grades_revisions_list: {
+        parameters: {
+            query?: {
+                assessment?: string;
+                enrollment?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+                /**
+                 * @description * `DRAFT` - Draft
+                 *     * `PENDING_APPROVAL` - Pending approval
+                 *     * `APPROVED` - Approved
+                 *     * `PUBLISHED` - Published
+                 *     * `REJECTED` - Rejected
+                 */
+                status?: "APPROVED" | "DRAFT" | "PENDING_APPROVAL" | "PUBLISHED" | "REJECTED";
+            };
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this grade. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedGradeRevisionList"];
                 };
             };
         };
@@ -6868,6 +8661,31 @@ export interface operations {
                 "application/json": components["schemas"]["PatchedLessonRequest"];
                 "application/x-www-form-urlencoded": components["schemas"]["PatchedLessonRequest"];
                 "multipart/form-data": components["schemas"]["PatchedLessonRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Lesson"];
+                };
+            };
+        };
+    };
+    lessons_reorder_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CurriculumReorderRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CurriculumReorderRequest"];
+                "multipart/form-data": components["schemas"]["CurriculumReorderRequest"];
             };
         };
         responses: {
@@ -7864,6 +9682,7 @@ export interface operations {
             query?: {
                 admission_year?: number;
                 department?: string;
+                home_unit?: string;
                 is_active?: boolean;
                 /** @description Which field to use when ordering the results. */
                 ordering?: string;
@@ -7874,6 +9693,15 @@ export interface operations {
                 program?: string;
                 /** @description A search term. */
                 search?: string;
+                /**
+                 * @description * `APPLICANT` - Applicant
+                 *     * `ACTIVE` - Active
+                 *     * `COMPLETED` - Completed
+                 *     * `WITHDRAWN` - Withdrawn
+                 *     * `SUSPENDED` - Suspended
+                 *     * `DEFERRED` - Deferred
+                 */
+                status?: "ACTIVE" | "APPLICANT" | "COMPLETED" | "DEFERRED" | "SUSPENDED" | "WITHDRAWN";
             };
             header?: never;
             path?: never;
@@ -7891,6 +9719,39 @@ export interface operations {
             };
         };
     };
+    students_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StudentRegistrationRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["StudentRegistrationRequest"];
+                "multipart/form-data": components["schemas"]["StudentRegistrationRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Student"];
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudentDuplicateConflict"];
+                };
+            };
+        };
+    };
     students_retrieve: {
         parameters: {
             query?: never;
@@ -7902,6 +9763,90 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Student"];
+                };
+            };
+        };
+    };
+    students_change_status_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this student. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StudentStatusRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["StudentStatusRequest"];
+                "multipart/form-data": components["schemas"]["StudentStatusRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Student"];
+                };
+            };
+        };
+    };
+    students_invite_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this student. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["InviteStudentRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["InviteStudentRequest"];
+                "multipart/form-data": components["schemas"]["InviteStudentRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Student"];
+                };
+            };
+        };
+    };
+    students_transfer_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this student. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StudentTransferRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["StudentTransferRequest"];
+                "multipart/form-data": components["schemas"]["StudentTransferRequest"];
+            };
+        };
         responses: {
             200: {
                 headers: {
@@ -7930,6 +9875,80 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StudentStatement"];
+                };
+            };
+        };
+    };
+    students_duplicate_lookup_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StudentDuplicateLookupRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["StudentDuplicateLookupRequest"];
+                "multipart/form-data": components["schemas"]["StudentDuplicateLookupRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudentDuplicateLookupResult"];
+                };
+            };
+        };
+    };
+    students_enroll_in_unit_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EnrollStudentInUnitRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["EnrollStudentInUnitRequest"];
+                "multipart/form-data": components["schemas"]["EnrollStudentInUnitRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EnrollStudentInUnitResult"];
+                };
+            };
+        };
+    };
+    students_import_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["StudentImportRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["StudentImportRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudentImportResult"];
                 };
             };
         };
@@ -8197,6 +10216,29 @@ export interface operations {
             };
         };
     };
+    transcripts_versions_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                student_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+        };
+    };
     transcripts_me_retrieve: {
         parameters: {
             query?: never;
@@ -8212,6 +10254,27 @@ export interface operations {
                 };
                 content: {
                     "application/pdf": string;
+                };
+            };
+        };
+    };
+    transcripts_me_versions_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
         };
@@ -8295,7 +10358,7 @@ export interface operations {
             };
         };
     };
-    users_role_partial_update: {
+    users_assignments_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -8305,11 +10368,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: {
+        requestBody: {
             content: {
-                "application/json": components["schemas"]["PatchedChangeRoleRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedChangeRoleRequest"];
-                "multipart/form-data": components["schemas"]["PatchedChangeRoleRequest"];
+                "application/json": components["schemas"]["RoleAssignmentCreateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["RoleAssignmentCreateRequest"];
+                "multipart/form-data": components["schemas"]["RoleAssignmentCreateRequest"];
             };
         };
         responses: {
@@ -8320,6 +10383,36 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["User"];
                 };
+            };
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["User"];
+                };
+            };
+        };
+    };
+    users_assignments_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment_id: string;
+                /** @description A UUID string identifying this user. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

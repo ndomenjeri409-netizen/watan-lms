@@ -77,11 +77,13 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         model = Enrollment
         fields = (
             "id",
+            "unit",
             "student",
             "student_profile",
             "course",
             "course_title",
             "course_code",
+            "class_group",
             "application",
             "status",
             "approved_by",
@@ -104,7 +106,7 @@ class CourseAccessSerializer(serializers.ModelSerializer):
 class StudentProvisioningSummarySerializer(serializers.Serializer):
     id = serializers.UUIDField()
     registration_number = serializers.CharField()
-    email = serializers.EmailField()
+    email = serializers.EmailField(allow_blank=True)
 
 
 class ApproveApplicationResponseSerializer(serializers.Serializer):
@@ -119,3 +121,4 @@ class RejectApplicationSerializer(serializers.Serializer):
 
 class TransitionEnrollmentSerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=Enrollment.Status.choices)
+    class_group = serializers.UUIDField(required=False)

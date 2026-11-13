@@ -14,8 +14,9 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from apps.accounts.models import User
-from apps.accounts.roles import ADMIN_ROLES, Role
+from apps.accounts.roles import GLOBAL_READ_ROLES
 from common.audit import record_audit
+from common.permissions import ReadOnlyRoleWritePermission
 
 from .models import StoredFile
 from .policies import UPLOAD_POLICIES
@@ -31,7 +32,7 @@ from .storage import get_storage_client
 class FileStorageViewSet(GenericViewSet):
     queryset = StoredFile.objects.all()
     serializer_class = StoredFileSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, ReadOnlyRoleWritePermission)
 
     def get_object(self):
         try:
@@ -65,7 +66,7 @@ class FileStorageViewSet(GenericViewSet):
             upload_url = client.generate_presigned_url(
                 "put_object",
                 Params={
-                    "Bucket": settings.R2_BUCKET,
+                    "Bucket": settings.STORAGE_BUCKET,
                     "Key": stored_file.object_key,
                     "ContentType": stored_file.content_type,
                 },
@@ -119,7 +120,7 @@ class FileStorageViewSet(GenericViewSet):
         client = get_storage_client()
         try:
             metadata = client.head_object(
-                Bucket=settings.R2_BUCKET,
+                Bucket=settings.STORAGE_BUCKET,
                 Key=stored_file.object_key,
             )
         except (BotoCoreError, ClientError) as exc:
@@ -136,7 +137,7 @@ class FileStorageViewSet(GenericViewSet):
         if not valid:
             try:
                 client.delete_object(
-                    Bucket=settings.R2_BUCKET,
+                    Bucket=settings.STORAGE_BUCKET,
                     Key=stored_file.object_key,
                 )
             except (BotoCoreError, ClientError) as exc:
@@ -176,7 +177,7 @@ class FileStorageViewSet(GenericViewSet):
             url = client.generate_presigned_url(
                 "get_object",
                 Params={
-                    "Bucket": settings.R2_BUCKET,
+                    "Bucket": settings.STORAGE_BUCKET,
                     "Key": stored_file.object_key,
                     "ResponseContentDisposition": (
                         f'attachment; filename="{stored_file.original_name}"'
@@ -203,24 +204,59 @@ class FileStorageViewSet(GenericViewSet):
 
     def _may_download(self, stored_file):
         from apps.academics.models import Course, Material
+        from apps.academics.permissions import may_manage_course
 
         if stored_file.purpose == StoredFile.Purpose.COVER_IMAGE:
             course_ids = Course.objects.filter(cover_image=stored_file).values("id")
         elif stored_file.purpose == StoredFile.Purpose.MATERIAL:
-            course_ids = Material.objects.filter(file=stored_file).values_list(
-                "lesson__unit__module__course__id", flat=True
+            user = self.request.user
+            materials = Material.objects.filter(file=stored_file).select_related(
+                "lesson__unit__module__course__department"
             )
+            for material in materials:
+                lesson = material.lesson
+                unit = lesson.unit
+                module = unit.module
+                course = module.course
+                if (
+                    material.is_active
+                    and material.is_visible
+                    and lesson.is_active
+                    and lesson.is_visible
+                    and unit.is_active
+                    and unit.is_visible
+                    and module.is_active
+                    and module.is_visible
+                    and course.status == Course.Status.PUBLISHED
+                    and course.is_active
+                ):
+                    return True
+                if user.is_authenticated and may_manage_course(user, course):
+                    return True
+            return False
         elif stored_file.purpose == StoredFile.Purpose.SUBMISSION:
             from apps.assessment.models import Submission
             from apps.assessment.views import may_manage_assessment
 
             submissions = Submission.objects.filter(file=stored_file).select_related(
-                "assessment__course__department",
-                "assessment__class_group__teacher",
+                "assessment__template__course__department"
             )
+            user = self.request.user
+            if user.has_role_global(*GLOBAL_READ_ROLES):
+                return True
             return any(
-                may_manage_assessment(self.request.user, item.assessment)
-                for item in submissions
+                may_manage_assessment(user, item.assessment) for item in submissions
+            )
+        elif stored_file.purpose == StoredFile.Purpose.PROFILE_PHOTO:
+            from apps.people.models import Student
+            from apps.people.permissions import may_read_restricted_student
+
+            user = self.request.user
+            if not user.is_authenticated:
+                return False
+            student = Student.objects.filter(photo_file=stored_file).first()
+            return bool(
+                student and may_read_restricted_student(user=user, student=student)
             )
         else:
             return False
@@ -232,9 +268,7 @@ class FileStorageViewSet(GenericViewSet):
         user = self.request.user
         if not user.is_authenticated:
             return False
-        if user.role in ADMIN_ROLES:
+        if user.has_role_global(*GLOBAL_READ_ROLES):
             return True
         courses = Course.objects.filter(id__in=course_ids)
-        if user.role == Role.HOD:
-            return courses.filter(department__role_scopes__user=user).exists()
-        return courses.filter(created_by=user).exists()
+        return any(may_manage_course(user, course) for course in courses)

@@ -1,50 +1,86 @@
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
 
-from apps.accounts.roles import Role
+from apps.accounts.roles import GLOBAL_READ_ROLES, Role
 from common.models import BaseModel
-from common.scoping import ScopedQuerySet
+from common.scoping import ScopedQuerySet, UnitScopedQuerySet
 
 
 class ApplicationQuerySet(ScopedQuerySet):
+    unit_field = "course__unit"
+
     def for_user(self, user):
-        if not user.is_authenticated or not user.role:
+        if not user.is_authenticated:
             return self.none()
-        if user.role in {Role.SUPER_ADMIN, Role.ADMIN, Role.DIRECTOR}:
+        if user.has_role_global(*GLOBAL_READ_ROLES):
             return self
-        if user.role == Role.HOD:
-            return self.filter(department__role_scopes__user=user).distinct()
-        return self.none()
+
+        scope = Q(pk__in=[])
+        if user.has_role(Role.HOD):
+            department_ids = user.department_ids_for_hod()
+            if department_ids:
+                scope |= Q(department_id__in=department_ids)
+        unit_ids = user.unit_ids_for(Role.UNIT_MANAGER)
+        if unit_ids:
+            scope |= Q(course__unit_id__in=unit_ids)
+        return self.filter(scope).distinct()
 
 
-class EnrollmentQuerySet(ScopedQuerySet):
+class EnrollmentQuerySet(UnitScopedQuerySet):
+    unit_field = "unit"
+
     def for_user(self, user):
-        if not user.is_authenticated or not user.role:
+        if not user.is_authenticated:
             return self.none()
-        if user.role in {Role.SUPER_ADMIN, Role.ADMIN, Role.DIRECTOR}:
+        if user.has_role_global(*GLOBAL_READ_ROLES):
             return self
-        if user.role == Role.HOD:
-            return self.filter(course__department__role_scopes__user=user).distinct()
-        if user.role == Role.STUDENT:
-            return self.filter(student__user=user)
-        if user.role == Role.TEACHER:
-            return self.filter(course__created_by=user)
-        return self.none()
+
+        scope = Q(pk__in=[])
+        department_ids = user.department_ids_for_hod()
+        if department_ids:
+            scope |= Q(course__department_id__in=department_ids)
+        unit_ids = user.unit_ids_for(Role.UNIT_MANAGER)
+        if unit_ids:
+            scope |= Q(unit_id__in=unit_ids)
+        if user.has_role(Role.TEACHER):
+            scope |= Q(
+                course__teacher_assignments__teacher=user,
+                course__teacher_assignments__can_edit_content=True,
+                course__teacher_assignments__is_active=True,
+            )
+        if user.has_role(Role.STUDENT):
+            scope |= Q(student__user=user)
+        return self.filter(scope).distinct()
 
 
 class CourseAccessQuerySet(ScopedQuerySet):
+    unit_field = "course__unit"
+
     def for_user(self, user):
-        if not user.is_authenticated or not user.role:
+        if not user.is_authenticated:
             return self.none()
-        if user.role in {Role.SUPER_ADMIN, Role.ADMIN, Role.DIRECTOR}:
+        if user.has_role_global(*GLOBAL_READ_ROLES):
             return self
-        if user.role == Role.HOD:
-            return self.filter(course__department__role_scopes__user=user).distinct()
-        if user.role == Role.STUDENT:
-            return self.filter(student__user=user, is_active=True)
-        if user.role == Role.TEACHER:
-            return self.filter(course__created_by=user, is_active=True)
-        return self.none()
+
+        scope = Q(pk__in=[])
+        department_ids = user.department_ids_for_hod()
+        if department_ids:
+            scope |= Q(course__department_id__in=department_ids)
+        unit_ids = user.unit_ids_for(Role.UNIT_MANAGER)
+        if unit_ids:
+            scope |= Q(course__unit_id__in=unit_ids)
+        if user.has_role(Role.TEACHER):
+            scope |= Q(
+                course__teacher_assignments__teacher=user,
+                course__teacher_assignments__can_edit_content=True,
+                course__teacher_assignments__is_active=True,
+                is_active=True,
+            )
+        if user.has_role(Role.STUDENT):
+            scope |= Q(student__user=user, is_active=True)
+        return self.filter(scope).distinct()
 
 
 class Application(BaseModel):
@@ -69,7 +105,7 @@ class Application(BaseModel):
     )
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    email = models.EmailField()
+    email = models.EmailField(blank=True)
     phone = models.CharField(max_length=32, blank=True)
     statement = models.TextField(blank=True)
     status = models.CharField(
@@ -110,11 +146,21 @@ class Enrollment(BaseModel):
         REJECTED = "REJECTED", "Rejected"
         CANCELLED = "CANCELLED", "Cancelled"
 
+    unit = models.ForeignKey(
+        "org.BusinessUnit", on_delete=models.PROTECT, related_name="enrollments"
+    )
     student = models.ForeignKey(
         "people.Student", on_delete=models.PROTECT, related_name="enrollments"
     )
     course = models.ForeignKey(
         "academics.Course", on_delete=models.PROTECT, related_name="enrollments"
+    )
+    class_group = models.ForeignKey(
+        "scheduling.ClassGroup",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        related_name="enrollments",
     )
     application = models.OneToOneField(
         Application,
@@ -142,8 +188,42 @@ class Enrollment(BaseModel):
         constraints = [  # noqa: RUF012
             models.UniqueConstraint(
                 fields=("student", "course"), name="unique_student_course_enrollment"
-            )
+            ),
+            models.CheckConstraint(
+                condition=~Q(status="ACTIVE") | Q(class_group__isnull=False),
+                name="active_enrollment_requires_class",
+            ),
         ]
+
+    def clean(self):
+        if self.course_id and self.unit_id and self.course.unit_id != self.unit_id:
+            raise ValidationError(
+                {"unit": "The enrollment must use its course's unit."}
+            )
+        if self.class_group_id and self.course_id:
+            if self.class_group.course_id != self.course_id:
+                raise ValidationError(
+                    {"class_group": "The class must use the enrollment's course."}
+                )
+            if self.class_group.course.unit_id != self.unit_id:
+                raise ValidationError(
+                    {
+                        "class_group": "The class must use the enrollment's business unit."
+                    }
+                )
+        if self.status == self.Status.ACTIVE and not self.class_group_id:
+            raise ValidationError(
+                {"class_group": "Assign the enrollment to a class before activation."}
+            )
+
+    def save(self, *args, **kwargs):
+        derived_unit = self.unit_id is None
+        if derived_unit and self.course_id:
+            self.unit_id = self.course.unit_id
+            if kwargs.get("update_fields") is not None:
+                kwargs["update_fields"] = tuple(set(kwargs["update_fields"]) | {"unit"})
+        self.clean()
+        super().save(*args, **kwargs)
 
 
 class CourseAccess(BaseModel):

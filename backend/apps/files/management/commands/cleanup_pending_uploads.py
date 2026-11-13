@@ -21,7 +21,7 @@ class Command(BaseCommand):
         removed = 0
         for stored_file in expired.iterator():
             client.delete_object(
-                Bucket=settings.R2_BUCKET,
+                Bucket=settings.STORAGE_BUCKET,
                 Key=stored_file.object_key,
             )
             stored_file.status = StoredFile.Status.DELETED

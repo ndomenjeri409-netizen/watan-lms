@@ -31,6 +31,12 @@ jobs:
           python-version: "3.12"
           cache: pip
           cache-dependency-path: backend/requirements/dev.txt
+      - name: Check documentation integrity
+        working-directory: .
+        run: python scripts/check_docs.py
+      - name: Check tracked files for NUL bytes
+        working-directory: .
+        run: python scripts/check_no_nul.py
       - run: pip install -r requirements/dev.txt
       - run: ruff check . && ruff format --check .
       - run: python manage.py makemigrations --check --dry-run

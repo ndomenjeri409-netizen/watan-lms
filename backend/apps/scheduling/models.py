@@ -1,50 +1,117 @@
-from django.conf import settings
-from django.db import models
+from typing import ClassVar
 
-from apps.accounts.roles import Role
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.db import models
+from django.db.models import Q
+
+from apps.accounts.roles import GLOBAL_READ_ROLES, Role
 from common.models import BaseModel
-from common.scoping import ScopedQuerySet
+from common.scoping import ScopedQuerySet, UnitScopedQuerySet
 
 
 class RoomQuerySet(ScopedQuerySet):
+    unit_field = "department__unit"
+
     def for_user(self, user):
-        if not user.is_authenticated or not user.role:
+        if not user.is_authenticated:
             return self.none()
-        if user.role in {Role.SUPER_ADMIN, Role.ADMIN, Role.DIRECTOR}:
+        if user.has_role_global(*GLOBAL_READ_ROLES):
             return self
-        if user.role == Role.HOD:
-            return self.filter(department__role_scopes__user=user).distinct()
-        if user.role == Role.TEACHER:
-            return self.filter(is_active=True)
-        if user.role == Role.STUDENT:
-            return self.filter(is_active=True)
-        return self.none()
+
+        scope = Q(pk__in=[])
+        department_ids = user.department_ids_for_hod()
+        if department_ids:
+            scope |= Q(department_id__in=department_ids)
+        manager_unit_ids = user.unit_ids_for(Role.UNIT_MANAGER)
+        if manager_unit_ids:
+            scope |= Q(department__unit_id__in=manager_unit_ids)
+        teacher_unit_ids = user.unit_ids_for(Role.TEACHER)
+        if teacher_unit_ids:
+            scope |= Q(department__unit_id__in=teacher_unit_ids, is_active=True)
+        if user.has_role(Role.STUDENT):
+            class_ids = ClassGroup.objects.for_user(user).filter(is_active=True)
+            scope |= Q(
+                timetable_slots__class_group__in=class_ids,
+                timetable_slots__is_active=True,
+                is_active=True,
+            )
+        return self.filter(scope).distinct()
 
 
 class ClassGroupQuerySet(ScopedQuerySet):
+    unit_field = "course__unit"
+
     def for_user(self, user):
         from apps.enrollment.models import CourseAccess
 
-        if not user.is_authenticated or not user.role:
+        if not user.is_authenticated:
             return self.none()
-        if user.role in {Role.SUPER_ADMIN, Role.ADMIN, Role.DIRECTOR}:
+        if user.has_role_global(*GLOBAL_READ_ROLES):
             return self
-        if user.role == Role.HOD:
-            return self.filter(course__department__role_scopes__user=user).distinct()
-        if user.role == Role.TEACHER:
-            return self.filter(teacher=user)
-        if user.role == Role.STUDENT:
-            return self.filter(
-                course_id__in=CourseAccess.objects.for_user(user).values("course_id"),
-                is_active=True,
+
+        scope = Q(pk__in=[])
+        department_ids = user.department_ids_for_hod()
+        if department_ids:
+            scope |= Q(course__department_id__in=department_ids)
+        unit_ids = user.unit_ids_for(Role.UNIT_MANAGER)
+        if unit_ids:
+            scope |= Q(course__unit_id__in=unit_ids)
+        if user.has_role(Role.TEACHER):
+            scope |= Q(
+                teacher_assignments__teacher=user,
+                teacher_assignments__is_active=True,
             )
-        return self.none()
+        if user.has_role(Role.STUDENT):
+            active_courses = CourseAccess.objects.for_user(user).filter(is_active=True)
+            scope |= Q(
+                course_id__in=active_courses.values("course_id"),
+                is_active=True,
+                status__in=(
+                    ClassGroup.Status.PLANNED,
+                    ClassGroup.Status.OPEN,
+                    ClassGroup.Status.RUNNING,
+                ),
+            )
+        return self.filter(scope).distinct()
 
 
-class TimetableSlotQuerySet(ScopedQuerySet):
+class ClassTeacherQuerySet(UnitScopedQuerySet):
+    unit_field = "unit"
+
     def for_user(self, user):
+        if not user.is_authenticated:
+            return self.none()
+        if user.has_role_global(*GLOBAL_READ_ROLES):
+            return self
+
+        scope = Q(pk__in=[])
+        unit_ids = user.unit_ids_for(Role.UNIT_MANAGER)
+        if unit_ids:
+            scope |= Q(unit_id__in=unit_ids)
+        if user.has_role(Role.TEACHER):
+            scope |= Q(teacher=user, is_active=True)
+        department_ids = user.department_ids_for_hod()
+        if department_ids:
+            scope |= Q(class_group__course__department_id__in=department_ids)
+        return self.filter(scope).distinct()
+
+
+class TimetableSlotQuerySet(UnitScopedQuerySet):
+    unit_field = "unit"
+
+    def for_user(self, user):
+        if not user.is_authenticated:
+            return self.none()
         group_ids = ClassGroup.objects.for_user(user).values("id")
-        return self.filter(class_group_id__in=group_ids)
+        return self.filter(
+            class_group_id__in=group_ids,
+            class_group__status__in=(
+                ClassGroup.Status.PLANNED,
+                ClassGroup.Status.OPEN,
+                ClassGroup.Status.RUNNING,
+            ),
+        )
 
 
 class Room(BaseModel):
@@ -70,13 +137,23 @@ class Room(BaseModel):
 
 
 class ClassGroup(BaseModel):
+    class Status(models.TextChoices):
+        PLANNED = "PLANNED", "Planned"
+        OPEN = "OPEN", "Open"
+        RUNNING = "RUNNING", "Running"
+        COMPLETED = "COMPLETED", "Completed"
+        CANCELLED = "CANCELLED", "Cancelled"
+
+    ALLOWED_STATUS_TRANSITIONS: ClassVar[dict[str, set[str]]] = {
+        Status.PLANNED: {Status.OPEN, Status.CANCELLED},
+        Status.OPEN: {Status.RUNNING, Status.CANCELLED},
+        Status.RUNNING: {Status.COMPLETED, Status.CANCELLED},
+        Status.COMPLETED: set(),
+        Status.CANCELLED: set(),
+    }
+
     course = models.ForeignKey(
         "academics.Course", on_delete=models.PROTECT, related_name="class_groups"
-    )
-    teacher = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT,
-        related_name="teaching_groups",
     )
     academic_period = models.ForeignKey(
         "org.AcademicPeriod",
@@ -88,15 +165,142 @@ class ClassGroup(BaseModel):
     name = models.CharField(max_length=160)
     code = models.CharField(max_length=40, unique=True)
     capacity = models.PositiveIntegerField(default=40)
+    status = models.CharField(
+        max_length=12, choices=Status.choices, default=Status.PLANNED
+    )
     is_active = models.BooleanField(default=True)
 
     objects = ClassGroupQuerySet.as_manager()
 
     class Meta:
         ordering = ("course__title", "name")
+        constraints = [  # noqa: RUF012
+            models.CheckConstraint(
+                condition=models.Q(capacity__gt=0),
+                name="class_group_capacity_positive",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(
+                    status__in=("PLANNED", "OPEN", "RUNNING", "COMPLETED", "CANCELLED")
+                ),
+                name="class_group_status_valid",
+            ),
+        ]
+
+    def clean(self):
+        if self.capacity < 1:
+            raise ValidationError({"capacity": "Capacity must be at least one."})
+        if (
+            self.academic_period_id
+            and self.course_id
+            and self.academic_period.unit_id
+            and self.academic_period.unit_id != self.course.unit_id
+        ):
+            raise ValidationError(
+                {"academic_period": "The academic period belongs to another unit."}
+            )
+        if self.pk and not self._state.adding:
+            previous = type(self).objects.filter(pk=self.pk).values("status").first()
+            if previous and previous["status"] != self.status:
+                if (
+                    self.status
+                    not in self.ALLOWED_STATUS_TRANSITIONS[previous["status"]]
+                ):
+                    raise ValidationError(
+                        {"status": "This class status transition is not allowed."}
+                    )
+                if (
+                    self.status == self.Status.RUNNING
+                    and not self.teacher_assignments.filter(is_active=True).exists()
+                ):
+                    raise ValidationError(
+                        {
+                            "status": "Assign at least one active teacher before starting."
+                        }
+                    )
+        if (
+            not self._state.adding
+            and self.pk
+            and self.course_id
+            and self.timetable_slots.exclude(unit_id=self.course.unit_id).exists()
+        ):
+            raise ValidationError(
+                {"course": "The course change conflicts with existing timetable slots."}
+            )
+        if (
+            not self._state.adding
+            and self.pk
+            and self.course_id
+            and self.teacher_assignments.exclude(unit_id=self.course.unit_id).exists()
+        ):
+            raise ValidationError(
+                {"course": "The course change conflicts with teacher assignments."}
+            )
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
+    def has_teacher(self, user):
+        return self.teacher_assignments.filter(teacher=user, is_active=True).exists()
 
     def __str__(self):
         return f"{self.course.code} — {self.name}"
+
+
+class ClassTeacher(BaseModel):
+    class Role(models.TextChoices):
+        LEAD = "LEAD", "Lead teacher"
+        ASSISTANT = "ASSISTANT", "Assistant teacher"
+
+    unit = models.ForeignKey(
+        "org.BusinessUnit",
+        on_delete=models.PROTECT,
+        related_name="class_teacher_assignments",
+    )
+    class_group = models.ForeignKey(
+        ClassGroup, on_delete=models.CASCADE, related_name="teacher_assignments"
+    )
+    teacher = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="class_teacher_assignments",
+    )
+    role = models.CharField(max_length=12, choices=Role.choices, default=Role.ASSISTANT)
+    is_active = models.BooleanField(default=True)
+
+    objects = ClassTeacherQuerySet.as_manager()
+
+    class Meta:
+        constraints = [  # noqa: RUF012
+            models.UniqueConstraint(
+                fields=("class_group", "teacher"),
+                name="unique_class_teacher_assignment",
+            ),
+            models.UniqueConstraint(
+                fields=("class_group",),
+                condition=models.Q(role="LEAD", is_active=True),
+                name="unique_active_class_lead_teacher",
+            ),
+        ]
+
+    def clean(self):
+        if (
+            self.class_group_id
+            and self.unit_id
+            and self.class_group.course.unit_id != self.unit_id
+        ):
+            raise ValidationError(
+                {"unit": "The assignment must use the class's course unit."}
+            )
+
+    def save(self, *args, **kwargs):
+        if self.unit_id is None and self.class_group_id:
+            self.unit_id = self.class_group.course.unit_id
+            if kwargs.get("update_fields") is not None:
+                kwargs["update_fields"] = tuple(set(kwargs["update_fields"]) | {"unit"})
+        self.clean()
+        super().save(*args, **kwargs)
 
 
 class TimetableSlot(BaseModel):
@@ -109,6 +313,9 @@ class TimetableSlot(BaseModel):
         SATURDAY = 5, "Saturday"
         SUNDAY = 6, "Sunday"
 
+    unit = models.ForeignKey(
+        "org.BusinessUnit", on_delete=models.PROTECT, related_name="timetable_slots"
+    )
     class_group = models.ForeignKey(
         ClassGroup, on_delete=models.CASCADE, related_name="timetable_slots"
     )
@@ -136,6 +343,25 @@ class TimetableSlot(BaseModel):
                 name="timetable_weekday_time_idx",
             )
         ]
+
+    def clean(self):
+        if (
+            self.class_group_id
+            and self.unit_id
+            and self.class_group.course.unit_id != self.unit_id
+        ):
+            raise ValidationError(
+                {"unit": "The timetable slot must use its course's unit."}
+            )
+
+    def save(self, *args, **kwargs):
+        derived_unit = self.unit_id is None
+        if derived_unit and self.class_group_id:
+            self.unit_id = self.class_group.course.unit_id
+            if kwargs.get("update_fields") is not None:
+                kwargs["update_fields"] = tuple(set(kwargs["update_fields"]) | {"unit"})
+        self.clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.class_group} — {self.get_weekday_display()} {self.starts_at}"

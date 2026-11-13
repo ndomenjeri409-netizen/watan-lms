@@ -1,3 +1,5 @@
+> SUPERSEDED by MASTER_GUIDE.md; do not follow.
+
 # UI Polish Pass 1 (revised) — exact brand palette + fixes from the screenshots
 
 Revision: the UI now uses **exactly six brand colours**. Everything else is derived from them by opacity or mixing, never by adding new hex values.

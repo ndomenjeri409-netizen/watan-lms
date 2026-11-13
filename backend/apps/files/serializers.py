@@ -2,6 +2,8 @@ from pathlib import PurePath
 
 from rest_framework import serializers
 
+from apps.accounts.roles import ADMIN_ROLES
+
 from .models import StoredFile
 from .policies import UPLOAD_POLICIES
 
@@ -19,7 +21,12 @@ class UploadRequestSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 {"purpose": "This file purpose cannot be uploaded directly."}
             )
-        if self.context["request"].user.role not in policy["roles"]:
+        user = self.context["request"].user
+        allowed_roles = policy["roles"]
+        if not (
+            user.has_role_global(*(allowed_roles & ADMIN_ROLES))
+            or user.has_role(*(allowed_roles - ADMIN_ROLES))
+        ):
             raise serializers.ValidationError(
                 {"purpose": "You may not upload files for this purpose."}
             )

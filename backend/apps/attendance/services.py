@@ -6,7 +6,7 @@ from django.db import IntegrityError, transaction
 from django.utils import timezone
 from rest_framework.exceptions import APIException, ValidationError
 
-from apps.enrollment.models import CourseAccess
+from apps.enrollment.models import Enrollment
 from apps.people.models import Student
 from common.audit import get_object_audit_scope, record_audit
 
@@ -60,25 +60,41 @@ def check_in_with_qr(*, user, raw_token, client_checkin_id=None):
         raise ValidationError({"token": "This attendance code is invalid."}) from exc
     now = timezone.now()
     session = token.session
-    if token.revoked_at or token.expires_at <= now or not session.is_open:
+    if (
+        token.revoked_at
+        or token.expires_at <= now
+        or not session.is_open
+        or session.class_group.status != session.class_group.Status.RUNNING
+    ):
         raise ValidationError({"token": "This attendance code has expired."})
-    course = session.class_group.course
-    if not CourseAccess.objects.filter(
-        student=student, course=course, is_active=True
-    ).exists():
-        raise ValidationError(
-            {"student": "You do not have active access to this class."}
-        )
     try:
         with transaction.atomic():
-            session = AttendanceSession.objects.select_for_update().get(pk=session.pk)
+            session = (
+                AttendanceSession.objects.select_for_update()
+                .select_related("class_group")
+                .get(pk=session.pk)
+            )
             if (
                 not session.is_open
                 or not session.class_group.is_active
+                or session.class_group.status != session.class_group.Status.RUNNING
                 or token.revoked_at
                 or token.expires_at <= timezone.now()
             ):
                 raise ValidationError({"token": "This attendance code has expired."})
+            enrollment = (
+                Enrollment.objects.select_for_update()
+                .filter(
+                    student=student,
+                    class_group_id=session.class_group_id,
+                    status=Enrollment.Status.ACTIVE,
+                )
+                .first()
+            )
+            if enrollment is None:
+                raise ValidationError(
+                    {"student": "You are not on this class's active attendance roster."}
+                )
             record = AttendanceRecord.objects.create(session=session, student=student)
             CheckIn.objects.create(
                 record=record,

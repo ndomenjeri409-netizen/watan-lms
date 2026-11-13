@@ -1,6 +1,8 @@
+from io import StringIO
 from types import SimpleNamespace
 from unittest.mock import patch
 
+from django.core.management import call_command
 from django.test import TestCase
 from rest_framework.test import APIClient
 
@@ -51,6 +53,7 @@ class SprintOneAuthorizationTests(TestCase):
             Role.ADMIN: 200,
             Role.DIRECTOR: 200,
             Role.HOD: 200,
+            Role.UNIT_MANAGER: 200,
             Role.TEACHER: 403,
             Role.BURSAR: 403,
             Role.STUDENT: 403,
@@ -68,6 +71,62 @@ class SprintOneAuthorizationTests(TestCase):
                             str(self.scoped_teacher.id),
                         },
                     )
+
+    def test_multi_role_user_list_combines_only_assigned_scopes(self):
+        manager_unit = BusinessUnit.objects.create(
+            code="WTA", name="Watan Travel Agency", kind=BusinessUnit.Kind.TRAINING
+        )
+        teacher_unit = BusinessUnit.objects.create(
+            code="WDS", name="Watan Digital Services", kind=BusinessUnit.Kind.TRAINING
+        )
+        manager = self.users[Role.HOD]
+        RoleAssignment.objects.create(
+            user=manager, role=Role.UNIT_MANAGER, unit=manager_unit
+        )
+        RoleAssignment.objects.create(
+            user=manager, role=Role.TEACHER, unit=teacher_unit
+        )
+        manager_unit_user = create_role_user(
+            "manager-unit-user", role=Role.CASHIER, unit=manager_unit
+        )
+        teacher_unit_user = create_role_user(
+            "teacher-unit-user", role=Role.TEACHER, unit=teacher_unit
+        )
+        self.client.force_authenticate(manager)
+
+        response = self.client.get("/api/v1/users/")
+
+        self.assertEqual(response.status_code, 200)
+        visible_ids = {item["id"] for item in response.json()["results"]}
+        self.assertEqual(
+            visible_ids,
+            {
+                str(manager.id),
+                str(self.scoped_teacher.id),
+                str(manager_unit_user.id),
+            },
+        )
+        self.assertNotIn(str(self.other_teacher.id), visible_ids)
+        self.assertNotIn(str(teacher_unit_user.id), visible_ids)
+
+    def test_user_list_reports_assignments_and_pending_status(self):
+        self.client.force_authenticate(self.users[Role.SUPER_ADMIN])
+        response = self.client.get("/api/v1/users/")
+        self.assertEqual(response.status_code, 200)
+        rows = {row["id"]: row for row in response.json()["results"]}
+
+        super_admin = rows[str(self.users[Role.SUPER_ADMIN].id)]
+        self.assertEqual(super_admin["status"], "ACTIVE")
+        self.assertEqual(super_admin["assignments"][0]["role"], Role.SUPER_ADMIN)
+        self.assertIsNone(super_admin["assignments"][0]["unit"])
+
+        pending = User.objects.create_user("pending-user")
+        response = self.client.get("/api/v1/users/")
+        pending_row = next(
+            row for row in response.json()["results"] if row["id"] == str(pending.id)
+        )
+        self.assertEqual(pending_row["status"], "PENDING")
+        self.assertEqual(pending_row["assignments"], [])
 
     def test_department_rows_are_scoped_by_hod_department(self):
         self.client.force_authenticate(self.users[Role.HOD])
@@ -121,36 +180,195 @@ class SprintOneAuthorizationTests(TestCase):
 
     def test_admin_cannot_promote_user_to_admin(self):
         self.client.force_authenticate(self.users[Role.ADMIN])
-        response = self.client.patch(
-            f"/api/v1/users/{self.users[Role.TEACHER].id}/role/",
-            {"role": Role.ADMIN},
+        for role in (Role.SUPER_ADMIN, Role.ADMIN):
+            with self.subTest(role=role):
+                response = self.client.post(
+                    f"/api/v1/users/{self.users[Role.TEACHER].id}/assignments/",
+                    {"role": role},
+                    format="json",
+                )
+                self.assertEqual(response.status_code, 403)
+        self.assertFalse(
+            self.users[Role.TEACHER]
+            .assignments.filter(role__in=(Role.SUPER_ADMIN, Role.ADMIN))
+            .exists()
+        )
+
+    def test_assignment_requires_unit_for_unit_roles_and_rejects_it_for_group_roles(
+        self,
+    ):
+        self.client.force_authenticate(self.users[Role.SUPER_ADMIN])
+        response = self.client.post(
+            f"/api/v1/users/{self.users[Role.TEACHER].id}/assignments/",
+            {"role": Role.CASHIER},
             format="json",
         )
-        self.assertEqual(response.status_code, 403)
-        self.assertEqual(self.users[Role.TEACHER].role, Role.TEACHER)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.json()["fields"]["unit"],
+            ["A business unit is required for this role."],
+        )
+        self.assertEqual(
+            response.json()["message"], "A business unit is required for this role."
+        )
+
+        response = self.client.post(
+            f"/api/v1/users/{self.users[Role.TEACHER].id}/assignments/",
+            {"role": Role.ADMIN, "unit": str(self.unit.id)},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("unit", response.json()["fields"])
 
     @patch("apps.accounts.views.authentication._ensure_firebase")
     @patch(
         "apps.accounts.views.fb_auth.verify_id_token",
         return_value={"uid": "uid-SUPER_ADMIN"},
     )
-    def test_super_admin_role_change_is_revocation_checked_and_audited(
+    def test_super_admin_assignment_is_revocation_checked_and_audited(
         self, verify_token, ensure_firebase
     ):
         self.client.force_authenticate(self.users[Role.SUPER_ADMIN])
-        response = self.client.patch(
-            f"/api/v1/users/{self.users[Role.TEACHER].id}/role/",
+        response = self.client.post(
+            f"/api/v1/users/{self.users[Role.TEACHER].id}/assignments/",
             {"role": Role.BURSAR},
             format="json",
             HTTP_AUTHORIZATION="Bearer verified-token",
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         verify_token.assert_called_once_with("verified-token", check_revoked=True)
-        self.users[Role.TEACHER].refresh_from_db()
-        self.assertEqual(self.users[Role.TEACHER].role, Role.BURSAR)
-        audit = AuditLog.objects.get(action="role_changed")
-        self.assertEqual(audit.before["role"], Role.TEACHER)
+        self.assertTrue(
+            self.users[Role.TEACHER]
+            .assignments.filter(role=Role.BURSAR, unit__isnull=True, is_active=True)
+            .exists()
+        )
+        audit = AuditLog.objects.get(action="assignment_changed")
+        self.assertIsNone(audit.unit)
+        self.assertEqual(audit.scope, AuditLog.Scope.GROUP)
+        self.assertEqual(audit.actor, self.users[Role.SUPER_ADMIN])
         self.assertEqual(audit.after["role"], Role.BURSAR)
+
+    @patch("apps.accounts.views.authentication._ensure_firebase")
+    @patch(
+        "apps.accounts.views.fb_auth.verify_id_token",
+        return_value={"uid": "uid-SUPER_ADMIN"},
+    )
+    def test_assignment_audit_records_the_assigned_unit(
+        self, verify_token, ensure_firebase
+    ):
+        self.client.force_authenticate(self.users[Role.SUPER_ADMIN])
+        response = self.client.post(
+            f"/api/v1/users/{self.users[Role.TEACHER].id}/assignments/",
+            {"role": Role.CASHIER, "unit": str(self.unit.id)},
+            format="json",
+            HTTP_AUTHORIZATION="Bearer verified-token",
+        )
+        self.assertEqual(response.status_code, 201)
+        audit = AuditLog.objects.get(action="assignment_changed")
+        self.assertEqual(audit.unit, self.unit)
+        self.assertEqual(audit.scope, AuditLog.Scope.UNIT)
+        self.assertEqual(audit.actor, self.users[Role.SUPER_ADMIN])
+        verify_token.assert_called_once_with("verified-token", check_revoked=True)
+
+    @patch("apps.accounts.views.authentication._ensure_firebase")
+    @patch(
+        "apps.accounts.views.fb_auth.verify_id_token",
+        return_value={"uid": "uid-SUPER_ADMIN"},
+    )
+    def test_super_admin_cannot_remove_own_assignment(
+        self, verify_token, ensure_firebase
+    ):
+        self.client.force_authenticate(self.users[Role.SUPER_ADMIN])
+        assignment = self.users[Role.SUPER_ADMIN].assignments.get(role=Role.SUPER_ADMIN)
+        response = self.client.delete(
+            f"/api/v1/users/{self.users[Role.SUPER_ADMIN].id}/assignments/{assignment.id}/",
+            HTTP_AUTHORIZATION="Bearer verified-token",
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(
+            RoleAssignment.objects.filter(pk=assignment.pk, is_active=True).exists()
+        )
+
+    @patch("apps.accounts.views.authentication._ensure_firebase")
+    @patch(
+        "apps.accounts.views.fb_auth.verify_id_token",
+        return_value={"uid": "uid-SUPER_ADMIN"},
+    )
+    def test_assignment_deletion_deactivates_and_audits_row(
+        self, verify_token, ensure_firebase
+    ):
+        self.client.force_authenticate(self.users[Role.SUPER_ADMIN])
+        assignment = self.users[Role.TEACHER].assignments.get(role=Role.TEACHER)
+        response = self.client.delete(
+            f"/api/v1/users/{self.users[Role.TEACHER].id}/assignments/{assignment.id}/",
+            HTTP_AUTHORIZATION="Bearer verified-token",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        assignment.refresh_from_db()
+        self.assertFalse(assignment.is_active)
+        self.assertTrue(RoleAssignment.objects.filter(pk=assignment.pk).exists())
+        audit = AuditLog.objects.get(action="assignment_deactivated")
+        self.assertEqual(audit.unit, self.unit)
+        self.assertEqual(audit.actor, self.users[Role.SUPER_ADMIN])
+        self.assertFalse(audit.after["is_active"])
+
+    def test_report_pending_users_shows_audit_role_without_assigning(self):
+        pending = User.objects.create_user(
+            "pending-report",
+            email="pending@example.test",
+            display_name="Pending User",
+        )
+        AuditLog.objects.create(
+            actor=self.users[Role.SUPER_ADMIN],
+            scope=AuditLog.Scope.GROUP,
+            actor_kind=AuditLog.ActorKind.USER,
+            action="role_changed",
+            object_type="accounts.User",
+            object_id=str(pending.pk),
+            after={"role": Role.HOD},
+        )
+        output = StringIO()
+
+        call_command("report_pending_users", stdout=output)
+
+        self.assertIn("pending@example.test", output.getvalue())
+        self.assertIn("Pending User", output.getvalue())
+        self.assertIn(Role.HOD, output.getvalue())
+        self.assertIn("No unit was inferred.", output.getvalue())
+        self.assertFalse(pending.assignments.filter(is_active=True).exists())
+
+    @patch("apps.accounts.views.authentication._ensure_firebase")
+    @patch(
+        "apps.accounts.views.fb_auth.verify_id_token",
+        return_value={"uid": "uid-SUPER_ADMIN"},
+    )
+    def test_last_active_super_admin_assignment_cannot_be_removed(
+        self, verify_token, ensure_firebase
+    ):
+        actor = self.users[Role.SUPER_ADMIN]
+        actor.roles()
+        RoleAssignment.objects.filter(
+            user=actor,
+            role=Role.SUPER_ADMIN,
+        ).update(is_active=False)
+        last_admin = create_role_user("last-super-admin", role=Role.SUPER_ADMIN)
+        assignment = last_admin.assignments.get(role=Role.SUPER_ADMIN)
+        self.client.force_authenticate(actor)
+
+        response = self.client.delete(
+            f"/api/v1/users/{last_admin.id}/assignments/{assignment.id}/",
+            HTTP_AUTHORIZATION="Bearer verified-token",
+        )
+
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(
+            response.json()["message"],
+            "The last active SUPER_ADMIN assignment cannot be removed.",
+        )
+        self.assertTrue(
+            RoleAssignment.objects.filter(pk=assignment.pk, is_active=True).exists()
+        )
 
     @patch("apps.accounts.views.authentication._ensure_firebase")
     @patch(

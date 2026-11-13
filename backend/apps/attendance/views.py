@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.accounts.roles import ADMIN_ROLES, Role
+from apps.enrollment.models import Enrollment
 from apps.scheduling.models import ClassGroup
 from common.audit import get_object_audit_scope, record_audit
 from common.scoping import ScopedViewSetMixin
@@ -16,13 +17,28 @@ from common.scoping import ScopedViewSetMixin
 from .models import AttendanceRecord, AttendanceSession
 from .permissions import AttendancePermission
 from .serializers import (
+    AttendanceMarkResponseSerializer,
+    AttendanceMarkSerializer,
     AttendanceRecordSerializer,
+    AttendanceRosterEntrySerializer,
     AttendanceSessionSerializer,
     CheckInSerializer,
     OpenSessionSerializer,
     QrIssueSerializer,
 )
 from .services import check_in_with_qr, issue_qr_token
+
+
+def may_manage_attendance(user, group):
+    return bool(
+        user.has_role_global(*ADMIN_ROLES)
+        or (
+            user.has_role(Role.HOD)
+            and group.course.department_id in user.department_ids_for_hod()
+        )
+        or user.has_role_for_unit(Role.UNIT_MANAGER, group.course.unit_id)
+        or (user.has_role(Role.TEACHER) and group.has_teacher(user))
+    )
 
 
 class SessionAlreadyOpen(APIException):
@@ -33,7 +49,7 @@ class SessionAlreadyOpen(APIException):
 
 class AttendanceSessionViewSet(ScopedViewSetMixin, viewsets.GenericViewSet):
     queryset = AttendanceSession.objects.select_related(
-        "class_group__course__department", "class_group__teacher", "opened_by"
+        "class_group__course__department", "opened_by"
     ).annotate(record_count=Count("records"))
     serializer_class = AttendanceSessionSerializer
     permission_classes = (AttendancePermission,)
@@ -65,13 +81,23 @@ class AttendanceSessionViewSet(ScopedViewSetMixin, viewsets.GenericViewSet):
             raise PermissionDenied(
                 "You may not open attendance for this class."
             ) from exc
-        if (
-            request.user.role not in ADMIN_ROLES | {Role.HOD}
-            and group.teacher_id != request.user.id
-        ):
-            raise PermissionDenied("You may only open attendance for your own class.")
+        if group.status != ClassGroup.Status.RUNNING:
+            raise ValidationError(
+                {"class_group": "Move the class to RUNNING before opening attendance."}
+            )
+        if not may_manage_attendance(request.user, group):
+            raise PermissionDenied(
+                "You may only open attendance within your assigned scope."
+            )
         try:
             with transaction.atomic():
+                group = ClassGroup.objects.select_for_update().get(pk=group.pk)
+                if not group.is_active or group.status != ClassGroup.Status.RUNNING:
+                    raise ValidationError(
+                        {
+                            "class_group": "Move an active class to RUNNING before opening attendance."
+                        }
+                    )
                 session = AttendanceSession.objects.create(
                     class_group=group,
                     opened_by=request.user,
@@ -93,6 +119,134 @@ class AttendanceSessionViewSet(ScopedViewSetMixin, viewsets.GenericViewSet):
             self.get_serializer(session).data, status=status.HTTP_201_CREATED
         )
 
+    @extend_schema(responses=AttendanceRosterEntrySerializer(many=True))
+    @action(detail=True, methods=("get",))
+    def roster(self, request, pk=None):
+        session = self.get_object()
+        if not may_manage_attendance(request.user, session.class_group):
+            raise PermissionDenied("You may not view this class attendance roster.")
+        enrollments = (
+            Enrollment.objects.filter(
+                class_group_id=session.class_group_id,
+                status=Enrollment.Status.ACTIVE,
+            )
+            .select_related("student")
+            .order_by("student__registration_number")
+        )
+        record_by_student = {
+            record.student_id: record
+            for record in AttendanceRecord.objects.filter(
+                session=session, student_id__in=enrollments.values("student_id")
+            )
+        }
+        entries = [
+            {
+                "student": enrollment.student_id,
+                "student_name": (
+                    f"{enrollment.student.first_name} {enrollment.student.last_name}"
+                ),
+                "registration_number": enrollment.student.registration_number,
+                "status": (
+                    record_by_student[enrollment.student_id].status
+                    if enrollment.student_id in record_by_student
+                    else None
+                ),
+                "checked_in_at": (
+                    record_by_student[enrollment.student_id].checked_in_at
+                    if enrollment.student_id in record_by_student
+                    else None
+                ),
+            }
+            for enrollment in enrollments
+        ]
+        page = self.paginate_queryset(entries)
+        if page is not None:
+            return self.get_paginated_response(
+                AttendanceRosterEntrySerializer(page, many=True).data
+            )
+        return Response(AttendanceRosterEntrySerializer(entries, many=True).data)
+
+    @extend_schema(
+        request=AttendanceMarkSerializer,
+        responses=AttendanceMarkResponseSerializer,
+    )
+    @action(detail=True, methods=("post",))
+    def mark(self, request, pk=None):
+        session = self.get_object()
+        if not may_manage_attendance(request.user, session.class_group):
+            raise PermissionDenied("You may only mark attendance within your assigned scope.")
+        serializer = AttendanceMarkSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        marks = serializer.validated_data["records"]
+        student_ids = [mark["student"] for mark in marks]
+
+        with transaction.atomic():
+            session = (
+                AttendanceSession.objects.select_for_update()
+                .select_related("class_group__course__department")
+                .get(pk=session.pk)
+            )
+            group = session.class_group
+            if not group.is_active or group.status == ClassGroup.Status.CANCELLED:
+                raise ValidationError(
+                    {"session": "Attendance cannot be marked for a cancelled class."}
+                )
+            roster_ids = set(
+                Enrollment.objects.select_for_update()
+                .filter(
+                    class_group=group,
+                    status=Enrollment.Status.ACTIVE,
+                )
+                .values_list("student_id", flat=True)
+            )
+            out_of_roster = sorted(
+                str(student_id)
+                for student_id in set(student_ids) - roster_ids
+            )
+            if out_of_roster:
+                raise ValidationError(
+                    {"records": {"students": out_of_roster}}
+                )
+
+            for mark in marks:
+                record = (
+                    AttendanceRecord.objects.select_for_update()
+                    .filter(session=session, student_id=mark["student"])
+                    .first()
+                )
+                previous_status = record.status if record else None
+                if record is None:
+                    record = AttendanceRecord.objects.create(
+                        session=session,
+                        student_id=mark["student"],
+                        status=mark["status"],
+                    )
+                elif record.status != mark["status"]:
+                    record.status = mark["status"]
+                    record.save(update_fields=("status", "updated_at"))
+                else:
+                    continue
+                record_audit(
+                    actor=request.user,
+                    action="attendance_record_marked",
+                    obj=record,
+                    unit=group.course.unit,
+                    before={"status": previous_status} if previous_status else {},
+                    after={
+                        "session_id": str(session.id),
+                        "student_id": str(record.student_id),
+                        "status": record.status,
+                        "source": "STAFF",
+                    },
+                )
+
+            records = AttendanceRecord.objects.filter(
+                session=session, student_id__in=student_ids
+            ).select_related("student").order_by("student__registration_number")
+        return Response(
+            {"records": AttendanceRecordSerializer(records, many=True).data}
+        )
+
     @extend_schema(request=None, responses=QrIssueSerializer)
     @action(detail=True, methods=("post",))
     def qr(self, request, pk=None):
@@ -110,7 +264,10 @@ class AttendanceSessionViewSet(ScopedViewSetMixin, viewsets.GenericViewSet):
     @action(detail=True, methods=("post",))
     def close(self, request, pk=None):
         with transaction.atomic():
-            session = self.get_queryset().select_for_update().get(pk=pk)
+            visible_sessions = self.get_queryset().filter(pk=pk).values("pk")
+            session = AttendanceSession.objects.select_for_update().get(
+                pk__in=visible_sessions
+            )
             self.check_object_permissions(request, session)
             if not session.is_open:
                 raise ValidationError({"session": "This session is already closed."})

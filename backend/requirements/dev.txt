@@ -2,4 +2,5 @@
 pytest>=8.0
 pytest-django>=4.8
 factory-boy>=3.3
+PyYAML>=6.0
 ruff>=0.6

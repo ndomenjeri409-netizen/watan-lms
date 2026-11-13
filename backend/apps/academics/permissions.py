@@ -19,13 +19,26 @@ def get_course(instance):
     return None
 
 
-def may_manage_course(user, course):
-    if user.role in ADMIN_ROLES:
+def may_manage_course_department(user, department):
+    if user.has_role_global(*ADMIN_ROLES):
         return True
-    if user.role == Role.HOD:
-        return course.department.role_scopes.filter(user=user).exists()
-    if user.role == Role.TEACHER:
-        return course.created_by_id == user.id
+    return department.pk in user.department_ids_for_hod() or user.has_role_for_unit(
+        Role.UNIT_MANAGER, department.unit_id
+    )
+
+
+def may_manage_course(user, course):
+    if may_manage_course_department(user, course.department):
+        return True
+    if user.has_role_for_unit(Role.TEACHER, course.unit_id):
+        from .models import CourseAssignment
+
+        return CourseAssignment.objects.filter(
+            course=course,
+            teacher=user,
+            can_edit_content=True,
+            is_active=True,
+        ).exists()
     return False
 
 
@@ -33,16 +46,39 @@ class AcademicsPermission(BasePermission):
     def has_permission(self, request, view):
         if request.method in SAFE_METHODS:
             return True
-        role = getattr(request.user, "role", None)
+        user = request.user
+        if not user.is_authenticated:
+            return False
+        if user.has_role_global(*ADMIN_ROLES):
+            return True
         if getattr(view, "action", None) == "create":
-            allowed_roles = ADMIN_ROLES | {Role.HOD}
-            if getattr(view, "teacher_content_management", False):
-                allowed_roles.add(Role.TEACHER)
-            return role in allowed_roles
-        return role in ADMIN_ROLES | {Role.HOD, Role.TEACHER}
+            return user.has_role(Role.HOD, Role.UNIT_MANAGER) or (
+                getattr(view, "teacher_content_management", False)
+                and user.has_role(Role.TEACHER)
+            )
+        return user.has_role(Role.HOD, Role.UNIT_MANAGER, Role.TEACHER)
 
     def has_object_permission(self, request, view, obj):
         if request.method in SAFE_METHODS:
             return True
         course = get_course(obj)
         return bool(course and may_manage_course(request.user, course))
+
+
+class CourseAssignmentPermission(BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        if not user.is_authenticated:
+            return False
+        if request.method in SAFE_METHODS:
+            return user.has_role_global(*ADMIN_ROLES, Role.DIRECTOR, Role.AUDITOR) or (
+                user.has_role(Role.HOD, Role.UNIT_MANAGER, Role.TEACHER)
+            )
+        return user.has_role_global(*ADMIN_ROLES) or user.has_role(
+            Role.HOD, Role.UNIT_MANAGER
+        )
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in SAFE_METHODS:
+            return True
+        return may_manage_course(request.user, obj.course)

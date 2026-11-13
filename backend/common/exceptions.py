@@ -22,9 +22,24 @@ def api_exception_handler(exc, context):
     if isinstance(detail, dict) and "detail" in detail:
         message = str(detail["detail"])
         fields = {}
+    elif isinstance(detail, dict):
+        message = _first_field_message(detail) or message
     response.data = {
         "code": STATUS_CODES.get(response.status_code, "UNKNOWN"),
         "message": message,
         "fields": fields,
     }
     return response
+
+
+def _first_field_message(fields):
+    for value in fields.values():
+        if isinstance(value, dict):
+            message = _first_field_message(value)
+            if message:
+                return message
+        elif isinstance(value, (list, tuple)) and value:
+            return str(value[0])
+        elif value:
+            return str(value)
+    return None

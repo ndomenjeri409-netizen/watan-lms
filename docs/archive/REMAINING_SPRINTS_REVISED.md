@@ -1,3 +1,5 @@
+> SUPERSEDED by MASTER_GUIDE.md; do not follow.
+
 # Remaining Sprints (6a closure to launch), revised for multi-unit finance
 
 Replaces Sprints 6 to 9 and "After launch" in `WATAN_LMS_V2_BLUEPRINT.md`. Read with `MULTI_UNIT_AND_FINANCE_ADDENDUM.md` (section numbers below refer to it). Sprints 0 to 5 are assumed done; section A lists a short audit to confirm they follow the unit rules.

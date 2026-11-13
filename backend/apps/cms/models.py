@@ -1,14 +1,14 @@
 from django.db import models
 from django.utils.text import slugify
 
-from apps.accounts.roles import Role
+from apps.accounts.roles import GLOBAL_READ_ROLES
 from common.models import BaseModel
 from common.scoping import ScopedQuerySet
 
 
 class PublishedContentQuerySet(ScopedQuerySet):
     def for_user(self, user):
-        if user.is_authenticated and user.role in {Role.SUPER_ADMIN, Role.ADMIN}:
+        if user.is_authenticated and user.has_role_global(*GLOBAL_READ_ROLES):
             return self
         return self.filter(is_published=True)
 

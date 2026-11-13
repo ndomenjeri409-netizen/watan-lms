@@ -5,7 +5,7 @@ from apps.accounts.roles import ADMIN_ROLES
 
 class CMSPermission(BasePermission):
     def has_permission(self, request, view):
-        return (
-            request.method in SAFE_METHODS
-            or getattr(request.user, "role", None) in ADMIN_ROLES
-        )
+        user = request.user
+        if request.method in SAFE_METHODS:
+            return True
+        return user.is_authenticated and user.has_role_global(*ADMIN_ROLES)

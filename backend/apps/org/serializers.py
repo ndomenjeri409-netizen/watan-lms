@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from apps.accounts.roles import ADMIN_ROLES, Role
+
 from .models import AcademicPeriod, BusinessUnit, Campus, Department, Program
 
 
@@ -65,8 +67,19 @@ class DepartmentWriteSerializer(serializers.ModelSerializer):
 
     def validate_unit(self, unit):
         user = self.context["request"].user
-        if not user.has_global_read() and unit.pk not in user.unit_ids():
+        if not (
+            user.has_role_global(*ADMIN_ROLES)
+            or user.has_role_for_unit(Role.UNIT_MANAGER, unit.pk)
+        ):
             raise serializers.ValidationError("You may not manage this unit.")
+        if (
+            self.instance
+            and self.instance.unit_id != unit.pk
+            and (self.instance.programs.exists() or self.instance.courses.exists())
+        ):
+            raise serializers.ValidationError(
+                "A department with programs or courses cannot change units."
+            )
         return unit
 
     def validate_name(self, value):
@@ -98,14 +111,60 @@ class DepartmentWriteSerializer(serializers.ModelSerializer):
 
 
 class ProgramSerializer(serializers.ModelSerializer):
+    def validate(self, attrs):
+        department = attrs.get("department", getattr(self.instance, "department", None))
+        if (
+            self.instance
+            and department
+            and department.pk != self.instance.department_id
+            and self.instance.courses.exists()
+        ):
+            raise serializers.ValidationError(
+                {"department": "A program with courses cannot change departments."}
+            )
+        return attrs
+
     class Meta:
         model = Program
-        fields = ("id", "department", "name", "code", "is_active")
-        read_only_fields = ("id",)
+        fields = ("id", "unit", "department", "name", "code", "is_active")
+        read_only_fields = ("id", "unit")
 
 
 class AcademicPeriodSerializer(serializers.ModelSerializer):
+    kind = serializers.ChoiceField(
+        choices=AcademicPeriod.Kind.choices, required=True, allow_null=True
+    )
+    unit = serializers.PrimaryKeyRelatedField(
+        queryset=BusinessUnit.objects.filter(is_active=True),
+        allow_null=True,
+        required=False,
+    )
+
     class Meta:
         model = AcademicPeriod
-        fields = ("id", "name", "starts_on", "ends_on", "is_current", "is_active")
+        fields = (
+            "id",
+            "name",
+            "starts_on",
+            "ends_on",
+            "kind",
+            "unit",
+            "is_current",
+            "is_active",
+        )
         read_only_fields = ("id",)
+
+    def validate(self, attrs):
+        if "kind" in attrs and attrs["kind"] is None:
+            raise serializers.ValidationError(
+                {"kind": "Choose TERM or INTAKE for new and updated periods."}
+            )
+        if self.instance and "unit" in attrs:
+            unit = attrs["unit"]
+            if unit and self.instance.class_groups.exclude(course__unit=unit).exists():
+                raise serializers.ValidationError(
+                    {
+                        "unit": "The period's unit cannot conflict with its existing classes."
+                    }
+                )
+        return attrs

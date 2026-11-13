@@ -7,6 +7,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
+import yaml
 from django.contrib import admin
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.management import call_command
@@ -17,7 +18,7 @@ from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 from rest_framework.test import APIClient
 
-from apps.accounts.models import User
+from apps.accounts.models import RoleAssignment, User
 from apps.accounts.roles import Role
 from apps.audit.models import AuditLog
 from apps.files.models import StoredFile
@@ -129,6 +130,96 @@ class FinanceFlowTests(TestCase):
         )
         self.assertEqual(response.status_code, 201, response.content)
         return response.json()
+
+    def test_finance_list_actor_matrix_uses_finance_role_scopes(self):
+        invoice = self.create_invoice()
+        payment_response = self.record_mpesa_payment(invoice["id"])
+        self.assertEqual(payment_response.status_code, 201, payment_response.content)
+        payment = payment_response.json()
+        other_unit = BusinessUnit.objects.create(
+            code="WTA", name="Watan Travel Academy", kind=BusinessUnit.Kind.ACADEMIC
+        )
+        other_department = Department.objects.create(
+            unit=other_unit, name="Travel", code="TRV"
+        )
+        student_other_user = User.objects.create_user("matrix-student-other")
+        Student.objects.create(
+            user=student_other_user,
+            department=other_department,
+            registration_number="TRV-2026-0001",
+            first_name="Other",
+            last_name="Student",
+            email="other.student@example.test",
+            admission_year=2026,
+        )
+        multi_role = User.objects.create_user("matrix-multi-role")
+        RoleAssignment.objects.create(
+            user=multi_role, role=Role.TEACHER, unit=self.unit
+        )
+        RoleAssignment.objects.create(
+            user=multi_role, role=Role.UNIT_MANAGER, unit=other_unit
+        )
+
+        actor_profiles = {
+            "awaiting": User.objects.create_user("matrix-awaiting"),
+            "super_admin": User.objects.create_user(
+                "matrix-super-admin", role=Role.SUPER_ADMIN
+            ),
+            "admin": self.approver,
+            "director": User.objects.create_user("matrix-director", role=Role.DIRECTOR),
+            "auditor": User.objects.create_user("matrix-auditor", role=Role.AUDITOR),
+            "unit_manager_own": User.objects.create_user(
+                "matrix-manager-own", role=Role.UNIT_MANAGER, unit=self.unit
+            ),
+            "unit_manager_other": User.objects.create_user(
+                "matrix-manager-other", role=Role.UNIT_MANAGER, unit=other_unit
+            ),
+            "hod": User.objects.create_user(
+                "matrix-hod", role=Role.HOD, unit=self.unit
+            ),
+            "teacher": User.objects.create_user(
+                "matrix-teacher", role=Role.TEACHER, unit=self.unit
+            ),
+            "bursar_unit": self.bursar,
+            "bursar_group": User.objects.create_user(
+                "matrix-bursar-group", role=Role.BURSAR
+            ),
+            "cashier": User.objects.create_user(
+                "matrix-cashier", role=Role.CASHIER, unit=self.unit
+            ),
+            "student_self": self.student_user,
+            "student_other": student_other_user,
+            "multi_role": multi_role,
+        }
+        matrix = yaml.safe_load(
+            Path(__file__).with_name("authz_matrix.yaml").read_text(encoding="utf-8")
+        )
+        probes = [
+            item
+            for item in matrix["scoped_reads"]
+            if item.get("rows_are_finance_fixture_ids")
+        ]
+
+        fixture_ids = {
+            "own_invoice": invoice["id"],
+            "own_payment": payment["id"],
+        }
+        for probe in probes:
+            for profile in matrix["actor_profiles"]:
+                with self.subTest(path=probe["path"], profile=profile):
+                    self.client.force_authenticate(actor_profiles.get(profile))
+                    response = self.client.get(probe["path"])
+                    expected = probe["expected"][profile]
+                    self.assertEqual(response.status_code, expected["status"])
+                    if response.status_code == 200:
+                        expected_ids = [
+                            fixture_ids.get(row, row)
+                            for row in expected.get("rows", [])
+                        ]
+                        self.assertEqual(
+                            sorted(row["id"] for row in response.json()["results"]),
+                            sorted(expected_ids),
+                        )
 
     def record_mpesa_payment(
         self,
@@ -274,6 +365,16 @@ class FinanceFlowTests(TestCase):
             invoice_a = self.create_invoice(
                 student=student, fee_structure=self.fee_structure, actor=self.bursar
             )
+            self.client.force_authenticate(second_manager)
+            transfer_response = self.client.post(
+                f"/api/v1/students/{student.pk}/transfer/",
+                {"home_unit": str(second_unit.pk)},
+                format="json",
+            )
+            self.assertEqual(
+                transfer_response.status_code, 200, transfer_response.content
+            )
+            student.refresh_from_db()
             student.department = second_department
             student.save(update_fields=("department",))
             invoice_b = self.create_invoice(

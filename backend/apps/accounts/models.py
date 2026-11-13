@@ -16,21 +16,20 @@ class UserQuerySet(models.QuerySet):
     def for_user(self, user):
         if not user.is_authenticated or not user.roles():
             return self.none()
-        if user.has_role(Role.SUPER_ADMIN, Role.ADMIN, Role.DIRECTOR):
+        if user.has_role_global(Role.SUPER_ADMIN, Role.ADMIN, Role.DIRECTOR):
             return self
-        if user.has_role(Role.HOD):
-            return self.filter(
-                models.Q(
-                    role_scopes__department__in=user.role_scopes.values("department_id")
-                )
-                | models.Q(pk=user.pk)
-            ).distinct()
-        if user.has_role(Role.UNIT_MANAGER):
-            return self.filter(
+
+        scope = models.Q(pk=user.pk)
+        department_ids = user.department_ids_for_hod()
+        if department_ids:
+            scope |= models.Q(role_scopes__department_id__in=department_ids)
+        manager_unit_ids = user.unit_ids_for(Role.UNIT_MANAGER)
+        if manager_unit_ids:
+            scope |= models.Q(
                 assignments__is_active=True,
-                assignments__unit_id__in=user.unit_ids(),
-            ).distinct()
-        return self.filter(pk=user.pk)
+                assignments__unit_id__in=manager_unit_ids,
+            )
+        return self.filter(scope).distinct()
 
 
 class UserManager(BaseUserManager):
@@ -122,6 +121,43 @@ class User(BaseModel, AbstractBaseUser, PermissionsMixin):
 
     def has_role(self, *roles):
         return bool(self.roles().intersection(roles))
+
+    def has_role_global(self, *roles):
+        role_set = set(roles)
+        return any(
+            assignment.role in role_set and assignment.unit_id is None
+            for assignment in self._active_role_assignments
+        )
+
+    def has_role_for_unit(self, role, unit_id):
+        if unit_id is None:
+            return False
+        return any(
+            assignment.role == role and assignment.unit_id == unit_id
+            for assignment in self._active_role_assignments
+        )
+
+    def unit_ids_for(self, *roles):
+        role_set = set(roles)
+        return tuple(
+            sorted(
+                {
+                    assignment.unit_id
+                    for assignment in self._active_role_assignments
+                    if assignment.role in role_set and assignment.unit_id is not None
+                },
+                key=str,
+            )
+        )
+
+    def department_ids_for_hod(self):
+        unit_ids = self.unit_ids_for(Role.HOD)
+        if not unit_ids:
+            return ()
+        department_ids = self.role_scopes.filter(
+            department__unit_id__in=unit_ids
+        ).values_list("department_id", flat=True)
+        return tuple(sorted(set(department_ids), key=str))
 
     def has_global_read(self):
         return self.has_role(*GLOBAL_READ_ROLES) or self.has_group_bursar_assignment()

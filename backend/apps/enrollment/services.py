@@ -1,30 +1,12 @@
-import logging
-
 from django.db import transaction
 from django.utils import timezone
-from firebase_admin.exceptions import FirebaseError
-from rest_framework.exceptions import (
-    APIException,
-    AuthenticationFailed,
-    ValidationError,
-)
+from rest_framework.exceptions import ValidationError
 
-from apps.accounts import authentication
-from apps.accounts.models import User
-from apps.accounts.roles import Role
 from apps.people.models import Student, allocate_registration_number
+from apps.scheduling.models import ClassGroup
 from common.audit import get_object_audit_scope, record_audit
 
 from .models import Application, CourseAccess, Enrollment
-
-logger = logging.getLogger(__name__)
-
-
-class IdentityProvisioningUnavailable(APIException):
-    status_code = 503
-    default_detail = "Student identity provisioning is unavailable."
-    default_code = "identity_provisioning_unavailable"
-
 
 ALLOWED_TRANSITIONS = {
     Enrollment.Status.PENDING: {
@@ -47,7 +29,7 @@ ALLOWED_TRANSITIONS = {
 }
 
 
-def transition_enrollment(enrollment, target, actor):
+def transition_enrollment(enrollment, target, actor, class_group_id=None):
     with transaction.atomic():
         enrollment = Enrollment.objects.select_for_update().get(pk=enrollment.pk)
         if target not in ALLOWED_TRANSITIONS.get(enrollment.status, set()):
@@ -56,13 +38,69 @@ def transition_enrollment(enrollment, target, actor):
                     "status": f"Cannot move an enrollment from {enrollment.status} to {target}."
                 }
             )
-        before = {"status": enrollment.status}
+        if target == Enrollment.Status.ACTIVE:
+            selected_class_id = class_group_id or enrollment.class_group_id
+            if not selected_class_id:
+                raise ValidationError(
+                    {
+                        "class_group": "Assign the enrollment to a class before activation."
+                    }
+                )
+            try:
+                class_group = ClassGroup.objects.select_for_update().get(
+                    pk=selected_class_id
+                )
+            except ClassGroup.DoesNotExist as exc:
+                raise ValidationError(
+                    {"class_group": "Select an existing class."}
+                ) from exc
+            if class_group.course_id != enrollment.course_id:
+                raise ValidationError(
+                    {"class_group": "The class must use the enrollment's course."}
+                )
+            if class_group.course.unit_id != enrollment.unit_id:
+                raise ValidationError(
+                    {
+                        "class_group": "The class must use the enrollment's business unit."
+                    }
+                )
+            if not class_group.is_active or class_group.status in {
+                ClassGroup.Status.COMPLETED,
+                ClassGroup.Status.CANCELLED,
+            }:
+                raise ValidationError({"class_group": "Select an active class."})
+            active_count = (
+                Enrollment.objects.filter(
+                    class_group=class_group, status=Enrollment.Status.ACTIVE
+                )
+                .exclude(pk=enrollment.pk)
+                .count()
+            )
+            if active_count >= class_group.capacity:
+                raise ValidationError(
+                    {"class_group": "This class has reached its enrollment capacity."}
+                )
+        elif class_group_id:
+            raise ValidationError(
+                {
+                    "class_group": "A class may only be assigned when activating an enrollment."
+                }
+            )
+
+        before = {
+            "status": enrollment.status,
+            "class_group_id": (
+                str(enrollment.class_group_id) if enrollment.class_group_id else None
+            ),
+        }
         enrollment.status = target
         update_fields = ["status", "updated_at"]
         if target == Enrollment.Status.APPROVED:
             enrollment.approved_by = actor
             update_fields.append("approved_by")
         if target == Enrollment.Status.ACTIVE:
+            enrollment.class_group = class_group
+            update_fields.append("class_group")
             enrollment.activated_at = timezone.now()
             update_fields.append("activated_at")
         enrollment.save(update_fields=update_fields)
@@ -121,7 +159,6 @@ def transition_enrollment(enrollment, target, actor):
 
 
 def approve_application(application, actor):
-    firebase_uid = None
     with transaction.atomic():
         application = (
             Application.objects.select_for_update(of=("self",))
@@ -132,104 +169,72 @@ def approve_application(application, actor):
             raise ValidationError(
                 {"status": "Only pending applications can be approved."}
             )
-        if User.objects.filter(email__iexact=application.email).exists():
-            raise ValidationError(
-                {"email": "An account already exists for this applicant email."}
-            )
-        try:
-            authentication._ensure_firebase()
-        except (AuthenticationFailed, ValueError, FirebaseError) as exc:
-            raise IdentityProvisioningUnavailable() from exc
-        try:
-            firebase_user = authentication.fb_auth.create_user(
-                email=application.email,
-                display_name=f"{application.first_name} {application.last_name}",
-            )
-        except authentication.fb_auth.EmailAlreadyExistsError as exc:
-            raise ValidationError(
-                {"email": "An identity account already exists for this email."}
-            ) from exc
-        except FirebaseError as exc:
-            raise IdentityProvisioningUnavailable() from exc
-        firebase_uid = firebase_user.uid
-        try:
-            user = User.objects.create_user(
-                firebase_uid=firebase_uid,
-                email=application.email,
-                display_name=f"{application.first_name} {application.last_name}",
-                role=Role.STUDENT,
-            )
-            year = timezone.localdate().year
-            student = Student.objects.create(
-                user=user,
+        year = timezone.localdate().year
+        student = Student.objects.create(
+            department=application.department,
+            home_unit=application.department.unit,
+            program=application.program,
+            registration_number=allocate_registration_number(
+                application.department.unit,
+                year,
                 department=application.department,
-                program=application.program,
-                registration_number=allocate_registration_number(
-                    application.department, year
-                ),
-                first_name=application.first_name,
-                last_name=application.last_name,
-                email=application.email,
-                phone=application.phone,
-                admission_year=year,
+            ),
+            first_name=application.first_name,
+            last_name=application.last_name,
+            email=application.email,
+            phone=application.phone,
+            admission_year=year,
+            account_status=Student.AccountStatus.NONE,
+        )
+        unit, group_level = get_object_audit_scope(student)
+        record_audit(
+            actor=actor,
+            action="student_registered",
+            obj=student,
+            unit=unit,
+            group_level=group_level,
+            after={
+                "registration_number": student.registration_number,
+                "user_id": None,
+                "account_status": student.account_status,
+                "department_id": str(student.department_id),
+            },
+        )
+        enrollment = Enrollment.objects.create(
+            student=student,
+            course=application.course,
+            unit=application.course.unit,
+            application=application,
+        )
+        transition_enrollment(enrollment, Enrollment.Status.APPROVED, actor)
+        before = {"status": application.status}
+        application.status = Application.Status.APPROVED
+        application.student = student
+        application.reviewed_by = actor
+        application.reviewed_at = timezone.now()
+        application.save(
+            update_fields=(
+                "status",
+                "student",
+                "reviewed_by",
+                "reviewed_at",
+                "updated_at",
             )
-            unit, group_level = get_object_audit_scope(student)
-            record_audit(
-                actor=actor,
-                action="student_provisioned",
-                obj=student,
-                unit=unit,
-                group_level=group_level,
-                after={
-                    "registration_number": student.registration_number,
-                    "user_id": str(user.id),
-                    "department_id": str(student.department_id),
-                },
-            )
-            enrollment = Enrollment.objects.create(
-                student=student,
-                course=application.course,
-                application=application,
-            )
-            transition_enrollment(enrollment, Enrollment.Status.APPROVED, actor)
-            transition_enrollment(enrollment, Enrollment.Status.ACTIVE, actor)
-
-            before = {"status": application.status}
-            application.status = Application.Status.APPROVED
-            application.student = student
-            application.reviewed_by = actor
-            application.reviewed_at = timezone.now()
-            application.save(
-                update_fields=(
-                    "status",
-                    "student",
-                    "reviewed_by",
-                    "reviewed_at",
-                    "updated_at",
-                )
-            )
-            unit, group_level = get_object_audit_scope(application)
-            record_audit(
-                actor=actor,
-                action="application_approved",
-                obj=application,
-                unit=unit,
-                group_level=group_level,
-                before=before,
-                after={
-                    "status": application.status,
-                    "student_id": str(student.id),
-                    "enrollment_id": str(enrollment.id),
-                },
-            )
-        except Exception:
-            try:
-                authentication.fb_auth.delete_user(firebase_uid)
-            except FirebaseError:
-                logger.exception(
-                    "Could not remove Firebase user after failed admission."
-                )
-            raise
+        )
+        unit, group_level = get_object_audit_scope(application)
+        record_audit(
+            actor=actor,
+            action="application_approved",
+            obj=application,
+            unit=unit,
+            group_level=group_level,
+            before=before,
+            after={
+                "status": application.status,
+                "student_id": str(student.id),
+                "enrollment_id": str(enrollment.id),
+            },
+        )
     return application, student, enrollment
 
 

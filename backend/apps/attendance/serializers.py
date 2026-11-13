@@ -64,3 +64,34 @@ class AttendanceRecordSerializer(serializers.ModelSerializer):
 
     def get_student_name(self, obj) -> str:
         return f"{obj.student.first_name} {obj.student.last_name}"
+
+
+class AttendanceMarkItemSerializer(serializers.Serializer):
+    student = serializers.UUIDField()
+    status = serializers.ChoiceField(choices=AttendanceRecord.Status.choices)
+
+
+class AttendanceMarkSerializer(serializers.Serializer):
+    records = AttendanceMarkItemSerializer(many=True, allow_empty=False)
+
+    def validate_records(self, records):
+        student_ids = [record["student"] for record in records]
+        if len(student_ids) != len(set(student_ids)):
+            raise serializers.ValidationError(
+                "A student may appear only once in a mark request."
+            )
+        return records
+
+
+class AttendanceRosterEntrySerializer(serializers.Serializer):
+    student = serializers.UUIDField()
+    student_name = serializers.CharField()
+    registration_number = serializers.CharField()
+    status = serializers.ChoiceField(
+        choices=AttendanceRecord.Status.choices, allow_null=True
+    )
+    checked_in_at = serializers.DateTimeField(allow_null=True)
+
+
+class AttendanceMarkResponseSerializer(serializers.Serializer):
+    records = AttendanceRecordSerializer(many=True)
