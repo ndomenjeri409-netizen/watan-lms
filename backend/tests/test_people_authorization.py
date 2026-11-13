@@ -119,7 +119,7 @@ class PeopleAuthorizationTests(TestCase):
         class_group = ClassGroup.objects.create(
             course=course,
             name=f"{course.code} Access Class",
-            code=f"{course.code}-{student.pk}",
+            code=f"C-{student.pk}",
         )
         enrollment = Enrollment.objects.create(
             student=student,

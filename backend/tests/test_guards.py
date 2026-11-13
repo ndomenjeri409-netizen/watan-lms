@@ -22,11 +22,13 @@ UNIT_OWNED_APP_LABELS = {
 UNIT_EXEMPT = {
     "org.BusinessUnit": "Defines the unit boundary; it is the scope root.",
     "org.Campus": "Shared campus record referenced by departments.",
-    "org.AcademicPeriod": "Shared academic calendar used by unit-scoped class groups.",
     "academics.CourseModule": "Derives its unit through Course.",
     "academics.Unit": "Course-content unit; derives its business unit through CourseModule.",
     "academics.Material": "Derives its unit through its Lesson and Course.",
     "people.Student": "Person record may participate across units; enrollment is the unit scope.",
+    "people.StudentDuplicateCandidate": (
+        "Join row derives scope through its lookup and candidate student."
+    ),
     "people.StaffProfile": "Person record may have assignments in multiple units.",
     "people.Guardian": "Derives its unit scope through the related Student.",
     "enrollment.Application": "Derives its unit through its required Department and Course.",
@@ -65,6 +67,9 @@ API_VIEW_ALLOWLIST = {
     "apps.assessment.transcripts.StudentTranscriptView": (
         "Restricts students to their own transcript and staff to permitted roles/scopes."
     ),
+    "apps.assessment.transcripts.TranscriptVersionListView": (
+        "Restricts transcript history to a student authorized by _authorized_student."
+    ),
     "apps.assessment.views.GradebookView": (
         "Resolves the course through Course.objects.for_user and applies learner checks."
     ),
@@ -85,6 +90,12 @@ API_VIEW_ALLOWLIST = {
 ACTION_ALLOWLIST = {
     "apps.accounts.views.UserViewSet.invite": (
         "assert_role_assignment validates the inviter's permission to grant the role/unit."
+    ),
+    "apps.people.views.StudentViewSet.duplicate_lookup": (
+        "lookup_student_duplicate validates the single-use token and caller's unit scope."
+    ),
+    "apps.people.views.StudentViewSet.import_students": (
+        "import_student_csv validates each row against the caller's authorized unit."
     ),
     "apps.files.views.FileStorageViewSet.download_url": (
         "_get_stored_file and _may_download enforce owner and resource-specific access."
