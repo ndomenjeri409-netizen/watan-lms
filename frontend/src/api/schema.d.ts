@@ -2427,7 +2427,6 @@ export interface components {
             due_at?: string | null;
             /** Format: date-time */
             late_until?: string | null;
-            /** Format: int64 */
             max_attempts?: number;
             /** Format: decimal */
             weight?: string;
@@ -2466,7 +2465,6 @@ export interface components {
             due_at?: string | null;
             /** Format: date-time */
             late_until?: string | null;
-            /** Format: int64 */
             max_attempts?: number;
             /** Format: decimal */
             weight?: string;
@@ -2666,7 +2664,6 @@ export interface components {
             academic_period: string | null;
             name: string;
             code: string;
-            /** Format: int64 */
             capacity?: number;
             readonly status: components["schemas"]["StatusBafEnum"];
             is_active?: boolean;
@@ -2680,7 +2677,6 @@ export interface components {
             academic_period: string | null;
             name: string;
             code: string;
-            /** Format: int64 */
             capacity?: number;
             is_active?: boolean;
         };
@@ -2799,7 +2795,6 @@ export interface components {
             course: string;
             title: string;
             description?: string;
-            /** Format: int64 */
             position: number;
             readonly is_active: boolean;
             is_visible?: boolean;
@@ -2809,7 +2804,6 @@ export interface components {
             course: string;
             title: string;
             description?: string;
-            /** Format: int64 */
             position: number;
             is_visible?: boolean;
         };
@@ -2925,14 +2919,12 @@ export interface components {
             readonly id: string;
             question: string;
             answer: string;
-            /** Format: int64 */
             position?: number;
             is_published?: boolean;
         };
         FAQRequest: {
             question: string;
             answer: string;
-            /** Format: int64 */
             position?: number;
             is_published?: boolean;
         };
@@ -3240,9 +3232,7 @@ export interface components {
             title: string;
             description?: string;
             video_url?: string;
-            /** Format: int64 */
             position: number;
-            /** Format: int64 */
             duration_minutes?: number;
             readonly is_active: boolean;
             is_visible?: boolean;
@@ -3253,9 +3243,7 @@ export interface components {
             title: string;
             description?: string;
             video_url?: string;
-            /** Format: int64 */
             position: number;
-            /** Format: int64 */
             duration_minutes?: number;
             is_visible?: boolean;
         };
@@ -3959,7 +3947,6 @@ export interface components {
             due_at?: string | null;
             /** Format: date-time */
             late_until?: string | null;
-            /** Format: int64 */
             max_attempts?: number;
             /** Format: decimal */
             weight?: string;
@@ -3997,7 +3984,6 @@ export interface components {
             academic_period?: string | null;
             name?: string;
             code?: string;
-            /** Format: int64 */
             capacity?: number;
             is_active?: boolean;
         };
@@ -4014,7 +4000,6 @@ export interface components {
             course?: string;
             title?: string;
             description?: string;
-            /** Format: int64 */
             position?: number;
             is_visible?: boolean;
         };
@@ -4045,7 +4030,6 @@ export interface components {
         PatchedFAQRequest: {
             question?: string;
             answer?: string;
-            /** Format: int64 */
             position?: number;
             is_published?: boolean;
         };
@@ -4093,9 +4077,7 @@ export interface components {
             title?: string;
             description?: string;
             video_url?: string;
-            /** Format: int64 */
             position?: number;
-            /** Format: int64 */
             duration_minutes?: number;
             is_visible?: boolean;
         };
@@ -4125,7 +4107,6 @@ export interface components {
             department?: string | null;
             name?: string;
             code?: string;
-            /** Format: int64 */
             capacity?: number;
             is_active?: boolean;
         };
@@ -4150,7 +4131,6 @@ export interface components {
             module?: string;
             title?: string;
             description?: string;
-            /** Format: int64 */
             position?: number;
             is_visible?: boolean;
         };
@@ -4313,7 +4293,6 @@ export interface components {
             department?: string | null;
             name: string;
             code: string;
-            /** Format: int64 */
             capacity?: number;
             is_active?: boolean;
         };
@@ -4322,7 +4301,6 @@ export interface components {
             department?: string | null;
             name: string;
             code: string;
-            /** Format: int64 */
             capacity?: number;
             is_active?: boolean;
         };
@@ -4636,7 +4614,6 @@ export interface components {
             module: string;
             title: string;
             description?: string;
-            /** Format: int64 */
             position: number;
             readonly is_active: boolean;
             is_visible?: boolean;
@@ -4646,7 +4623,6 @@ export interface components {
             module: string;
             title: string;
             description?: string;
-            /** Format: int64 */
             position: number;
             is_visible?: boolean;
         };
