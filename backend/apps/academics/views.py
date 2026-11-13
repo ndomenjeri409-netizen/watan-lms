@@ -98,10 +98,7 @@ class AcademicViewSet(ScopedViewSetMixin, viewsets.ModelViewSet):
                         blockers.append("course access rows")
                     if (
                         Assessment.objects.filter(template__course=course)
-                        .filter(
-                            Q(submissions__isnull=False)
-                            | Q(grades__isnull=False)
-                        )
+                        .filter(Q(submissions__isnull=False) | Q(grades__isnull=False))
                         .exists()
                     ):
                         blockers.append("assessments with submissions or grades")

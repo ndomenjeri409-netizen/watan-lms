@@ -11,9 +11,7 @@ def may_assign_role(actor, role, target=None):
         Role.ADMIN,
     }:
         return False
-    return target is None or not target.has_role_global(
-        Role.SUPER_ADMIN, Role.ADMIN
-    )
+    return target is None or not target.has_role_global(Role.SUPER_ADMIN, Role.ADMIN)
 
 
 def assert_role_assignment(actor, role, target=None):

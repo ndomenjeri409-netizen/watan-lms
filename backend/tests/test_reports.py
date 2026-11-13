@@ -1,4 +1,4 @@
-﻿from django.test import TestCase
+from django.test import TestCase
 from rest_framework.test import APIClient
 
 from apps.accounts.models import RoleScope, User

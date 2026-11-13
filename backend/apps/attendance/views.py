@@ -174,7 +174,9 @@ class AttendanceSessionViewSet(ScopedViewSetMixin, viewsets.GenericViewSet):
     def mark(self, request, pk=None):
         session = self.get_object()
         if not may_manage_attendance(request.user, session.class_group):
-            raise PermissionDenied("You may only mark attendance within your assigned scope.")
+            raise PermissionDenied(
+                "You may only mark attendance within your assigned scope."
+            )
         serializer = AttendanceMarkSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         marks = serializer.validated_data["records"]
@@ -200,13 +202,10 @@ class AttendanceSessionViewSet(ScopedViewSetMixin, viewsets.GenericViewSet):
                 .values_list("student_id", flat=True)
             )
             out_of_roster = sorted(
-                str(student_id)
-                for student_id in set(student_ids) - roster_ids
+                str(student_id) for student_id in set(student_ids) - roster_ids
             )
             if out_of_roster:
-                raise ValidationError(
-                    {"records": {"students": out_of_roster}}
-                )
+                raise ValidationError({"records": {"students": out_of_roster}})
 
             for mark in marks:
                 record = (
@@ -240,9 +239,13 @@ class AttendanceSessionViewSet(ScopedViewSetMixin, viewsets.GenericViewSet):
                     },
                 )
 
-            records = AttendanceRecord.objects.filter(
-                session=session, student_id__in=student_ids
-            ).select_related("student").order_by("student__registration_number")
+            records = (
+                AttendanceRecord.objects.filter(
+                    session=session, student_id__in=student_ids
+                )
+                .select_related("student")
+                .order_by("student__registration_number")
+            )
         return Response(
             {"records": AttendanceRecordSerializer(records, many=True).data}
         )

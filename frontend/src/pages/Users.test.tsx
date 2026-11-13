@@ -14,6 +14,7 @@ const apiMocks = vi.hoisted(() => ({
 }))
 
 vi.mock('../api/client', () => ({ api: apiMocks }))
+vi.mock('../lib/firebase', () => ({ auth: { currentUser: null } }))
 
 const profile: Profile = {
   id: 'admin',
